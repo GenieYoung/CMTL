@@ -5,11 +5,11 @@
 #include <iomanip>
 #include <assert.h>
 
-namespace geo2d
-{
+namespace CMTL  {
+namespace geo2d {
 
 template<typename T>
-class PointT
+class Point
 {
     public:
         typedef T _value_type;
@@ -18,12 +18,12 @@ class PointT
         /**
          * @brief constructor.
         */
-        PointT(const T& x = 0, const T& y = 0) : _x(x), _y(y) {}
+        Point(const T& x = 0, const T& y = 0) : _x(x), _y(y) {}
 
         /**
          * @brief copy constructor
         */
-        PointT(const PointT& p)
+        Point(const Point& p)
         {
             _x = p._x;
             _y = p._y;
@@ -74,15 +74,15 @@ class PointT
         /**
          * @brief add two point.
         */
-        PointT operator+(const PointT& p) const
+        Point operator+(const Point& p) const
         {
-            return PointT(_x + p._x, _y + p._y);
+            return Point(_x + p._x, _y + p._y);
         }
 
         /**
          * @brief self-addition.
         */
-        const PointT& operator+=(const PointT& p)
+        const Point& operator+=(const Point& p)
         {
             _x += p._x;
             _y += p._y;
@@ -92,15 +92,15 @@ class PointT
         /**
          * @brief subtract two point.
         */
-        PointT operator-(const PointT& p) const
+        Point operator-(const Point& p) const
         {
-            return PointT(_x - p._x, _y - p._y);
+            return Point(_x - p._x, _y - p._y);
         }
 
         /**
          * @brief self-subtract.
         */
-        const PointT& operator-=(const PointT& p)
+        const Point& operator-=(const Point& p)
         {
             _x -= p._x;
             _y -= p._y;
@@ -108,17 +108,17 @@ class PointT
         }
 
         /**
-         * do scale by multiply.
+         * @brief do scale by multiply.
         */
-        PointT operator*(T scale) const
+        Point operator*(T scale) const
         {
-            return PointT(_x * scale, _y * scale);
+            return Point(_x * scale, _y * scale);
         }
 
         /**
-         * self-scale by multiply.
+         * @brief self-scale by multiply.
         */
-        const PointT& operator*=(T scale)
+        const Point& operator*=(T scale)
         {
             _x *= scale;
             _y *= scale;
@@ -126,18 +126,18 @@ class PointT
         }
 
         /**
-         * do scale by divide.
+         * @brief do scale by divide.
         */
-        PointT operator/(T scale) const
+        Point operator/(T scale) const
         {
             assert(scale != 0);
-            return PointT(_x / scale, _y / scale);
+            return Point(_x / scale, _y / scale);
         }
 
         /**
-         * self-scale by divide.
+         * @brief self-scale by divide.
         */
-        const PointT& operator/=(T scale)
+        const Point& operator/=(T scale)
         {
             assert(scale != 0);
             _x /= scale;
@@ -146,33 +146,37 @@ class PointT
         }
 
         /**
-         * dot product.
+         * @brief dot product.
         */
-        T operator*(const PointT& p) const
+        T operator*(const Point& p) const
         {
             return _x * p._x + _y * p._y;
         }
 
         /**
-         * cross product.
+         * @brief cross product.
         */
-        T operator%(const PointT& p) const
+        T operator%(const Point& p) const
         {
             return _x * p._y - _y * p._x;
         }
 
     public:
-        friend std::ostream& operator<<(std::ostream& os, const PointT& p)
+        /**
+         * @brief formatted print.
+        */
+        friend std::ostream& operator<<(std::ostream& os, const Point& p)
         {
-            os << "[" << p._x << "," << std::setw(8) << p._y << "]";
+            os << "[" << p._x << ", " << p._y << "]";
             return os;
         }
 
 
     private:
-        T _x;
-        T _y;
+        T _x, _y;
 };
 
-}
+}   // namespace geo2d
+}   // namespace CMTL
+
 #endif // __geo2d_point_h__

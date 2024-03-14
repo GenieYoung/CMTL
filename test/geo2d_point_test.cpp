@@ -2,7 +2,9 @@
 
 int main()
 {
-    geo2d::PointT<double> p(0, 1);
+    CMTL::geo2d::Point<double> p(1, 2);
+    CMTL::geo2d::Point<double> q(3, 4);
     std::cout << p << std::endl;
-    std::cout << p[0] << " " << p[1] << std::endl;
+    std::cout << p*q << std::endl;
+    std::cout << p%q << std::endl;
 }

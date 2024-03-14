@@ -1,4 +1,4 @@
-project(geometry)
+project(CMTL)
 
 ### Find dependencies
 #find_package(GMP REQUIRED)
