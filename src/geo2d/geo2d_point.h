@@ -8,6 +8,10 @@
 namespace CMTL  {
 namespace geo2d {
 
+/**
+ * @brief 2 dimension point.
+ * @tparam T value type of coordinate
+*/
 template<typename T>
 class Point
 {
@@ -159,6 +163,16 @@ class Point
         T operator%(const Point& p) const
         {
             return _x * p._y - _y * p._x;
+        }
+
+        /**
+         * @brief less comparator, used for sort.
+        */
+        bool operator<(const Point& p) const
+        {
+            if(_x != p._x)  return _x < p._x;
+            if(_y != p._y)  return _y < p._y;
+            return false;
         }
 
     public:
