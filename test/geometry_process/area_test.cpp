@@ -10,4 +10,7 @@ int main()
     points.push_back(CMTL::geo2d::Point<double>{0,1});
     CMTL::geo2d::Polygon<double> polygon(points);
     std::cout << "area : " << CMTL::geometry_process::area(polygon) << std::endl;
+    double area1;
+    CMTL::geometry_process::area(points.begin(), points.end(), area1);
+    std::cout << "area1 : " << area1 << std::endl;
 }

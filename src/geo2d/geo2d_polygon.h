@@ -23,15 +23,11 @@ class Polygon
          * @brief construct from iterator range.
          * @tparam InputIterator Container iterator.
         */
-        template<class InputIterator,  class = std::enable_if_t<
-                    std::is_base_of< std::input_iterator_tag,
-                    typename std::iterator_traits<InputIterator>::iterator_category>{}>>
-        Polygon(InputIterator first, InputIterator second)
+        template<class ForwardIterator,  class = std::enable_if_t<
+                    std::is_base_of< std::forward_iterator_tag,
+                    typename std::iterator_traits<ForwardIterator>::iterator_category>{}>>
+        Polygon(ForwardIterator first, ForwardIterator second) : _vertices(first, second)
         {
-            while(first != second)
-            {
-                _vertices.push_back(*(first++));
-            }
         }
 
         /**
@@ -87,6 +83,12 @@ class Polygon
 
     public:
         /**
+         * @brief get the area of the polygon
+         */
+        T area() const;
+
+    public:
+        /**
          * @brief formatted print.
         */
         friend std::ostream& operator<<(std::ostream& os, const Polygon& poly)
@@ -101,6 +103,21 @@ class Polygon
     private:
         std::vector<Point<T>> _vertices;
 };
+
+
+/* Implementation */
+
+template<typename T>
+T Polygon<T>::area() const
+{
+    /* use the Shoelace formula */
+    T result = T(0);
+    for(size_t i = 0, j = 1; i < _vertices.size(); ++i, ++j, j%=_vertices.size())
+    {
+        result += ( _vertices[i].x() * _vertices[j].y() - _vertices[j].x() * _vertices[i].y());
+    }
+    return result / 2;
+}
 
 }   // namespace geo2d
 }   // namespace CMTL

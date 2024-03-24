@@ -7,6 +7,30 @@ namespace CMTL  {
 namespace geometry_process  {
 
 /**
+ * @brief calculate polygon area from iterator range from point container.
+ * @tparam ForwardIterator point container's iterator, the point must has x() and y() method
+ * @tparam NT type of point coordinate 
+ */
+template<typename ForwardIterator, class NumberType>
+void area(ForwardIterator first, ForwardIterator last, NumberType& result)
+{
+    /* use the Shoelace formula */
+    result = NumberType(0);
+    if(first == last)
+        return;
+    ForwardIterator second = first; ++second;
+    if(second == first)
+        return;
+    while(first != last)
+    {
+        result += (first->x() * second->y() - second->x() * first->y());
+        ++first;
+        second == last ? (second = first) : ++second;
+    }
+    result /= 2;
+}
+
+/**
  * @brief calculate the area of a simple polygon.
  * @tparam T value type of point coordinate 
  * @return the polygon area.
@@ -15,12 +39,7 @@ template<typename T>
 T area(const geo2d::Polygon<T>& polygon)
 {
     /* use the Shoelace formula */
-    T result = 0;
-    for(size_t i = 0, j = 1; i < polygon.n_points(); ++i, ++j, j%=polygon.n_points())
-    {
-        result += ( polygon[i].x() * polygon[j].y() - polygon[j].x() * polygon[i].y());
-    }
-    return result / 2;
+    return polygon.area();
 }
 
 
