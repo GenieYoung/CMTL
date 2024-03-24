@@ -8,7 +8,7 @@ namespace CMTL  {
 namespace geo2d {
 
 /**
- * @brief 2 dimension closed polygon in counterclockwise order.
+ * @brief 2 dimension closed simple polygon in counterclockwise order.
  * @tparam T value type of point coordinate 
  * @note end point not same as first point.
 */
@@ -40,6 +40,49 @@ class Polygon
         Polygon(const std::vector<Point<T>>& vertices)
         {
             _vertices.assign(vertices.begin(), vertices.end());
+        }
+
+    public:
+        /**
+         * @brief return the number of points
+         */
+        size_t n_points() const
+        {
+            return _vertices.size();
+        }
+
+        /**
+         * @brief get the writable ith point
+         */
+        Point<T>& operator[](unsigned int i)
+        {
+            return _vertices[i];
+        }
+
+        /**
+         * @brief get the const ith point
+         */
+        const Point<T>& operator[](unsigned int i) const
+        {
+            return _vertices[i];
+        }
+
+        /**
+         * @brief get the writable ith point with range check
+         */
+        Point<T>& at(unsigned int i)
+        {
+            assert(i < _vertices.size());
+            return _vertices[i];
+        }
+
+        /**
+         * @brief get the const ith point with range check
+         */
+        const Point<T>& at(unsigned int i) const
+        {
+            assert(i < _vertices.size());
+            return _vertices[i];
         }
 
     public:
