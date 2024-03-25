@@ -42,7 +42,7 @@ class Polygon
         /**
          * @brief return the number of points
          */
-        size_t n_points() const
+        size_t size() const
         {
             return _vertices.size();
         }

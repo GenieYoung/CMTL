@@ -13,6 +13,15 @@ namespace geo2d {
 
 namespace geometry_process  {
 
+namespace internal  {
+
+    class triangulate_polygon_modifier
+    {
+        
+    };
+
+}   // namespace internal
+
 /**
  * @brief triangulate polygon into several triangles.
  * @return true if the polygon can be trianguled.

@@ -1,8 +1,8 @@
 project(CMTL)
 
 ### Find dependencies
-#find_package(GMP REQUIRED)
-#find_package(GMPXX REQUIRED)
+find_package(GMP REQUIRED)
+find_package(GMPXX REQUIRED)
 
 file(GLOB_RECURSE SOURCE_LIST "*.cpp")
 
