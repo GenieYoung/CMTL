@@ -8,8 +8,9 @@ namespace geometry_process  {
 
 /**
  * @brief calculate polygon area from iterator range from point container.
- * @tparam ForwardIterator point container's iterator, the point must has x() and y() method
+ * @tparam ForwardIterator point container's iterator, the point must has operator[] method to get coordinate
  * @tparam NT type of point coordinate 
+ * @param result the polygon area
  */
 template<typename ForwardIterator, class NumberType>
 void area(ForwardIterator first, ForwardIterator last, NumberType& result)
@@ -23,7 +24,7 @@ void area(ForwardIterator first, ForwardIterator last, NumberType& result)
         return;
     while(first != last)
     {
-        result += (first->x() * second->y() - second->x() * first->y());
+        result += (first->operator[](0) * second->operator[](1) - second->operator[](0) * first->operator[](1));
         ++first;
         second == last ? (second = first) : ++second;
     }
