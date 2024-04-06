@@ -8,7 +8,7 @@ namespace CMTL  {
 namespace geo2d {
 
 /**
- * @brief 2 dimension closed simple polygon in counterclockwise order.
+ * @brief 2 dimension closed simple polygon
  * @tparam T value type of point coordinate 
  * @note end point not same as first point.
 */
@@ -20,7 +20,14 @@ class Polygon
 
     public:
         /**
-         * @brief construct from iterator range.
+         * @brief default constructor
+        */
+        Polygon()
+        {
+        }
+
+        /**
+         * @brief construct from iterator range of points list.
          * @tparam InputIterator Container iterator.
         */
         template<class ForwardIterator,  class = std::enable_if_t<
