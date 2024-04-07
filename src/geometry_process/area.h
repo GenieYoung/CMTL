@@ -36,20 +36,40 @@ T area(const geo2d::Polygon<T>& polygon)
  * @tparam Point point type
  * @note the point must has operator[] method to get coordinate
 */
-template<typename Point, class NumberType>
-void area_2d(const Point& p1, const Point&p2, const Point& p3, NumberType& result)
+template<typename Point, typename NumberType>
+void area_2d(const Point& p1, const Point& p2, const Point& p3, NumberType& result)
 {
-    return ((p2[0]-p1[0])*(p3[1]-p1[1])-(p2[1]-p1[1])*(p3[0]-p1[0])) / NumberType(2);
+    result = ((p2[0]-p1[0])*(p3[1]-p1[1])-(p2[1]-p1[1])*(p3[0]-p1[0])) / NumberType(2);
+}
+
+/**
+ * @brief calculate polygon area.
+ * @tparam Polygon polygon type
+ * @tparam NumberType type of point coordinate 
+ * @param result the polygon area
+ * @note  polygon struct should have [] operator to get the point and the size() method to get the length;
+ *        the point struct should have [] opeartor to get the coordinate.
+ */
+template<typename Polygon, typename NumberType>
+void area_2d(const Polygon& poly, NumberType& result)
+{
+    /* use the Shoelace formula */
+    result = NumberType(0);
+    for(size_t i = 0, j = 1; i < poly.size(); ++i, ++j, j%=poly.size())
+    {
+        result += ( poly[i][0] * poly[j][1] - poly[j][0] * poly[i][1]);
+    }
+    result /= NumberType(2);
 }
 
 /**
  * @brief calculate polygon area from iterator range from point container.
  * @tparam ForwardIterator point container's iterator
- * @tparam NT type of point coordinate 
+ * @tparam NumberType type of point coordinate 
  * @param result the polygon area
  * @note the point must has operator[] method to get coordinate
  */
-template<typename ForwardIterator, class NumberType>
+template<typename ForwardIterator, typename NumberType>
 void area_2d(ForwardIterator first, ForwardIterator last, NumberType& result)
 {
     /* use the Shoelace formula */
@@ -65,7 +85,7 @@ void area_2d(ForwardIterator first, ForwardIterator last, NumberType& result)
         ++first;
         second == last ? (second = first) : ++second;
     }
-    result /= 2;
+    result /= NumberType(2);
 }
 
 }   // namespace geometry_process

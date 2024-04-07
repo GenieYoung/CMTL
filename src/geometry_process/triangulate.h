@@ -26,12 +26,8 @@ namespace internal  {
         private:
             struct vertex
             {
-                unsigned prev_id;
-                unsigned next_id;
-                unsigned cur_id;
-                bool is_convex;
-                bool is_reflex;
-                bool is_ear = false;
+                unsigned prev_id, next_id, cur_id;
+                bool is_convex, is_reflex, is_ear=false;
             };
 
         public:

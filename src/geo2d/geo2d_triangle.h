@@ -35,6 +35,14 @@ class Triangle
 
     public:
         /**
+         * @brief return the number of points
+         */
+        size_t size() const
+        {
+            return 3;
+        }
+
+        /**
          * @brief get the writable ith point
          */
         Point<T>& operator[](unsigned int i)
