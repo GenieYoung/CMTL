@@ -1,14 +1,14 @@
-#ifndef __geo2d_polygon_h__
-#define __geo2d_polygon_h__
+#ifndef __geo3d_polygon_h__
+#define __geo3d_polygon_h__
 
-#include "geo2d_point.h"
+#include "geo3d_point.h"
 #include <vector>
 
 namespace CMTL  {
-namespace geo2d {
+namespace geo3d {
 
 /**
- * @brief 2 dimension closed simple polygon
+ * @brief 3 dimension closed simple polygon
  * @tparam T value type of point coordinate 
  * @note end point not same as first point.
 */
@@ -44,7 +44,7 @@ class Polygon
         {
             _vertices.assign(vertices.begin(), vertices.end());
         }
-        
+
         /**
          * @brief copy constructor
          */
@@ -105,9 +105,14 @@ class Polygon
 
     public:
         /**
-         * @brief get the area of the polygon
+         * @brief get the square area of the polygon
          */
-        T area() const;
+        T area2() const;
+
+        /**
+         * @brief get the normal without normalized
+         */
+        Point<T> normal() const;
 
     public:
         /**
@@ -132,18 +137,36 @@ class Polygon
 /* Implementation */
 
 template<typename T>
-T Polygon<T>::area() const
+T Polygon<T>::area2() const
 {
-    /* use the Shoelace formula */
-    T result = T(0);
-    for(size_t i = 0, j = 1; i < _vertices.size(); ++i, ++j, j%=_vertices.size())
+    /* https://math.stackexchange.com/questions/3207981/how-do-you-calculate-the-area-of-a-2d-polygon-in-3d */
+    if(_vertices.size() <= 2 )
+        return 0;
+    Point<T> p;
+    for(size_t i = 1, j = 2; i < _vertices.size()-1; ++i, ++j, j%=_vertices.size())
     {
-        result += ( _vertices[i].x() * _vertices[j].y() - _vertices[j].x() * _vertices[i].y());
+        p += ((_vertices[i]-_vertices[0]) % (_vertices[j]-_vertices[0]));
     }
-    return result / 2;
+    return p.size2() / T(4);
 }
 
-}   // namespace geo2d
+template<typename T>
+Point<T> Polygon<T>::normal() const
+{
+    /* Newells algorithm */
+    if(_vertices.size() <= 2 )
+        return Point<T>();
+    T x, y, z;
+    for(unsigned i = 0, j = 1; i < _vertices.size(); ++i, ++j, j%=_vertices.size())
+    {
+        x += ((_vertices[i].z() + _vertices[j].z())*(_vertices[i].y() - _vertices[j].y()));
+        y += ((_vertices[i].x() + _vertices[j].x())*(_vertices[i].z() - _vertices[j].z()));
+        z += ((_vertices[i].y() + _vertices[j].y())*(_vertices[i].x() - _vertices[j].x()));
+    }
+    return Point<T>(x, y, z);
+}
+
+}   // namespace geo3d
 }   // namespace CMTL
 
-#endif // __geo2d_polygon_h__
+#endif // __geo3d_polygon_h__

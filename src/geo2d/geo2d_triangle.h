@@ -33,6 +33,13 @@ class Triangle
         {
         }
 
+        /**
+         * @brief deconstructor
+         */
+        ~Triangle()
+        {
+        }
+
     public:
         /**
          * @brief return the number of points

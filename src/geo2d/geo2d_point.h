@@ -33,6 +33,13 @@ class Point
             _y = p._y;
         }
 
+        /**
+         * @brief deconstructor
+         */
+        ~Point()
+        {
+        }
+
     public:
         /**
          * @brief get the writable x coordinate.
@@ -158,11 +165,35 @@ class Point
         }
 
         /**
+         * @brief dot product.
+        */
+        T dot(const Point& p) const
+        {
+            return _x * p._x + _y * p._y;
+        }
+
+        /**
          * @brief cross product.
         */
         T operator%(const Point& p) const
         {
             return _x * p._y - _y * p._x;
+        }
+
+        /**
+         * @brief cross product.
+        */
+        T cross(const Point& p) const
+        {
+            return _x * p._y - _y * p._x;
+        }
+
+        /**
+         * @brief the square length of the point
+         */
+        T size2() const
+        {
+            return (*this) * (*this);
         }
 
         /**
