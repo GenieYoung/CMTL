@@ -206,6 +206,22 @@ class Point
             return false;
         }
 
+        /**
+         * @brief comparator
+         */
+        bool operator==(const Point& p) const
+        {
+            return _x == p._x && _y == p._y;
+        }
+
+        /**
+         * @brief comparator
+         */
+        bool operator!=(const Point& p) const
+        {
+            return !(*this == p);
+        }
+
     public:
         /**
          * @brief formatted print.

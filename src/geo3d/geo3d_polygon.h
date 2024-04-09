@@ -153,17 +153,30 @@ T Polygon<T>::area2() const
 template<typename T>
 Point<T> Polygon<T>::normal() const
 {
-    /* Newells algorithm */
     if(_vertices.size() <= 2 )
         return Point<T>();
-    T x, y, z;
-    for(unsigned i = 0, j = 1; i < _vertices.size(); ++i, ++j, j%=_vertices.size())
-    {
-        x += ((_vertices[i].z() + _vertices[j].z())*(_vertices[i].y() - _vertices[j].y()));
-        y += ((_vertices[i].x() + _vertices[j].x())*(_vertices[i].z() - _vertices[j].z()));
-        z += ((_vertices[i].y() + _vertices[j].y())*(_vertices[i].x() - _vertices[j].x()));
-    }
-    return Point<T>(x, y, z);
+    #if 0
+        /* Newells algorithm */
+        T x, y, z;
+        for(unsigned i = 0, j = 1; i < _vertices.size(); ++i, ++j, j%=_vertices.size())
+        {
+            x += ((_vertices[i].z() + _vertices[j].z())*(_vertices[i].y() - _vertices[j].y()));
+            y += ((_vertices[i].x() + _vertices[j].x())*(_vertices[i].z() - _vertices[j].z()));
+            z += ((_vertices[i].y() + _vertices[j].y())*(_vertices[i].x() - _vertices[j].x()));
+        }
+        return Point<T>(x, y, z);
+    #else
+        for(unsigned i=0, j=1, k=2; i<_vertices.size(); ++i, ++j, ++k, j%=_vertices.size(), k%=_vertices.size())
+        {
+            const Point<T>& pi = _vertices[i];
+            const Point<T>& pj = _vertices[j];
+            const Point<T>& pk = _vertices[k];
+            Point<T> n = (pj-pi) % (pk-pj);
+            if(n != Point<T>())
+                return n;
+        }
+    #endif
+    return Point<T>();
 }
 
 }   // namespace geo3d

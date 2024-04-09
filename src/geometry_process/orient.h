@@ -14,7 +14,7 @@ namespace geometry_process  {
  * @note the point must has operator[] method to get coordinate
  */
 template<typename Point>
-int orient2d(const Point& pa, const Point& pb, const Point& pc)
+int orient_2d(const Point& pa, const Point& pb, const Point& pc)
 {
     auto flag = (pa[0] - pc[0]) * (pb[1] - pc[1]) - (pa[1] - pc[1]) * (pb[0] - pc[0]);
     if(flag > 0)    
