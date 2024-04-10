@@ -274,7 +274,7 @@ namespace internal  {
 template<typename T>
 bool triangulate_3d(const geo3d::Polygon<T>& polygon, std::vector<std::array<unsigned, 3>>& triangles)
 {
-    internal::triangulate_polygon_modifier_3d modifier(polygon);
+    internal::triangulate_polygon_modifier_3d<T> modifier(polygon);
     return modifier.execute(triangles);
 }
 

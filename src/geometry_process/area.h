@@ -13,10 +13,9 @@ namespace geometry_process  {
  * @return the triangle area.
  */
 template<typename T>
-T area(const geo2d::Triangle<T>& polygon)
+T area(const geo2d::Triangle<T>& triangle)
 {
-    /* use the Shoelace formula */
-    return polygon.area();
+    return triangle.area();
 }
 
 /**
@@ -27,7 +26,6 @@ T area(const geo2d::Triangle<T>& polygon)
 template<typename T>
 T area(const geo2d::Polygon<T>& polygon)
 {
-    /* use the Shoelace formula */
     return polygon.area();
 }
 

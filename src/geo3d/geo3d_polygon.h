@@ -29,12 +29,16 @@ class Polygon
         /**
          * @brief construct from iterator range of points list.
          * @tparam InputIterator Container iterator.
+         * @note the point must have operator[] method to get coordinate
         */
-        template<class ForwardIterator,  class = std::enable_if_t<
-                    std::is_base_of< std::forward_iterator_tag,
-                    typename std::iterator_traits<ForwardIterator>::iterator_category>{}>>
-        Polygon(ForwardIterator first, ForwardIterator second) : _vertices(first, second)
+        template<class ForwardIterator>
+        Polygon(ForwardIterator first, ForwardIterator second)
         {
+            while(first != second)
+            {
+                _vertices.emplace_back(first->operator[](0), first->operator[](1), first->operator[](2));
+                ++first;
+            }
         }
 
         /**

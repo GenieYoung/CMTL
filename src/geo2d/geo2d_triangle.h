@@ -27,10 +27,14 @@ class Triangle
 
         /**
          * @brief construct from three points
+         * @note the point must have operator[] to get coordinate
          */
-        Triangle(const Point<T>& p1, const Point<T>& p2, const Point<T>& p3)
-                : _vertices(p1, p2, p3)
+        template<typename PointType>
+        Triangle(const PointType& p0, const PointType& p1, const PointType& p2)
         {
+            _vertices[0][0] = p0[0]; _vertices[0][1] = p0[1];
+            _vertices[1][0] = p1[0]; _vertices[1][1] = p1[1];
+            _vertices[2][0] = p2[0]; _vertices[2][1] = p2[1];
         }
 
         /**
