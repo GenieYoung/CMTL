@@ -9,9 +9,9 @@
 #include <vector>
 #include <array>
 
-namespace CMTL  {
-
-namespace geometry_process  {
+namespace CMTL{
+namespace geometry{
+namespace geometry_process{
 
 namespace internal  {
 
@@ -279,6 +279,7 @@ bool triangulate_3d(const geo3d::Polygon<T>& polygon, std::vector<std::array<uns
 }
 
 }   // namespace geometry_process
+}   // namespace geometry
 }   // namespace CMTL
 
 #endif  // __geometry_process_triangulate__

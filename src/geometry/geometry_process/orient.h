@@ -4,8 +4,9 @@
 #include "geo2d/geo2d_polygon.h"
 #include "geo2d/geo2d_triangle.h"
 
-namespace CMTL  {
-namespace geometry_process  {
+namespace CMTL{
+namespace geometry{
+namespace geometry_process{
 
 /**
  * @brief 2d orientation test, non robust if point type is not exact.
@@ -27,6 +28,7 @@ int orient_2d(const Point& pa, const Point& pb, const Point& pc)
 
 
 }   // namespace geometry_process
+}   // namespace geometry
 }   // namespace CMTL
 
 #endif  // __geometry_process_area__

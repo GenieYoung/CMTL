@@ -4,16 +4,16 @@ project(CMTL)
 find_package(GMP REQUIRED)
 find_package(GMPXX REQUIRED)
 
-file(GLOB_RECURSE SOURCE_LIST "*.cpp")
+### geometry is a header-only library
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/geometry)
 
-### Register all sources
-add_library(${PROJECT_NAME} ${SOURCE_LIST})
+add_library(${PROJECT_NAME} INTERFACE)
 
-### Include directories
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-### Link with dependencies
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME} INTERFACE
     ${GMP_LIBRARIES}
     ${GMPXX_LIBRARIES}
+    CMTL_geometry
 )
+

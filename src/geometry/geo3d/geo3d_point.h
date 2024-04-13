@@ -1,15 +1,16 @@
-#ifndef __geo2d_point_h__
-#define __geo2d_point_h__
+#ifndef __geo3d_point_h__
+#define __geo3d_point_h__
 
 #include <iostream>
 #include <iomanip>
 #include <assert.h>
 
-namespace CMTL  {
-namespace geo2d {
+namespace CMTL{
+namespace geometry{
+namespace geo3d{
 
 /**
- * @brief 2 dimension point.
+ * @brief 3 dimension point.
  * @tparam T value type of coordinate
 */
 template<typename T>
@@ -22,7 +23,7 @@ class Point
         /**
          * @brief constructor.
         */
-        Point(const T& x = 0, const T& y = 0) : _x(x), _y(y) {}
+        Point(const T& x = 0, const T& y = 0, const T& z = 0) : _x(x), _y(y), _z(z) {}
 
         /**
          * @brief copy constructor
@@ -31,6 +32,7 @@ class Point
         {
             _x = p._x;
             _y = p._y;
+            _z = p._z;
         }
 
         /**
@@ -62,12 +64,23 @@ class Point
         const T& y() const { return _y; }
 
         /**
+         * @brief get the writable z coordinate.
+        */
+        T& z() { return _z; }
+
+        /**
+         * @brief get the const y coordinate.
+        */
+        const T& z() const { return _z; }
+
+        /**
          * @brief get the writable ith coordinate.
         */
         T& operator[](unsigned int i)
         {
             if(i == 0)  return _x;
             if(i == 1)  return _y;
+            if(i == 2)  return _z;
             assert(false);
         }
 
@@ -78,6 +91,7 @@ class Point
         {
             if(i == 0)  return _x;
             if(i == 1)  return _y;
+            if(i == 2)  return _z;
             assert(false);
         }
 
@@ -87,7 +101,7 @@ class Point
         */
         Point operator+(const Point& p) const
         {
-            return Point(_x + p._x, _y + p._y);
+            return Point(_x + p._x, _y + p._y, _z + p._z);
         }
 
         /**
@@ -97,6 +111,7 @@ class Point
         {
             _x += p._x;
             _y += p._y;
+            _z += p._z;
             return *this;
         }
 
@@ -105,7 +120,7 @@ class Point
         */
         Point operator-(const Point& p) const
         {
-            return Point(_x - p._x, _y - p._y);
+            return Point(_x - p._x, _y - p._y, _z - p._z);
         }
 
         /**
@@ -115,6 +130,7 @@ class Point
         {
             _x -= p._x;
             _y -= p._y;
+            _z -= p._z;
             return *this;
         }
 
@@ -123,7 +139,7 @@ class Point
         */
         Point operator*(T scale) const
         {
-            return Point(_x * scale, _y * scale);
+            return Point(_x * scale, _y * scale, _z * scale);
         }
 
         /**
@@ -133,6 +149,7 @@ class Point
         {
             _x *= scale;
             _y *= scale;
+            _z *= scale;
             return *this;
         }
 
@@ -142,7 +159,7 @@ class Point
         Point operator/(T scale) const
         {
             assert(scale != 0);
-            return Point(_x / scale, _y / scale);
+            return Point(_x / scale, _y / scale, _z / scale);
         }
 
         /**
@@ -153,6 +170,7 @@ class Point
             assert(scale != 0);
             _x /= scale;
             _y /= scale;
+            _z /= scale;
             return *this;
         }
 
@@ -161,7 +179,7 @@ class Point
         */
         T operator*(const Point& p) const
         {
-            return _x * p._x + _y * p._y;
+            return _x * p._x + _y * p._y + _z * p._z;
         }
 
         /**
@@ -169,23 +187,23 @@ class Point
         */
         T dot(const Point& p) const
         {
-            return _x * p._x + _y * p._y;
+            return _x * p._x + _y * p._y + _z * p._z;
         }
 
         /**
          * @brief cross product.
         */
-        T operator%(const Point& p) const
+        Point operator%(const Point& p) const
         {
-            return _x * p._y - _y * p._x;
+            return Point(_y*p._z-_z*p._y, _z*p._x-_x*p._z, _x*p._y-_y*p._x);
         }
 
         /**
          * @brief cross product.
         */
-        T cross(const Point& p) const
+        Point cross(const Point& p) const
         {
-            return _x * p._y - _y * p._x;
+            return Point(_y*p._z-_z*p._y, _z*p.x-_x*p._z, _x*p._y-_y*p._x);
         }
 
         /**
@@ -203,6 +221,7 @@ class Point
         {
             if(_x != p._x)  return _x < p._x;
             if(_y != p._y)  return _y < p._y;
+            if(_z != p._z)  return _z < p._z;
             return false;
         }
 
@@ -228,16 +247,17 @@ class Point
         */
         friend std::ostream& operator<<(std::ostream& os, const Point& p)
         {
-            os << "[" << p._x << ", " << p._y << "]";
+            os << "[" << p._x << ", " << p._y << ", " << p._z << "]";
             return os;
         }
 
 
     private:
-        T _x, _y;
+        T _x, _y, _z;
 };
 
-}   // namespace geo2d
+}   // namespace geo3d
+}   // namespace geometry
 }   // namespace CMTL
 
-#endif // __geo2d_point_h__
+#endif // __geo3d_point_h__

@@ -4,8 +4,9 @@
 #include "geo2d/geo2d_polygon.h"
 #include "geo2d/geo2d_triangle.h"
 
-namespace CMTL  {
-namespace geometry_process  {
+namespace CMTL{
+namespace geometry{
+namespace geometry_process{
 
 /**
  * @brief calculate the area of a triangle.
@@ -87,6 +88,7 @@ void area_2d(ForwardIterator first, ForwardIterator last, NumberType& result)
 }
 
 }   // namespace geometry_process
+}   // namespace geometry
 }   // namespace CMTL
 
 #endif  // __geometry_process_area__

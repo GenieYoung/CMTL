@@ -4,8 +4,9 @@
 #include "geo3d_point.h"
 #include <vector>
 
-namespace CMTL  {
-namespace geo3d {
+namespace CMTL{
+namespace geometry{
+namespace geo3d{
 
 /**
  * @brief 3 dimension closed simple polygon
@@ -184,6 +185,7 @@ Point<T> Polygon<T>::normal() const
 }
 
 }   // namespace geo3d
+}   // namespace geometry
 }   // namespace CMTL
 
 #endif // __geo3d_polygon_h__

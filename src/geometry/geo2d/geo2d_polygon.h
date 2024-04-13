@@ -4,8 +4,9 @@
 #include "geo2d_point.h"
 #include <vector>
 
-namespace CMTL  {
-namespace geo2d {
+namespace CMTL{
+namespace geometry{
+namespace geo2d{
 
 /**
  * @brief 2 dimension closed simple polygon
@@ -148,6 +149,7 @@ T Polygon<T>::area() const
 }
 
 }   // namespace geo2d
+}   // namespace geometry
 }   // namespace CMTL
 
 #endif // __geo2d_polygon_h__

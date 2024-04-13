@@ -4,8 +4,9 @@
 #include "geo2d_point.h"
 #include <array>
 
-namespace CMTL  {
-namespace geo2d {
+namespace CMTL{
+namespace geometry{
+namespace geo2d{
 
 /**
  * @brief 2 dimension triangle.
@@ -114,6 +115,7 @@ T Triangle<T>::area() const
 }
 
 }   // namespace geo2d
+}   // namespace geometry
 }   // namespace CMTL
 
 #endif // __geo2d_triangle_h__

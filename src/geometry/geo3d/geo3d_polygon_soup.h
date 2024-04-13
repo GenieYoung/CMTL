@@ -4,8 +4,9 @@
 #include "geo3d_point.h"
 #include <vector>
 
-namespace CMTL  {
-namespace geo3d {
+namespace CMTL{
+namespace geometry{
+namespace geo3d{
 
 /**
  * @brief 3 dimension polygon soup
@@ -29,7 +30,7 @@ class PolygonSoup
          * @brief construct from point container and face container.
          * @tparam PointRange point container
          * @tparam FaceRange face container
-         * @note point container must have size() and iterator method and operator[] method to get coordinate, face container must have iterator method.
+         * @note point container must have iterator method and operator[] method to get coordinate, face container must have iterator method.
         */
         template<class PointRange, class FaceRange>
         PolygonSoup(const PointRange& points, const FaceRange& faces)
@@ -104,6 +105,7 @@ class PolygonSoup
 
 
 }   // namespace geo3d
+}   // namespace geometry
 }   // namespace CMTL
 
 #endif // __geo3d_polygon_soup_h__
