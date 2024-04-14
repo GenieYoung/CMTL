@@ -2,6 +2,7 @@
 #define __topologic_halfedge_h__
 
 #include <vector>
+#include <cassert>
 
 namespace CMTL{
 namespace geometry{
@@ -109,6 +110,7 @@ class FaceHandle : public ElemHandle
  */
 class VertexItem 
 {
+    friend class TopoGraphBase;
     HalfedgeHandle _halfedge_handle;
 };
 
@@ -117,6 +119,7 @@ class VertexItem
  */
 class HalfedgeItem
 {
+    friend class TopoGraphBase;
     FaceHandle _face_handle;
     VertexHandle _vertex_handle;
     HalfedgeHandle _next_halfedge_handle;
@@ -127,7 +130,8 @@ class HalfedgeItem
  */
 class EdgeItem
 {
-    HalfedgeHandle _halfedge_handles[2];
+    friend class TopoGraphBase;
+    HalfedgeItem _halfedge_handles[2];
 };
 
 /**
@@ -135,6 +139,7 @@ class EdgeItem
  */
 class FaceItem
 {
+    friend class TopoGraphBase;
     HalfedgeHandle _halfedge_handle;
 };
 
@@ -208,6 +213,243 @@ class GraphFaceHandle : public GraphElemHandle, FaceHandle
 };
 
 /**
+ * @brief base class for all traits, usr traits should be derived from this class and override these traits
+ */
+struct DefaultTraits
+{
+    typedef int PointAttributes;
+    typedef int HalfedgeAttributes;
+    typedef int EdgeAttributes;
+    typedef int FaceAttributes;
+};
+
+/**
+ * @brief base struct that store the mesh item arrays.
+ */
+template<class Traits = DefaultTraits>
+class TopoGraphBase
+{
+    public:
+        typedef typename Traits::PointAttributes       PointAttributes;
+        typedef typename Traits::HalfedgeAttributes    HalfedgeAttributes;
+        typedef typename Traits::EdgeAttributes        EdgeAttributes;
+        typedef typename Traits::FaceAttributes        FaceAttributes;
+
+    public:
+        TopoGraphBase() 
+        {
+        };
+
+        virtual ~TopoGraphBase()
+        {
+        }
+
+    public:
+        /**
+         * @brief get the number of vertices
+         */
+        unsigned n_vertices() const
+        {
+            return _vertices.size();
+        }
+
+        /**
+         * @brief get the number of edges
+         */
+        unsigned n_edges() const
+        {
+            return _edges.size();
+        }
+
+        /**
+         * @brief get the number of vertices
+         */
+        unsigned n_halfedges() const
+        {
+            return _edges.size() * 2;
+        }
+
+        /**
+         * @brief get the number of faces
+         */
+        unsigned n_faces() const
+        {
+            return _faces.size();
+        }
+
+        /**
+         * @brief use vertex handle to get the vertex item
+         */
+        VertexItem& vertex(VertexHandle vh)
+        {
+            assert(vh.is_valid());
+            return _vertices[vh.idx()];
+        }
+
+        /**
+         * @brief use vertex handle to get the vertex item
+         */
+        const VertexItem& vertex(VertexHandle vh) const
+        {
+            assert(vh.is_valid());
+            return _vertices[vh.idx()];
+        }
+
+        /**
+         * @brief use halfedge handle to get the halfedge item
+         */
+        HalfedgeItem& halfedge(HalfedgeHandle heh)
+        {
+            assert(heh.is_valid());
+            return _edges[heh.idx() >> 1]._halfedge_handles[heh.idx() & 1];
+        }
+
+        /**
+         * @brief use halfedge handle to get the halfedge item
+         */
+        const HalfedgeItem& halfedge(HalfedgeHandle heh) const
+        {
+            assert(heh.is_valid());
+            return _edges[heh.idx() >> 1]._halfedge_handles[heh.idx() & 1];
+        }
+
+        /**
+         * @brief use edge handle to get the edge item
+         */
+        EdgeItem& edge(EdgeHandle eh)
+        {
+            assert(eh.is_valid());
+            return _edges[eh.idx()];
+        }
+
+        /**
+         * @brief use edge handle to get the edge item
+         */
+        const EdgeItem& edge(EdgeHandle eh) const
+        {
+            assert(eh.is_valid());
+            return _edges[eh.idx()];
+        }
+        
+        /**
+         * @brief use face handle to get the face item
+         */
+        FaceItem& face(FaceHandle fh)
+        {
+            assert(fh.is_valid());
+            return _faces[fh.idx()];
+        }
+
+        /**
+         * @brief use face handle to get the face item
+         */
+        const FaceItem& face(FaceHandle fh) const
+        {
+            assert(fh.is_valid());
+            return _faces[fh.idx()];
+        }
+
+        /**
+         * @brief get i'th vertex handle
+         */
+        VertexHandle vertex_handle(unsigned i) const
+        {
+            return (i<n_vertices() ? VertexHandle(i) : VertexHandle());
+        }
+
+        /**
+         * @brief get i'th halfedge handle
+         */
+        HalfedgeHandle halfedge_handle(unsigned i) const
+        {
+            return (i<n_halfedges() ? HalfedgeHandle(i) : HalfedgeHandle());
+        }
+
+        /**
+         * @brief 
+         */
+        HalfedgeHandle halfedge_handle(VertexHandle vh)
+        {
+            return vertex(vh)._halfedge_handle;
+        }
+
+        /**
+         * @brief get halfedge handle with edge handle and a side
+         */
+        HalfedgeHandle halfedge_handle(EdgeHandle eh, unsigned i) const
+        {
+            assert(i <= 1);
+            return (eh.idx()<n_edges() ? HalfedgeHandle((eh.idx() << 1) + i) : HalfedgeHandle());
+        }
+
+        /**
+         * @brief get halfedge handle of a face
+         */
+        HalfedgeHandle halfedge_handle(FaceHandle fh) const
+        {
+            return (fh.idx()<n_faces() ? face(fh)._halfedge_handle : HalfedgeHandle());
+        }
+
+        /**
+         * @brief get i'th edge handle
+         */
+        EdgeHandle edge_handle(unsigned i) const
+        {
+            return (i<n_edges() ? EdgeHandle(i) : EdgeHandle());
+        }
+
+        /**
+         * @brief get i'th face handle
+         */
+        FaceHandle face_handle(unsigned i) const
+        {
+            return (i<n_faces() ? FaceHandle(i) : FaceHandle());
+        }
+
+        /**
+         * @brief check if the vertex is a boundary vertex
+         */
+        bool is_boundary(VertexHandle vh)
+        {
+            // HalfedgeHandle heh(halfedge_handle(vh));
+        }
+
+    public:
+        /**
+         * @brief add a new vertex
+         */
+        VertexHandle new_vertex()
+        {
+            _vertices.push_back(VertexItem());
+            return vertex_handle(_vertices.size() - 1);
+        }
+
+        /**
+         * @brief add a new edge
+         */
+        HalfedgeHandle new_edge(VertexHandle start, VertexHandle end)
+        {
+            _edges.push_back(EdgeItem());
+            EdgeHandle eh(_edges.size() - 1);
+            HalfedgeHandle he0 = halfedge_handle(eh, 0);
+            HalfedgeHandle he1 = halfedge_handle(eh, 1);
+            halfedge(he0)._vertex_handle = start;
+            halfedge(he1)._vertex_handle = end;
+        }
+        
+    private:
+        std::vector<VertexItem> _vertices;
+        std::vector<EdgeItem>   _edges;
+        std::vector<FaceItem>   _faces;
+
+    private:
+        std::vector<PointAttributes>    _vertex_attrs;
+        std::vector<HalfedgeAttributes> _halfedge_attrs;
+        std::vector<EdgeAttributes>     _edge_attrs;
+        std::vector<FaceAttributes>     _face_attrs;
+};
+
+/**
  * @brief A graph describe the topological relationship of the halfedge data struct
  */
 class TopoGraph
@@ -217,11 +459,6 @@ class TopoGraph
         static const HalfedgeHandle InvalidHalfedgeHandle;
         static const EdgeHandle InvalidEdgeHandle;
         static const FaceHandle InvalidFaceHandle;
-        
-    private:
-        std::vector<VertexItem> _vertices;
-        std::vector<EdgeItem> _edges;
-        std::vector<FaceItem> _faces;
 };
 
 const VertexHandle    TopoGraph::InvalidVertexHandle;
