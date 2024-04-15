@@ -16,7 +16,10 @@ template<typename T>
 class Triangle
 {
     public:
-        typedef T _value_type;
+        /**
+         * @brief number type
+         */
+        typedef T NT;
 
     public:
         /**

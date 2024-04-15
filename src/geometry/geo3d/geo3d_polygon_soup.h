@@ -16,7 +16,10 @@ template<typename T>
 class PolygonSoup
 {
     public:
-        typedef T _value_type;
+        /**
+         * @brief number type
+         */
+        typedef T NT;
 
     public:
         /**

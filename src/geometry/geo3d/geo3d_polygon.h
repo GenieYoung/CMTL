@@ -17,7 +17,10 @@ template<typename T>
 class Polygon
 {
     public:
-        typedef T _value_type;
+        /**
+         * @brief number type
+         */
+        typedef T NT;
 
     public:
         /**

@@ -17,10 +17,13 @@ template<typename T>
 class Plane
 {
     public:
-        typedef T _value_type;
+        /**
+         * @brief number type
+         */
+        typedef T NT;
 
     private:
-        
+
 };
 
 }   // namespace geo3d
