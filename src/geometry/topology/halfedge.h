@@ -37,7 +37,7 @@ class ElemHandle
         /**
          * @brief make the handle invalid
          */
-        bool invalidate()
+        void invalidate()
         {
             _idx = -1;
         }
@@ -110,6 +110,7 @@ class FaceHandle : public ElemHandle
  */
 class VertexItem 
 {
+    template<class Traits>
     friend class TopoGraphBase;
     HalfedgeHandle _halfedge_handle;
 };
@@ -119,6 +120,7 @@ class VertexItem
  */
 class HalfedgeItem
 {
+    template<class Traits>
     friend class TopoGraphBase;
     FaceHandle _face_handle;
     VertexHandle _vertex_handle;
@@ -130,6 +132,7 @@ class HalfedgeItem
  */
 class EdgeItem
 {
+    template<class Traits>
     friend class TopoGraphBase;
     HalfedgeItem _halfedge_handles[2];
 };
@@ -139,6 +142,7 @@ class EdgeItem
  */
 class FaceItem
 {
+    template<class Traits>
     friend class TopoGraphBase;
     HalfedgeHandle _halfedge_handle;
 };
@@ -217,10 +221,10 @@ class GraphFaceHandle : public GraphElemHandle, FaceHandle
  */
 struct DefaultTraits
 {
-    typedef int PointAttributes;
-    typedef int HalfedgeAttributes;
-    typedef int EdgeAttributes;
-    typedef int FaceAttributes;
+    typedef int PointAttribute;
+    typedef int HalfedgeAttribute;
+    typedef int EdgeAttribute;
+    typedef int FaceAttribute;
 };
 
 /**
@@ -230,10 +234,10 @@ template<class Traits = DefaultTraits>
 class TopoGraphBase
 {
     public:
-        typedef typename Traits::PointAttributes       PointAttributes;
-        typedef typename Traits::HalfedgeAttributes    HalfedgeAttributes;
-        typedef typename Traits::EdgeAttributes        EdgeAttributes;
-        typedef typename Traits::FaceAttributes        FaceAttributes;
+        typedef typename Traits::PointAttribute       PointAttribute;
+        typedef typename Traits::HalfedgeAttribute    HalfedgeAttribute;
+        typedef typename Traits::EdgeAttribute        EdgeAttribute;
+        typedef typename Traits::FaceAttribute        FaceAttribute;
 
     public:
         TopoGraphBase() 
@@ -350,6 +354,86 @@ class TopoGraphBase
         }
 
         /**
+         * @brief get the writable vertex attribute
+        */
+        PointAttribute& vertex_attribute(VertexHandle vh)
+        {
+            assert(vh.is_valid() && vh.idx() < n_vertices());
+            if(vh.idx() >= _vertex_attr.size())
+                _vertex_attr.resize(vh.idx() + 1);
+            return _vertex_attr[vh.idx()];
+        }
+
+        /**
+         * @brief get a const vertex attribute
+        */
+        const PointAttribute& vertex_attribute(VertexHandle vh) const
+        {
+            assert(vh.is_valid() && vh.idx() < _vertex_attr.size());
+            return _vertex_attr[vh.idx()];
+        }
+
+        /**
+         * @brief get the writable halfedge attribute
+        */
+        HalfedgeAttribute& halfedge_attribute(HalfedgeHandle heh)
+        {
+            assert(heh.is_valid() && heh.idx() < n_halfedges());
+            if(heh.idx() >= _halfedge_attr.size())
+                _halfedge_attr.resize(heh.idx() + 1);
+            return _halfedge_attr[heh.idx()];
+        }
+
+        /**
+         * @brief get a const halfedge attribute
+        */
+        const HalfedgeAttribute& halfedge_attribute(HalfedgeHandle heh) const
+        {
+            assert(heh.is_valid() && heh.idx() < _halfedge_attr.size());
+            return _halfedge_attr[heh.idx()];
+        }
+
+        /**
+         * @brief get the writable edge attribute
+        */
+        EdgeAttribute& edge_attribute(EdgeHandle eh)
+        {
+            assert(eh.is_valid() && eh.idx() < n_edges());
+            if(eh.idx() >= _edge_attr.size())
+                _edge_attr.resize(eh.idx() + 1);
+            return _edge_attr[eh.idx()];
+        }
+
+        /**
+         * @brief get a const edge attribute
+        */
+        const EdgeAttribute& edge_attribute(EdgeHandle eh) const
+        {
+            assert(eh.is_valid() && eh.idx() < _edge_attr.size());
+            return _edge_attr[eh.idx()];
+        }
+
+        /**
+         * @brief get the writable face attribute
+        */
+        FaceAttribute& face_attribute(FaceHandle fh)
+        {
+            assert(fh.is_valid() && fh.idx() < n_edges());
+            if(fh.idx() >= _face_attr.size())
+                _face_attr.resize(fh.idx() + 1);
+            return _edge_attr[fh.idx()];
+        }
+
+        /**
+         * @brief get a const edge attribute
+        */
+        const FaceAttribute& face_attribute(FaceHandle fh) const
+        {
+            assert(fh.is_valid() && fh.idx() < _face_attr.size());
+            return _edge_attr[fh.idx()];
+        }
+
+        /**
          * @brief get i'th vertex handle
          */
         VertexHandle vertex_handle(unsigned i) const
@@ -412,6 +496,7 @@ class TopoGraphBase
         bool is_boundary(VertexHandle vh)
         {
             // HalfedgeHandle heh(halfedge_handle(vh));
+            return true;
         }
 
     public:
@@ -443,10 +528,10 @@ class TopoGraphBase
         std::vector<FaceItem>   _faces;
 
     private:
-        std::vector<PointAttributes>    _vertex_attrs;
-        std::vector<HalfedgeAttributes> _halfedge_attrs;
-        std::vector<EdgeAttributes>     _edge_attrs;
-        std::vector<FaceAttributes>     _face_attrs;
+        std::vector<PointAttribute>    _vertex_attr;
+        std::vector<HalfedgeAttribute> _halfedge_attr;
+        std::vector<EdgeAttribute>     _edge_attr;
+        std::vector<FaceAttribute>     _face_attr;
 };
 
 /**
