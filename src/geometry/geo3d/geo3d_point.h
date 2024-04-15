@@ -10,7 +10,7 @@ namespace geometry{
 namespace geo3d{
 
 /**
- * @brief 3 dimension point.
+ * @brief 3 dimension point or vector.
  * @tparam T value type of coordinate
 */
 template<typename T>

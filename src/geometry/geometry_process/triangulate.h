@@ -3,7 +3,6 @@
 
 #include "geo2d/geo2d_polygon.h"
 #include "geo3d/geo3d_polygon.h"
-#include "area.h"
 #include "orient.h"
 
 #include <vector>
@@ -275,6 +274,21 @@ template<typename T>
 bool triangulate_3d(const geo3d::Polygon<T>& polygon, std::vector<std::array<unsigned, 3>>& triangles)
 {
     internal::triangulate_polygon_modifier_3d<T> modifier(polygon);
+    return modifier.execute(triangles);
+}
+
+/**
+ * @brief triangulate a single 3d-polygon into several triangles using ear-clipping
+ * @tparam NumberType the point coordinate type
+ * @tparam Polygon point container
+ * @return true if the polygon be trianguled successfully.
+ * @note the polygon should have the iterator method and be intersect-free.
+*/
+template<typename NumberType, typename Polygon>
+bool triangulate_3d(const Polygon& polygon, std::vector<std::array<unsigned, 3>>& triangles)
+{
+    geo3d::Polygon<NumberType> geo_poly(polygon.begin(), polygon.end());
+    internal::triangulate_polygon_modifier_3d<NumberType> modifier(geo_poly);
     return modifier.execute(triangles);
 }
 

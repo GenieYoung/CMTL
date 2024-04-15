@@ -10,7 +10,7 @@ namespace geometry{
 namespace geo2d{
 
 /**
- * @brief 2 dimension point.
+ * @brief 2 dimension point or vector.
  * @tparam T value type of coordinate
 */
 template<typename T>
