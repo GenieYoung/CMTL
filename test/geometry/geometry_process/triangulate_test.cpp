@@ -1,6 +1,6 @@
 #include <set>
-#include "geometry/geo2d/geo2d_polygon.h"
-#include "geometry/geometry_process/triangulate.h"
+#include "CMTL/geometry/geo2d/geo2d_polygon.h"
+#include "CMTL/geometry/geometry_process/triangulate.h"
 
 void test1()
 {
