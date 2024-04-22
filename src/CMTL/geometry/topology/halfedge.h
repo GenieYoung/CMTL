@@ -15,6 +15,9 @@ namespace halfedge{
 class ElemHandle
 {
     public:
+        /**
+         * @brief constructor
+         */
         explicit ElemHandle(int idx = -1) : _idx(idx)
         {
         }
@@ -43,22 +46,34 @@ class ElemHandle
             _idx = -1;
         }
 
+        /**
+         * @brief comparator
+         */
         bool operator==(const ElemHandle& other) const
         {
             return _idx == other._idx;
         }
 
+        /**
+         * @brief comparator
+         */
         bool operator!=(const ElemHandle& other) const
         {
             return _idx != other._idx;
         }
-        
+
+        /**
+         * @brief comparator, used for sort
+         */   
         bool operator<(const ElemHandle& other) const
         {
             return _idx < other._idx;
         }
 
     private:
+        /**
+         * @brief the handle index
+         */
         int _idx;
 };
 
@@ -108,19 +123,24 @@ class FaceHandle : public ElemHandle
 
 /**
  * @brief vertex item
+ * @param _halfedge_handle an outgoing halfedge
  */
 class VertexItem 
 {
-    friend class TopoGraphBase;
+    friend class GraphTopology;
     HalfedgeHandle _halfedge_handle;
 };
 
 /**
  * @brief half edge item
+ * @param _face_handle face contain this halfedge
+ * @param _vertex_handle target vertex
+ * @param _prev_halfedge_handle previous halfedge
+ * @param _next_halfedge_handle next halfedge
  */
 class HalfedgeItem
 {
-    friend class TopoGraphBase;
+    friend class GraphTopology;
     FaceHandle _face_handle;
     VertexHandle _vertex_handle;
     HalfedgeHandle _prev_halfedge_handle;
@@ -129,24 +149,26 @@ class HalfedgeItem
 
 /**
  * @brief edge item
+ * @param _halfedges two side halfedges
  */
 class EdgeItem
 {
-    friend class TopoGraphBase;
+    friend class GraphTopology;
     HalfedgeItem _halfedges[2];
 };
 
 /**
  * @brief face item
+ * @param _halfedge_handle a halfedge in this face
  */
 class FaceItem
 {
-    friend class TopoGraphBase;
+    friend class GraphTopology;
     HalfedgeHandle _halfedge_handle;
 };
 
 
-class TopoGraphBase;
+class GraphTopology;
 
 /**
  * @brief elem handle connect to the topology graph, allow access to the graph
@@ -154,17 +176,17 @@ class TopoGraphBase;
 class GraphElemHandle
 {
     public:
-        explicit GraphElemHandle(const TopoGraphBase* graph) : _graph(graph)
+        explicit GraphElemHandle(const GraphTopology* graph) : _graph(graph)
         {
         }
 
-        const TopoGraphBase* graph() const
+        const GraphTopology* graph() const
         {
             return _graph;
         }
 
     private:
-        const TopoGraphBase* _graph;
+        const GraphTopology* _graph;
 };
 
 /**
@@ -173,7 +195,7 @@ class GraphElemHandle
 class GraphVertexHandle : public GraphElemHandle, VertexHandle
 {
     public:
-        explicit GraphVertexHandle(int idx = -1, const TopoGraphBase* graph = nullptr)
+        explicit GraphVertexHandle(int idx = -1, const GraphTopology* graph = nullptr)
             : GraphElemHandle(graph), VertexHandle(idx)
         {
         }
@@ -185,7 +207,7 @@ class GraphVertexHandle : public GraphElemHandle, VertexHandle
 class GraphEdgeHandle : public GraphElemHandle, EdgeHandle
 {
     public:
-        explicit GraphEdgeHandle(int idx = -1, const TopoGraphBase* graph = nullptr)
+        explicit GraphEdgeHandle(int idx = -1, const GraphTopology* graph = nullptr)
             : GraphElemHandle(graph), EdgeHandle(idx)
         {
         }
@@ -197,7 +219,7 @@ class GraphEdgeHandle : public GraphElemHandle, EdgeHandle
 class GraphHalfedgeHandle : public GraphElemHandle, HalfedgeHandle
 {
     public:
-        explicit GraphHalfedgeHandle(int idx = -1, const TopoGraphBase* graph = nullptr)
+        explicit GraphHalfedgeHandle(int idx = -1, const GraphTopology* graph = nullptr)
             : GraphElemHandle(graph), HalfedgeHandle(idx)
         {
         }
@@ -209,7 +231,7 @@ class GraphHalfedgeHandle : public GraphElemHandle, HalfedgeHandle
 class GraphFaceHandle : public GraphElemHandle, FaceHandle
 {
     public:
-        explicit GraphFaceHandle(int idx = -1, const TopoGraphBase* graph = nullptr)
+        explicit GraphFaceHandle(int idx = -1, const GraphTopology* graph = nullptr)
             : GraphElemHandle(graph), FaceHandle(idx)
         {
         }
@@ -229,14 +251,14 @@ struct DefaultTraits
 /**
  * @brief base struct that store the mesh handle connectivity information.
  */
-class TopoGraphBase
+class GraphTopology
 {
     public:
-        TopoGraphBase() 
+        GraphTopology() 
         {
         };
 
-        virtual ~TopoGraphBase()
+        virtual ~GraphTopology()
         {
         }
 
@@ -362,7 +384,7 @@ class TopoGraphBase
         }
 
         /**
-         * @brief 
+         * @brief get the handle of a vertex's outgoing halfedge
          */
         HalfedgeHandle halfedge_handle(VertexHandle vh)
         {
@@ -386,16 +408,25 @@ class TopoGraphBase
             return (fh.idx()<n_faces() ? face(fh)._halfedge_handle : HalfedgeHandle());
         }
 
+        /**
+         * @brief get handle of the opposite halfedge
+         */
         HalfedgeHandle opposite_halfedge_handle(HalfedgeHandle heh) const
         {
             return(heh.idx()<n_halfedges() ? HalfedgeHandle(heh.idx() ^ 1) : HalfedgeHandle());
         }
 
+        /**
+         * @brief get handle of the previous halfedge
+         */
         HalfedgeHandle prev_halfedge_handle(HalfedgeHandle heh) const
         {
             return(heh.idx()<n_halfedges() ? halfedge(heh)._prev_halfedge_handle : HalfedgeHandle());
         }
 
+        /**
+         * @brief get handle of the next halfedge
+         */
         HalfedgeHandle next_halfedge_handle(HalfedgeHandle heh) const
         {
             return(heh.idx()<n_halfedges() ? halfedge(heh)._next_halfedge_handle : HalfedgeHandle());
@@ -418,16 +449,16 @@ class TopoGraphBase
         }
 
         /**
-         * @brief get face handle the halfedge handle lies on
+         * @brief get face handle the halfedge lies on
          */
         FaceHandle face_handle(HalfedgeHandle heh) const
         {
             return (heh.idx()<n_halfedges() ? halfedge(heh)._face_handle : FaceHandle());
         }
 
-
         /**
          * @brief check if the vertex is a boundary vertex
+         * @note if vertex is a boundary, we will make sure the outgoing halfedge of this vertex is also a boundary
          */
         bool is_boundary(VertexHandle vh)
         {
@@ -476,14 +507,30 @@ class TopoGraphBase
             return FaceHandle(_faces.size() - 1);
         }
 
+        /**
+         * @brief find halfedge with corresponding vertexes
+         * @param start start vertex of halfedge
+         * @param end end vertex of halfedge
+         */
         HalfedgeHandle find_halfedge(VertexHandle start, VertexHandle end)
         {
             return HalfedgeHandle();
         }
         
     private:
+        /**
+         * @brief vertex elements
+         */
         std::vector<VertexItem> _vertices;
+
+        /**
+         * @brief edge elements
+         */
         std::vector<EdgeItem>   _edges;
+
+        /**
+         * @brief face elements
+         */
         std::vector<FaceItem>   _faces;
 };
 
@@ -491,7 +538,7 @@ class TopoGraphBase
  * @brief A graph describe the topological relationship and mesh items of the halfedge data struct
  */
 template<class Traits = DefaultTraits>
-class TopoGraph : public TopoGraphBase
+class Graph : public GraphTopology
 {
     public:
         typedef typename Traits::PointAttribute       PointAttribute;
@@ -500,6 +547,11 @@ class TopoGraph : public TopoGraphBase
         typedef typename Traits::FaceAttribute        FaceAttribute;
         
     public:
+        /**
+         * @brief add a vertex into graph and attach an attribute information
+         * @param p_attr point attribute
+         * @return the new vertex handle
+         */
         GraphVertexHandle add_vertex(const PointAttribute& p_attr)
         {
             VertexHandle vh = new_vertex();
@@ -507,6 +559,11 @@ class TopoGraph : public TopoGraphBase
             return GraphVertexHandle(vh.idx(), this);
         }
 
+        /**
+         * @brief add a face into graph and build connectivity information
+         * @param vhs vertex handle container that make up this face
+         * @return the new face handle
+         */
         GraphFaceHandle add_face(const std::vector<VertexHandle>& vhs)
         {
             unsigned n = vhs.size();
@@ -684,31 +741,32 @@ class TopoGraph : public TopoGraphBase
             bool is_new;
             bool need_adjust;
         };
+        /**
+         * @brief container that store the edge information when add a new face
+         */
         std::vector<AddFaceEdgeStorage> _tmp_edge_storage;
 
     private:
+        /**
+         * @brief attributes binding at vertices
+         */
         std::vector<PointAttribute>    _vertex_attr;
+
+        /**
+         * @brief attributes binding at halfedges 
+         */
         std::vector<HalfedgeAttribute> _halfedge_attr;
+
+        /**
+         * @brief attributes binding at edges 
+         */
         std::vector<EdgeAttribute>     _edge_attr;
+
+        /**
+         * @brief attributes binding at faces 
+         */
         std::vector<FaceAttribute>     _face_attr;
 };
-
-/**
- * @brief A graph describe the topological relationship of the halfedge data struct
- */
-// class TopoGraph
-// {
-//     private:
-//         static const VertexHandle InvalidVertexHandle;     
-//         static const HalfedgeHandle InvalidHalfedgeHandle;
-//         static const EdgeHandle InvalidEdgeHandle;
-//         static const FaceHandle InvalidFaceHandle;
-// };
-
-// const VertexHandle    TopoGraph::InvalidVertexHandle;
-// const HalfedgeHandle  TopoGraph::InvalidHalfedgeHandle;
-// const EdgeHandle      TopoGraph::InvalidEdgeHandle;
-// const FaceHandle      TopoGraph::InvalidFaceHandle;
 
 }   // namespace topologic
 }   // namespace geometry
