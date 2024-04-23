@@ -516,6 +516,14 @@ class GraphTopology
         {
             return HalfedgeHandle();
         }
+
+        /**
+         * @brief if the vertex has a boundary outgoing halfedge around it, link the halfedge
+         */
+        void adjust_outgoing_halfedge(VertexHandle vh)
+        {
+
+        }
         
     private:
         /**
@@ -572,6 +580,7 @@ class Graph : public GraphTopology
             if(_tmp_edge_storage.size() < n)
             {
                 _tmp_edge_storage.resize(n);
+                _he_link_storage.resize(6*n);
             }
              
             for(unsigned i = 0, j = 1; i < n; ++i, ++j, j%=n)
@@ -587,6 +596,52 @@ class Graph : public GraphTopology
                 {
                     std::cerr << "Warning : Complex edge" << std::endl;
                     return GraphFaceHandle(-1, this);
+                }
+            }
+
+            unsigned link_count = 0;
+            for(unsigned i = 0, j = 1; i < n; ++i, ++j, j%=n)
+            {
+                if(!_tmp_edge_storage[i].is_new && !_tmp_edge_storage[j].is_new)
+                {
+                    HalfedgeHandle inner_prev_he = _tmp_edge_storage[i].halfedge_handle;
+                    HalfedgeHandle inner_next_he = _tmp_edge_storage[j].halfedge_handle;
+
+                    if(next_halfedge_handle(inner_prev_he) != inner_next_he)
+                    {
+                        HalfedgeHandle outer_prev_he = opposite_halfedge_handle(inner_next_he);
+                        HalfedgeHandle outer_next_he = opposite_halfedge_handle(inner_prev_he);
+                        HalfedgeHandle boundary_prev_he = outer_prev_he;
+                        do 
+                        {
+                            boundary_prev_he = opposite_halfedge_handle(next_halfedge_handle(boundary_prev_he));
+                        }
+                        while(!is_boundary(boundary_prev_he));
+                        HalfedgeHandle boundary_next_he = next_halfedge_handle(boundary_prev_he);
+
+                        if(boundary_prev_he == inner_prev_he)
+                        {
+                            std::cerr << "Warning : relink failed" << std::endl;
+                            return GraphFaceHandle(-1, this);
+                        }
+
+                        assert(is_boundary(boundary_prev_he));
+                        assert(is_boundary(boundary_next_he));
+
+                        HalfedgeHandle patch_start_he = next_halfedge_handle(inner_prev_he);
+                        HalfedgeHandle patch_end_he   = next_halfedge_handle(inner_next_he);
+
+                        assert(boundary_prev_he.is_valid());
+                        assert(boundary_next_he.is_valid());
+                        assert(patch_start_he.is_valid());
+                        assert(patch_end_he.is_valid());
+                        assert(inner_prev_he.is_valid());
+                        assert(inner_next_he.is_valid());
+
+                        _he_link_storage[link_count++] = std::make_pair(boundary_prev_he, patch_start_he);
+                        _he_link_storage[link_count++] = std::make_pair(patch_end_he, boundary_next_he);
+                        _he_link_storage[link_count++] = std::make_pair(inner_prev_he, inner_next_he);
+                    }
                 }
             }
 
@@ -622,17 +677,20 @@ class Graph : public GraphTopology
                         case 1:
                             HalfedgeHandle boundary_prev_he = prev_halfedge_handle(inner_next_he);
                             assert(boundary_prev_he.is_valid());
+                            _he_link_storage[link_count++] = std::make_pair(boundary_prev_he, outer_next_he);
                             vertex(vh)._halfedge_handle = outer_next_he;
                             break;
                         case 2:
                             HalfedgeHandle boundary_next_he = prev_halfedge_handle(inner_prev_he);
                             assert(boundary_next_he.is_valid());
+                            _he_link_storage[link_count++] = std::make_pair(outer_prev_he, boundary_next_he);
                             vertex(vh)._halfedge_handle = boundary_next_he;
                             break;
                         case 3:
                             if(!halfedge_handle(vh).is_valid())
                             {
                                 vertex(vh)._halfedge_handle = outer_next_he;
+                                _he_link_storage[link_count++] = std::make_pair(outer_prev_he, outer_next_he);
                             }
                             else
                             {
@@ -640,6 +698,8 @@ class Graph : public GraphTopology
                                 HalfedgeHandle boundary_prev_he = prev_halfedge_handle(boundary_next_he);
                                 assert(boundary_next_he.is_valid());
                                 assert(boundary_prev_he.is_valid());
+                                _he_link_storage[link_count++] = std::make_pair(boundary_prev_he, outer_next_he);
+                                _he_link_storage[link_count++] = std::make_pair(outer_prev_he, boundary_next_he);
                             }
                             break;
                     }
@@ -651,6 +711,20 @@ class Graph : public GraphTopology
 
                 halfedge(_tmp_edge_storage[i].halfedge_handle)._face_handle = fh;
             }
+
+            for(unsigned i = 0; i < link_count; ++i)
+            {
+                halfedge(_he_link_storage[i].first)._next_halfedge_handle(_he_link_storage[i].second);
+                halfedge(_he_link_storage[i].second)._prev_halfedge_handle(_he_link_storage[i].first);
+            }
+
+            for(unsigned i = 0; i < n; ++i)
+            {
+                if(_tmp_edge_storage[i].need_adjust)
+                    adjust_outgoing_halfedge(vhs[i]);
+            }
+
+            return GraphFaceHandle(fh.idx(), this);
         }
 
     public:
@@ -745,6 +819,10 @@ class Graph : public GraphTopology
          * @brief container that store the edge information when add a new face
          */
         std::vector<AddFaceEdgeStorage> _tmp_edge_storage;
+        /**
+         * @brief container that store the information used for next halfedge link when add a new face
+         */
+        std::vector<std::pair<HalfedgeHandle, HalfedgeHandle> > _he_link_storage;
 
     private:
         /**
