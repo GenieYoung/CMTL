@@ -18,16 +18,13 @@ void normal(const Polygon& poly, Point& n)
 {
     if(poly.size() <= 2)
         return;
-    for(unsigned i=0, j=1, k=2; i<poly.size(); ++i, ++j, ++k, j%=poly.size(), k%=poly.size())
+    /* Newells algorithm */
+    n[0] = 0; n[1] = 0; n[2] = 0;
+    for(unsigned i=0, j=1; i<poly.size(); ++i, ++j, j%=poly.size())
     {
-        const Point& pi = poly[i];
-        const Point& pj = poly[j];
-        const Point& pk = poly[k];
-        n[0] = (pj[1]-pi[1])*(pk[2]-pj[2])-(pj[2]-pi[2])*(pk[1]-pj[1]);
-        n[1] = (pj[2]-pi[2])*(pk[0]-pj[0])-(pj[0]-pi[0])*(pk[2]-pj[2]);
-        n[2] = (pj[0]-pi[0])*(pk[1]-pj[1])-(pj[1]-pi[1])*(pk[0]-pj[0]);
-        if(n[0]!=0 || n[1]!=0 || n[2]!=0)
-            return;
+        n[0] += ((poly[i].z() + poly[j].z())*(poly[i].y() - poly[j].y()));
+        n[1] += ((poly[i].x() + poly[j].x())*(poly[i].z() - poly[j].z()));
+        n[2] += ((poly[i].y() + poly[j].y())*(poly[i].x() - poly[j].x()));
     }
 }
 

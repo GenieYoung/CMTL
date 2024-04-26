@@ -163,7 +163,7 @@ Point<T> Polygon<T>::normal() const
 {
     if(_vertices.size() <= 2 )
         return Point<T>();
-    #if 0
+    #if 1
         /* Newells algorithm */
         T x, y, z;
         for(unsigned i = 0, j = 1; i < _vertices.size(); ++i, ++j, j%=_vertices.size())
@@ -173,7 +173,8 @@ Point<T> Polygon<T>::normal() const
             z += ((_vertices[i].y() + _vertices[j].y())*(_vertices[i].x() - _vertices[j].x()));
         }
         return Point<T>(x, y, z);
-    #else
+    #else   
+        /* wrong method, it may cause the normal inverse*/
         for(unsigned i=0, j=1, k=2; i<_vertices.size(); ++i, ++j, ++k, j%=_vertices.size(), k%=_vertices.size())
         {
             const Point<T>& pi = _vertices[i];
