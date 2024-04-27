@@ -70,6 +70,22 @@ class ElemHandle
             return _idx < other._idx;
         }
 
+        /**
+         * @brief increase the index
+         */
+        void forward()
+        {
+            ++_idx;
+        }
+
+        /**
+         * @brief decrease the index
+         */
+        void backward()
+        {
+            --_idx;
+        }
+
     private:
         /**
          * @brief the handle index
@@ -237,6 +253,98 @@ class GraphFaceHandle : public GraphElemHandle, FaceHandle
         }
 };
 
+template <class Topo, class ElemHandle, class GraphElemHandle>
+class IteratorBase
+{
+    public:
+        /**
+         * @brief default constructor
+         */
+        IteratorBase() : _geh(GraphElemHandle(-1, nullptr))
+        {
+        }
+
+        /**
+         * @brief constructor with mesh and a element handle
+         */
+        IteratorBase(const Topo* topo, ElemHandle eh) : _geh(GraphElemHandle(eh.idx(), topo))
+        {
+        }
+
+        /**
+         * @brief dereferencing opeartor
+         */
+        const GraphElemHandle& operator*() const
+        {
+            return _geh;
+        }
+
+        /**
+         * @brief pointer operator
+         */
+        const GraphEdgeHandle* operator->() const
+        {
+            return &_geh;
+        }
+
+        /**
+         * @brief are two iterator equal?
+         */
+        bool operator==(const IteratorBase& other) const
+        {
+            return ((_geh.graph() == other._geh.graph()) && (_geh == other._geh));
+        }
+
+        /**
+         * @brief are two iterator not equal?
+         */
+        bool operator!=(const IteratorBase& other) const
+        {
+            return !operator==(other);
+        }
+
+        /**
+         * @brief pre-increment operator
+         */
+        IteratorBase& operator++()
+        {
+            _geh.forward();
+            return *this;
+        }
+
+        /**
+         * @brief post-increment operator
+         */
+        IteratorBase operator++(int)
+        {
+            IteratorBase copy(*this);
+            ++(*this);
+            return copy;
+        }
+
+        /**
+         * @brief pre-decrement operator
+         */
+        IteratorBase& operator--()
+        {
+            _geh.backward();
+            return *this;
+        }
+
+        /**
+         * @brief post-decrement operator
+         */
+        IteratorBase operator--(int)
+        {
+            IteratorBase copy(*this);
+            --(*this);
+            return copy;
+        }
+
+    private:
+        GraphElemHandle _geh;
+};
+
 /**
  * @brief base class for all traits, usr traits should be derived from this class and override these traits
  */
@@ -261,6 +369,16 @@ class GraphTopology
         virtual ~GraphTopology()
         {
         }
+
+        typedef IteratorBase<GraphTopology, VertexHandle, GraphVertexHandle>        VertexIter;
+        typedef IteratorBase<GraphTopology, HalfedgeHandle, GraphHalfedgeHandle>    HalfedgeIter;
+        typedef IteratorBase<GraphTopology, EdgeHandle, GraphEdgeHandle>            EdgeIter;
+        typedef IteratorBase<GraphTopology, FaceHandle, GraphFaceHandle>            FaceIter;
+        
+        typedef VertexIter      ConstVertexIter;
+        typedef HalfedgeIter    ConstHalfedgeIter;
+        typedef EdgeIter        ConstEdgeIter;
+        typedef FaceIter        ConstFaceIter;
 
     public:
         /**
@@ -472,6 +590,135 @@ class GraphTopology
         bool is_boundary(HalfedgeHandle heh)
         {
             return !face_handle(heh).is_valid();
+        }
+
+    public:
+        /**
+         * @brief begin iterator for vertices
+         */
+        VertexIter vertices_begin()
+        {
+            return VertexIter(this, VertexHandle(0));
+        }
+
+        /**
+         * @brief const begin iterator for vertices
+         */
+        ConstVertexIter vertices_begin() const
+        {
+            return ConstVertexIter(this, VertexHandle(0));
+        }
+
+        /**
+         * @brief end iterator for vertices
+         */
+        VertexIter vertices_end()
+        {
+            return VertexIter(this, VertexHandle(int(n_vertices())));
+        }
+
+        /**
+         * @brief const end iterator for vertices
+         */
+        ConstVertexIter vertices_end() const
+        {
+            return ConstVertexIter(this, VertexHandle(int(n_vertices())));
+        }
+
+        /**
+         * @brief begin iterator for halfedges
+         */
+        HalfedgeIter halfedges_begin()
+        {
+            return HalfedgeIter(this, HalfedgeHandle(0));
+        }
+
+        /**
+         * @brief const begin iterator for halfedges
+         */
+        ConstHalfedgeIter halfedges_begin() const
+        {
+            return ConstHalfedgeIter(this, HalfedgeHandle(0));
+        }
+
+        /**
+         * @brief end iterator for halfedges
+         */
+        HalfedgeIter halfedges_end()
+        {
+            return HalfedgeIter(this, HalfedgeHandle(int(n_halfedges())));
+        }
+
+        /**
+         * @brief const end iterator for halfedges
+         */
+        ConstHalfedgeIter halfedges_end() const
+        {
+            return ConstHalfedgeIter(this, HalfedgeHandle(int(n_halfedges())));
+        }
+
+        /**
+         * @brief begin iterator for edges
+         */
+        EdgeIter edges_begin()
+        {
+            return EdgeIter(this, EdgeHandle(0));
+        }
+
+        /**
+         * @brief const begin iterator for edges
+         */
+        ConstEdgeIter edges_begin() const
+        {
+            return ConstEdgeIter(this, EdgeHandle(0));
+        }
+
+        /**
+         * @brief end iterator for edges
+         */
+        EdgeIter edges_end()
+        {
+            return EdgeIter(this, EdgeHandle(int(n_edges())));
+        }
+
+        /**
+         * @brief const end iterator for edges
+         */
+        ConstEdgeIter edges_end() const
+        {
+            return ConstEdgeIter(this, EdgeHandle(int(n_edges())));
+        }
+
+        /**
+         * @brief begin iterator for faces
+         */
+        FaceIter faces_begin()
+        {
+            return FaceIter(this, FaceHandle(0));
+        }
+
+        /**
+         * @brief const begin iterator for faces
+         */
+        ConstFaceIter faces_begin() const
+        {
+            return ConstFaceIter(this, FaceHandle(0));
+        }
+
+        /**
+         * @brief end iterator for faces
+         */
+        FaceIter faces_end()
+        {
+            return FaceIter(this, FaceHandle(int(n_faces())));
+        }
+
+        /**
+         * @brief const end iterator for faces
+         */
+        ConstFaceIter faces_end() const
+        {
+            return ConstFaceIter(this, FaceHandle(int(n_faces())));
         }
 
     public:
