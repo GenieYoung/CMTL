@@ -345,6 +345,100 @@ class IteratorBase
         GraphElemHandle _geh;
 };
 
+template<typename Topo, bool CCW>
+class VertexVertexIter
+{
+    public:
+        /**
+         * @brief default constructor
+         */
+        VertexVertexIter() : _topo(0)
+        {
+        }
+
+        VertexVertexIter(const Topo* topo, VertexHandle vh) : _topo(topo), _heh(topo.halfedge_handle(vh))
+        {
+            if(CCW)
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+        }
+
+    public:
+        /**
+         * @brief pre-increment
+         */
+        VertexVertexIter& operator++()
+        {
+            if(CCW)
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+            else
+                _heh = _topo->cw_rotated_halfedge_handle(_heh);
+        }
+
+        /**
+         * @brief post-increment
+         */
+        VertexVertexIter operator++(int)
+        {
+            VertexVertexIter copy(*this);
+            ++(*this);
+            return copy;
+        }
+
+        /**
+         * @brief pre-decrement
+         */
+        VertexVertexIter& operator--()
+        {
+            if(CCW)
+                _heh = _topo->cw_rotated_halfedge_handle(_heh);
+            else
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+        }
+
+        /**
+         * @brief post-decrement
+         */
+        VertexVertexIter operator--(int)
+        {
+            VertexVertexIter copy(*this);
+            --(*this);
+            return copy;
+        }
+
+        /**
+         * @brief dereferencing opeartor
+         */
+        GraphVertexHandle operator*() const
+        {
+            return GraphVertexHandle(_topo->to_vertex_handle(_heh), _topo);
+        }
+
+        /**
+         * @brief pointer operator
+         */
+        GraphVertexHandle* operator->() const
+        {
+            _geh =  **this;
+            return &_geh;
+        }
+
+        bool operator==(const VertexVertexIter& other) const
+        {
+            return _topo == other._topo && _heh == other._heh;
+        }
+
+        bool operator!=(const VertexVertexIter& other) const
+        {
+            return !operator==(other);
+        }
+
+
+    public:
+        const Topo* _topo;
+        HalfedgeHandle _heh;
+        mutable GraphVertexHandle _geh;
+};
+
 /**
  * @brief base class for all traits, usr traits should be derived from this class and override these traits
  */
@@ -370,10 +464,10 @@ class GraphTopology
         {
         }
 
-        typedef IteratorBase<GraphTopology, VertexHandle, GraphVertexHandle>        VertexIter;
+        typedef IteratorBase<GraphTopology, VertexHandle,   GraphVertexHandle>      VertexIter;
         typedef IteratorBase<GraphTopology, HalfedgeHandle, GraphHalfedgeHandle>    HalfedgeIter;
-        typedef IteratorBase<GraphTopology, EdgeHandle, GraphEdgeHandle>            EdgeIter;
-        typedef IteratorBase<GraphTopology, FaceHandle, GraphFaceHandle>            FaceIter;
+        typedef IteratorBase<GraphTopology, EdgeHandle,     GraphEdgeHandle>        EdgeIter;
+        typedef IteratorBase<GraphTopology, FaceHandle,     GraphFaceHandle>        FaceIter;
         
         typedef VertexIter      ConstVertexIter;
         typedef HalfedgeIter    ConstHalfedgeIter;
@@ -494,6 +588,22 @@ class GraphTopology
         }
 
         /**
+         * @brief get the destination of the halfedge
+         */
+        VertexHandle to_vertex_handle(HalfedgeHandle heh) const
+        {
+            return halfedge(heh)._vertex_handle;
+        }
+
+        /**
+         * @brief get the destination of the halfedge
+         */
+        VertexHandle from_vertex_handle(HalfedgeHandle heh) const
+        {
+            return to_vertex_handle(opposite_halfedge_handle(heh));
+        }
+
+        /**
          * @brief get i'th halfedge handle
          */
         HalfedgeHandle halfedge_handle(unsigned i) const
@@ -548,6 +658,22 @@ class GraphTopology
         HalfedgeHandle next_halfedge_handle(HalfedgeHandle heh) const
         {
             return(heh.idx()<n_halfedges() ? halfedge(heh)._next_halfedge_handle : HalfedgeHandle());
+        }
+
+        /**
+         * @brief get the first halfedge handle in the clock-wise order
+         */
+        HalfedgeHandle cw_rotated_halfedge_handle(HalfedgeHandle heh) const
+        {
+            return next_halfedge_handle(opposite_halfedge_handle(heh));
+        }
+
+        /**
+         * @brief get the first halfedge handle in the countor-clock-wise order
+         */
+        HalfedgeHandle ccw_rotated_halfedge_handle(HalfedgeHandle heh) const
+        {
+            return opposite_halfedge_handle(prev_halfedge_handle(heh));
         }
 
         /**
