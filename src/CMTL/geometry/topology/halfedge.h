@@ -15,87 +15,65 @@ namespace halfedge{
 class ElemHandle
 {
     public:
-        /**
-         * @brief constructor
-         */
+        /* constructor */
         explicit ElemHandle(int idx = -1) : _idx(idx)
         {
         }
 
-        /**
-         * @brief get the index of this handle
-         */
+        /* get the index of this handle */
         int idx() const
         {
             return _idx;
         }
 
-        /**
-         * @brief check whether the handle is valid
-         */
+        /* check whether the handle is valid */
         bool is_valid() const
         {
             return _idx >= 0;
         }
 
-        /**
-         * @brief make the handle invalid
-         */
+        /* make the handle invalid */
         void invalidate()
         {
             _idx = -1;
         }
 
-        /**
-         * @brief comparator
-         */
+        /* comparator */
         bool operator==(const ElemHandle& other) const
         {
             return _idx == other._idx;
         }
 
-        /**
-         * @brief comparator
-         */
+        /* comparator */
         bool operator!=(const ElemHandle& other) const
         {
             return _idx != other._idx;
         }
 
-        /**
-         * @brief comparator, used for sort
-         */   
+        /* comparator, used for sort */
         bool operator<(const ElemHandle& other) const
         {
             return _idx < other._idx;
         }
 
-        /**
-         * @brief increase the index
-         */
+        /* increase the index */
         void forward()
         {
             ++_idx;
         }
 
-        /**
-         * @brief decrease the index
-         */
+        /* decrease the index */
         void backward()
         {
             --_idx;
         }
 
     private:
-        /**
-         * @brief the handle index
-         */
+        /* the handle index */
         int _idx;
 };
 
-/**
- * @brief handle for a vertex
- */
+/* handle for a vertex */
 class VertexHandle : public ElemHandle
 {
     public:
@@ -104,9 +82,7 @@ class VertexHandle : public ElemHandle
         }
 };
 
-/**
- * @brief handle for a half edge
- */
+/* handle for a half edge */
 class HalfedgeHandle : public ElemHandle
 {
     public:
@@ -115,9 +91,7 @@ class HalfedgeHandle : public ElemHandle
         }
 };
 
-/**
- * @brief handle for an edge
- */
+/* handle for an edge */
 class EdgeHandle : public ElemHandle
 {
     public:
@@ -126,9 +100,7 @@ class EdgeHandle : public ElemHandle
         }
 };
 
-/**
- * @brief handle for a face
- */
+/* handle for a face */
 class FaceHandle : public ElemHandle
 {
     public:
@@ -186,9 +158,7 @@ class FaceItem
 
 class GraphTopology;
 
-/**
- * @brief elem handle connect to the topology graph, allow access to the graph
- */
+/* elem handle connect to the topology graph, allow access to the graph */
 class GraphElemHandle
 {
     public:
@@ -205,10 +175,8 @@ class GraphElemHandle
         const GraphTopology* _graph;
 };
 
-/**
- * @brief vertex handle connect to a topology graph
- */
-class GraphVertexHandle : public GraphElemHandle, VertexHandle
+/* vertex handle connect to a topology graph */
+class GraphVertexHandle : public GraphElemHandle, public VertexHandle
 {
     public:
         explicit GraphVertexHandle(int idx = -1, const GraphTopology* graph = nullptr)
@@ -217,10 +185,8 @@ class GraphVertexHandle : public GraphElemHandle, VertexHandle
         }
 };
 
-/**
- * @brief edge handle connect to a topology graph
- */
-class GraphEdgeHandle : public GraphElemHandle, EdgeHandle
+/* edge handle connect to a topology graph */
+class GraphEdgeHandle : public GraphElemHandle, public EdgeHandle
 {
     public:
         explicit GraphEdgeHandle(int idx = -1, const GraphTopology* graph = nullptr)
@@ -229,10 +195,8 @@ class GraphEdgeHandle : public GraphElemHandle, EdgeHandle
         }
 };
 
-/**
- * @brief half edge handle connect to a topology graph
- */
-class GraphHalfedgeHandle : public GraphElemHandle, HalfedgeHandle
+/* half edge handle connect to a topology graph */
+class GraphHalfedgeHandle : public GraphElemHandle, public HalfedgeHandle
 {
     public:
         explicit GraphHalfedgeHandle(int idx = -1, const GraphTopology* graph = nullptr)
@@ -241,10 +205,8 @@ class GraphHalfedgeHandle : public GraphElemHandle, HalfedgeHandle
         }
 };
 
-/**
- * @brief face handle connect to a topology graph
- */
-class GraphFaceHandle : public GraphElemHandle, FaceHandle
+/* face handle connect to a topology graph */
+class GraphFaceHandle : public GraphElemHandle, public FaceHandle
 {
     public:
         explicit GraphFaceHandle(int idx = -1, const GraphTopology* graph = nullptr)
@@ -257,64 +219,48 @@ template <class Topo, class ElemHandle, class GraphElemHandle>
 class IteratorBase
 {
     public:
-        /**
-         * @brief default constructor
-         */
+        /* default constructor */
         IteratorBase() : _geh(GraphElemHandle(-1, nullptr))
         {
         }
 
-        /**
-         * @brief constructor with mesh and a element handle
-         */
+        /* constructor with mesh and a element handle */
         IteratorBase(const Topo* topo, ElemHandle eh) : _geh(GraphElemHandle(eh.idx(), topo))
         {
         }
 
-        /**
-         * @brief dereferencing opeartor
-         */
+        /* dereferencing opeartor */
         const GraphElemHandle& operator*() const
         {
             return _geh;
         }
 
-        /**
-         * @brief pointer operator
-         */
+        /* pointer operator */
         const GraphEdgeHandle* operator->() const
         {
             return &_geh;
         }
 
-        /**
-         * @brief are two iterator equal?
-         */
+        /* are two iterator equal? */
         bool operator==(const IteratorBase& other) const
         {
             return ((_geh.graph() == other._geh.graph()) && (_geh == other._geh));
         }
 
-        /**
-         * @brief are two iterator not equal?
-         */
+        /* are two iterator not equal? */
         bool operator!=(const IteratorBase& other) const
         {
             return !operator==(other);
         }
 
-        /**
-         * @brief pre-increment operator
-         */
+        /* pre-increment operator */
         IteratorBase& operator++()
         {
             _geh.forward();
             return *this;
         }
 
-        /**
-         * @brief post-increment operator
-         */
+        /* post-increment operator */
         IteratorBase operator++(int)
         {
             IteratorBase copy(*this);
@@ -322,18 +268,14 @@ class IteratorBase
             return copy;
         }
 
-        /**
-         * @brief pre-decrement operator
-         */
+        /* pre-decrement operator */
         IteratorBase& operator--()
         {
             _geh.backward();
             return *this;
         }
 
-        /**
-         * @brief post-decrement operator
-         */
+        /* post-decrement operator */
         IteratorBase operator--(int)
         {
             IteratorBase copy(*this);
@@ -346,88 +288,96 @@ class IteratorBase
 };
 
 template<typename Topo, bool CCW>
-class VertexVertexIter
+class VertexVertexIterBase
 {
     public:
-        /**
-         * @brief default constructor
-         */
-        VertexVertexIter() : _topo(0)
+        /* default constructor */
+        VertexVertexIterBase() : _topo(0), _cycle_count(0)
         {
         }
 
-        VertexVertexIter(const Topo* topo, VertexHandle vh) : _topo(topo), _heh(topo.halfedge_handle(vh))
+        VertexVertexIterBase(const Topo* topo, VertexHandle vh, bool end = false)
+                         : _topo(topo), _start(_topo->halfedge_handle(vh)), _heh(_start), _cycle_count(static_cast<int>(end))
         {
             if(CCW)
+            {
                 _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+                _start = _heh;
+            }
         }
 
     public:
-        /**
-         * @brief pre-increment
-         */
-        VertexVertexIter& operator++()
+        /* pre-increment */
+        VertexVertexIterBase& operator++()
         {
             if(CCW)
+            {
                 _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)  
+                    ++_cycle_count;
+            }
             else
+            {
                 _heh = _topo->cw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)
+                    --_cycle_count;
+            }
+            return *this;
         }
 
-        /**
-         * @brief post-increment
-         */
-        VertexVertexIter operator++(int)
+        /* post-increment */
+        VertexVertexIterBase operator++(int)
         {
-            VertexVertexIter copy(*this);
+            VertexVertexIterBase copy(*this);
             ++(*this);
             return copy;
         }
 
-        /**
-         * @brief pre-decrement
-         */
-        VertexVertexIter& operator--()
+        /* pre-decrement */
+        VertexVertexIterBase& operator--()
         {
             if(CCW)
+            {
                 _heh = _topo->cw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)  
+                    ++_cycle_count;
+            }
             else
+            {
                 _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)
+                    --_cycle_count;
+            }
+            return *this;
         }
 
-        /**
-         * @brief post-decrement
-         */
-        VertexVertexIter operator--(int)
+        /* post-decrement */
+        VertexVertexIterBase operator--(int)
         {
-            VertexVertexIter copy(*this);
+            VertexVertexIterBase copy(*this);
             --(*this);
             return copy;
         }
 
-        /**
-         * @brief dereferencing opeartor
-         */
+        /* dereferencing opeartor */
         GraphVertexHandle operator*() const
         {
-            return GraphVertexHandle(_topo->to_vertex_handle(_heh), _topo);
+            return GraphVertexHandle(_topo->to_vertex_handle(_heh).idx(), _topo);
         }
 
-        /**
-         * @brief pointer operator
-         */
+        /* pointer operator */
         GraphVertexHandle* operator->() const
         {
             _geh =  **this;
             return &_geh;
         }
 
-        bool operator==(const VertexVertexIter& other) const
+        bool operator==(const VertexVertexIterBase& other) const
         {
             return _topo == other._topo && _heh == other._heh;
         }
 
-        bool operator!=(const VertexVertexIter& other) const
+        bool operator!=(const VertexVertexIterBase& other) const
         {
             return !operator==(other);
         }
@@ -435,8 +385,112 @@ class VertexVertexIter
 
     public:
         const Topo* _topo;
-        HalfedgeHandle _heh;
+        HalfedgeHandle _start, _heh;
+        int _cycle_count;
         mutable GraphVertexHandle _geh;
+};
+
+template<typename Topo, bool CCW>
+class VertexOHalfedgeIterBase
+{
+    public:
+        /* default constructor */
+        VertexOHalfedgeIterBase() : _topo(0), _cycle_count(0)
+        {
+        }
+
+        VertexOHalfedgeIterBase(const Topo* topo, VertexHandle vh, bool end = false)
+                         : _topo(topo), _start(_topo->halfedge_handle(vh)), _heh(_start), _cycle_count(static_cast<int>(end))
+        {
+            if(CCW)
+            {
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+                _start = _heh;
+            }
+        }
+
+    public:
+        /* pre-increment */
+        VertexOHalfedgeIterBase& operator++()
+        {
+            if(CCW)
+            {
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)  
+                    ++_cycle_count;
+            }
+            else
+            {
+                _heh = _topo->cw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)
+                    --_cycle_count;
+            }
+            return *this;
+        }
+
+        /* post-increment */
+        VertexOHalfedgeIterBase operator++(int)
+        {
+            VertexOHalfedgeIterBase copy(*this);
+            ++(*this);
+            return copy;
+        }
+
+        /* pre-decrement */
+        VertexOHalfedgeIterBase& operator--()
+        {
+            if(CCW)
+            {
+                _heh = _topo->cw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)  
+                    ++_cycle_count;
+            }
+            else
+            {
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)
+                    --_cycle_count;
+            }
+            return *this;
+        }
+
+        /* post-decrement */
+        VertexOHalfedgeIterBase operator--(int)
+        {
+            VertexOHalfedgeIterBase copy(*this);
+            --(*this);
+            return copy;
+        }
+
+        /* dereferencing opeartor */
+        GraphHalfedgeHandle operator*() const
+        {
+            return GraphHalfedgeHandle(_heh.idx(), _topo);
+        }
+
+        /* pointer operator */
+        GraphHalfedgeHandle* operator->() const
+        {
+            _geh =  **this;
+            return &_geh;
+        }
+
+        bool operator==(const VertexOHalfedgeIterBase& other) const
+        {
+            return _topo == other._topo && _start == other._start && _heh == other._heh && _cycle_count == other._cycle_count;
+        }
+
+        bool operator!=(const VertexOHalfedgeIterBase& other) const
+        {
+            return !operator==(other);
+        }
+
+
+    public:
+        const Topo* _topo;
+        HalfedgeHandle _start, _heh;
+        int _cycle_count;
+        mutable GraphHalfedgeHandle _geh;
 };
 
 /**
@@ -474,392 +528,455 @@ class GraphTopology
         typedef EdgeIter        ConstEdgeIter;
         typedef FaceIter        ConstFaceIter;
 
+        typedef VertexVertexIterBase<GraphTopology, true>   VertexVertexIter;
+        typedef VertexVertexIterBase<GraphTopology, true>   VertexVertexCCWIter;
+        typedef VertexVertexIterBase<GraphTopology, false>  VertexVertexCWIter;
+        typedef VertexVertexIter    ConstVertexVertexIter;
+        typedef VertexVertexCCWIter ConstVertexVertexCCWIter;
+        typedef VertexVertexCWIter  ConstVertexVertexCWIter;
+
+        typedef VertexOHalfedgeIterBase<GraphTopology, true>    VertexOHalfedgeIter;
+        typedef VertexOHalfedgeIterBase<GraphTopology, true>    VertexOHalfedgeCCWIter;
+        typedef VertexOHalfedgeIterBase<GraphTopology, false>   VertexOHalfedgeCWIter;
+        typedef VertexOHalfedgeIter     ConstVertexOHalfedgeIter;
+        typedef VertexOHalfedgeCCWIter  ConstVertexOHalfedgeCCWIter;
+        typedef VertexOHalfedgeCWIter   ConstVertexOHalfedgeCWIter;
+
     public:
-        /**
-         * @brief get the number of vertices
-         */
+        /* get the number of vertices */
         unsigned n_vertices() const
         {
             return _vertices.size();
         }
 
-        /**
-         * @brief get the number of edges
-         */
+        /* get the number of edges */
         unsigned n_edges() const
         {
             return _edges.size();
         }
 
-        /**
-         * @brief get the number of vertices
-         */
+        /* get the number of vertices */
         unsigned n_halfedges() const
         {
             return _edges.size() * 2;
         }
 
-        /**
-         * @brief get the number of faces
-         */
+        /* get the number of faces */
         unsigned n_faces() const
         {
             return _faces.size();
         }
 
-        /**
-         * @brief use vertex handle to get the vertex item
-         */
+        /* use vertex handle to get the vertex item */
         VertexItem& vertex(VertexHandle vh)
         {
             assert(vh.is_valid());
             return _vertices[vh.idx()];
         }
 
-        /**
-         * @brief use vertex handle to get the vertex item
-         */
+        /* use vertex handle to get the vertex item */
         const VertexItem& vertex(VertexHandle vh) const
         {
             assert(vh.is_valid());
             return _vertices[vh.idx()];
         }
 
-        /**
-         * @brief use halfedge handle to get the halfedge item
-         */
+        /* use halfedge handle to get the halfedge item */
         HalfedgeItem& halfedge(HalfedgeHandle heh)
         {
             assert(heh.is_valid());
             return _edges[heh.idx() >> 1]._halfedges[heh.idx() & 1];
         }
 
-        /**
-         * @brief use halfedge handle to get the halfedge item
-         */
+        /* use halfedge handle to get the halfedge item */
         const HalfedgeItem& halfedge(HalfedgeHandle heh) const
         {
             assert(heh.is_valid());
             return _edges[heh.idx() >> 1]._halfedges[heh.idx() & 1];
         }
 
-        /**
-         * @brief use edge handle to get the edge item
-         */
+        /* use edge handle to get the edge item */
         EdgeItem& edge(EdgeHandle eh)
         {
             assert(eh.is_valid());
             return _edges[eh.idx()];
         }
 
-        /**
-         * @brief use edge handle to get the edge item
-         */
+        /* use edge handle to get the edge item */
         const EdgeItem& edge(EdgeHandle eh) const
         {
             assert(eh.is_valid());
             return _edges[eh.idx()];
         }
         
-        /**
-         * @brief use face handle to get the face item
-         */
+        /* use face handle to get the face item */
         FaceItem& face(FaceHandle fh)
         {
             assert(fh.is_valid());
             return _faces[fh.idx()];
         }
 
-        /**
-         * @brief use face handle to get the face item
-         */
+        /* use face handle to get the face item */
         const FaceItem& face(FaceHandle fh) const
         {
             assert(fh.is_valid());
             return _faces[fh.idx()];
         }
 
-        /**
-         * @brief get i'th vertex handle
-         */
+        /* get i'th vertex handle */
         VertexHandle vertex_handle(unsigned i) const
         {
             return (i<n_vertices() ? VertexHandle(i) : VertexHandle());
         }
 
-        /**
-         * @brief get the destination of the halfedge
-         */
+        /* get the destination of the halfedge */
         VertexHandle to_vertex_handle(HalfedgeHandle heh) const
         {
             return halfedge(heh)._vertex_handle;
         }
 
-        /**
-         * @brief get the destination of the halfedge
-         */
+        /* get the destination of the halfedge */
         VertexHandle from_vertex_handle(HalfedgeHandle heh) const
         {
             return to_vertex_handle(opposite_halfedge_handle(heh));
         }
 
-        /**
-         * @brief get i'th halfedge handle
-         */
+        /* get i'th halfedge handle */
         HalfedgeHandle halfedge_handle(unsigned i) const
         {
             return (i<n_halfedges() ? HalfedgeHandle(i) : HalfedgeHandle());
         }
 
-        /**
-         * @brief get the handle of a vertex's outgoing halfedge
-         */
-        HalfedgeHandle halfedge_handle(VertexHandle vh)
+        /* get the handle of a vertex's outgoing halfedge */
+        HalfedgeHandle halfedge_handle(VertexHandle vh) const
         {
             return vertex(vh)._halfedge_handle;
         }
 
-        /**
-         * @brief get halfedge handle with edge handle and a side
-         */
+        /* get halfedge handle with edge handle and a side */
         HalfedgeHandle halfedge_handle(EdgeHandle eh, unsigned i) const
         {
             assert(i <= 1);
             return (eh.idx()<n_edges() ? HalfedgeHandle((eh.idx() << 1) + i) : HalfedgeHandle());
         }
 
-        /**
-         * @brief get halfedge handle of a face
-         */
+        /* get halfedge handle of a face */
         HalfedgeHandle halfedge_handle(FaceHandle fh) const
         {
             return (fh.idx()<n_faces() ? face(fh)._halfedge_handle : HalfedgeHandle());
         }
 
-        /**
-         * @brief get handle of the opposite halfedge
-         */
+        /* get handle of the opposite halfedge */
         HalfedgeHandle opposite_halfedge_handle(HalfedgeHandle heh) const
         {
             return(heh.idx()<n_halfedges() ? HalfedgeHandle(heh.idx() ^ 1) : HalfedgeHandle());
         }
 
-        /**
-         * @brief get handle of the previous halfedge
-         */
+        /* get handle of the previous halfedge */
         HalfedgeHandle prev_halfedge_handle(HalfedgeHandle heh) const
         {
             return(heh.idx()<n_halfedges() ? halfedge(heh)._prev_halfedge_handle : HalfedgeHandle());
         }
 
-        /**
-         * @brief get handle of the next halfedge
-         */
+        /* get handle of the next halfedge */
         HalfedgeHandle next_halfedge_handle(HalfedgeHandle heh) const
         {
             return(heh.idx()<n_halfedges() ? halfedge(heh)._next_halfedge_handle : HalfedgeHandle());
         }
 
-        /**
-         * @brief get the first halfedge handle in the clock-wise order
-         */
+        /* get the first halfedge handle in the clock-wise order */
         HalfedgeHandle cw_rotated_halfedge_handle(HalfedgeHandle heh) const
         {
             return next_halfedge_handle(opposite_halfedge_handle(heh));
         }
 
-        /**
-         * @brief get the first halfedge handle in the countor-clock-wise order
-         */
+        /* get the first halfedge handle in the countor-clock-wise order */
         HalfedgeHandle ccw_rotated_halfedge_handle(HalfedgeHandle heh) const
         {
             return opposite_halfedge_handle(prev_halfedge_handle(heh));
         }
 
-        /**
-         * @brief get i'th edge handle
-         */
+        /* get i'th edge handle */
         EdgeHandle edge_handle(unsigned i) const
         {
             return (i<n_edges() ? EdgeHandle(i) : EdgeHandle());
         }
 
-        /**
-         * @brief get i'th face handle
-         */
+        /* get i'th face handle */
         FaceHandle face_handle(unsigned i) const
         {
             return (i<n_faces() ? FaceHandle(i) : FaceHandle());
         }
 
-        /**
-         * @brief get face handle the halfedge lies on
-         */
+        /* get face handle the halfedge lies on */
         FaceHandle face_handle(HalfedgeHandle heh) const
         {
             return (heh.idx()<n_halfedges() ? halfedge(heh)._face_handle : FaceHandle());
         }
 
-        /**
-         * @brief check if the vertex is a boundary vertex
-         * @note if vertex is a boundary, we will make sure the outgoing halfedge of this vertex is also a boundary
-         */
+        /* check if the vertex is a boundary vertex */
         bool is_boundary(VertexHandle vh)
         {
             HalfedgeHandle heh(halfedge_handle(vh));
             return !(heh.is_valid() && face_handle(heh).is_valid());
         }
 
-        /**
-         * @brief check if a halfedge is a boundary vertex
-         */
+        /* check if a halfedge is a boundary vertex */
         bool is_boundary(HalfedgeHandle heh)
         {
             return !face_handle(heh).is_valid();
         }
 
     public:
-        /**
-         * @brief begin iterator for vertices
-         */
+        /* begin iterator for vertices */
         VertexIter vertices_begin()
         {
             return VertexIter(this, VertexHandle(0));
         }
 
-        /**
-         * @brief const begin iterator for vertices
-         */
+        /* const begin iterator for vertices */
         ConstVertexIter vertices_begin() const
         {
             return ConstVertexIter(this, VertexHandle(0));
         }
 
-        /**
-         * @brief end iterator for vertices
-         */
+        /* end iterator for vertices */
         VertexIter vertices_end()
         {
             return VertexIter(this, VertexHandle(int(n_vertices())));
         }
 
-        /**
-         * @brief const end iterator for vertices
-         */
+        /* const end iterator for vertices */
         ConstVertexIter vertices_end() const
         {
             return ConstVertexIter(this, VertexHandle(int(n_vertices())));
         }
 
-        /**
-         * @brief begin iterator for halfedges
-         */
+        /* begin iterator for halfedges */
         HalfedgeIter halfedges_begin()
         {
             return HalfedgeIter(this, HalfedgeHandle(0));
         }
 
-        /**
-         * @brief const begin iterator for halfedges
-         */
+        /* const begin iterator for halfedges */
         ConstHalfedgeIter halfedges_begin() const
         {
             return ConstHalfedgeIter(this, HalfedgeHandle(0));
         }
 
-        /**
-         * @brief end iterator for halfedges
-         */
+        /* end iterator for halfedges */
         HalfedgeIter halfedges_end()
         {
             return HalfedgeIter(this, HalfedgeHandle(int(n_halfedges())));
         }
 
-        /**
-         * @brief const end iterator for halfedges
-         */
+        /* const end iterator for halfedges */
         ConstHalfedgeIter halfedges_end() const
         {
             return ConstHalfedgeIter(this, HalfedgeHandle(int(n_halfedges())));
         }
 
-        /**
-         * @brief begin iterator for edges
-         */
+        /* begin iterator for edges */
         EdgeIter edges_begin()
         {
             return EdgeIter(this, EdgeHandle(0));
         }
 
-        /**
-         * @brief const begin iterator for edges
-         */
+        /* const begin iterator for edges */
         ConstEdgeIter edges_begin() const
         {
             return ConstEdgeIter(this, EdgeHandle(0));
         }
 
-        /**
-         * @brief end iterator for edges
-         */
+        /* end iterator for edges */
         EdgeIter edges_end()
         {
             return EdgeIter(this, EdgeHandle(int(n_edges())));
         }
 
-        /**
-         * @brief const end iterator for edges
-         */
+        /* const end iterator for edges */
         ConstEdgeIter edges_end() const
         {
             return ConstEdgeIter(this, EdgeHandle(int(n_edges())));
         }
 
-        /**
-         * @brief begin iterator for faces
-         */
+        /* begin iterator for faces */
         FaceIter faces_begin()
         {
             return FaceIter(this, FaceHandle(0));
         }
 
-        /**
-         * @brief const begin iterator for faces
-         */
+        /* const begin iterator for faces */
         ConstFaceIter faces_begin() const
         {
             return ConstFaceIter(this, FaceHandle(0));
         }
 
-        /**
-         * @brief end iterator for faces
-         */
+        /* end iterator for faces */
         FaceIter faces_end()
         {
             return FaceIter(this, FaceHandle(int(n_faces())));
         }
 
-        /**
-         * @brief const end iterator for faces
-         */
+        /* const end iterator for faces */
         ConstFaceIter faces_end() const
         {
             return ConstFaceIter(this, FaceHandle(int(n_faces())));
         }
 
+        /* vertex-vertex circulator */
+        VertexVertexIter vv_begin(VertexHandle vh)
+        {
+            return VertexVertexIter(this, vh);
+        }
+
+        /* vertex-vertex circulator */
+        VertexVertexIter vv_end(VertexHandle vh)
+        {
+            return VertexVertexIter(this, vh, true);
+        }
+
+        /* const vertex-vertex circulator */
+        ConstVertexVertexIter vv_begin(VertexHandle vh) const
+        {
+            return ConstVertexVertexIter(this, vh);
+        }
+
+        /* const vertex-vertex circulator */
+        ConstVertexVertexIter vv_end(VertexHandle vh) const
+        {
+            return ConstVertexVertexIter(this, vh, true);
+        }
+
+        /* vertex-vertex contour clock wise circulator */
+        VertexVertexCCWIter vv_ccwbegin(VertexHandle vh)
+        {
+            return VertexVertexCCWIter(this, vh);
+        }
+
+        /* vertex-vertex contour clock wise circulator */
+        VertexVertexCCWIter vv_ccwend(VertexHandle vh)
+        {
+            return VertexVertexCCWIter(this, vh, true);
+        }
+
+        /* const vertex-vertex contour clock wise circulator */
+        ConstVertexVertexCCWIter vv_ccwbegin(VertexHandle vh) const
+        {
+            return ConstVertexVertexCCWIter(this, vh);
+        }
+
+        /* const vertex-vertex contour clock wise circulator */
+        ConstVertexVertexCCWIter vv_ccwend(VertexHandle vh) const
+        {
+            return ConstVertexVertexCCWIter(this, vh, true);
+        }
+
+        /* vertex-vertex clock wise circulator */
+        VertexVertexCWIter vv_cwbegin(VertexHandle vh)
+        {
+            return VertexVertexCWIter(this, vh);
+        }
+
+        /* vertex-vertex clock wise circulator */
+        VertexVertexCWIter vv_cwend(VertexHandle vh)
+        {
+            return VertexVertexCWIter(this, vh, true);
+        }
+
+        /* const vertex-vertex clock wise circulator */
+        ConstVertexVertexCWIter vv_cwbegin(VertexHandle vh) const
+        {
+            return ConstVertexVertexCWIter(this, vh);
+        }
+
+        /* const vertex-vertex clock wise circulator */
+        ConstVertexVertexCWIter vv_cwend(VertexHandle vh) const
+        {
+            return ConstVertexVertexCWIter(this, vh, true);
+        }
+
+        /* vertex - outgoing halfedge circulator */
+        VertexOHalfedgeIter voh_begin(VertexHandle vh)
+        {
+            return VertexOHalfedgeIter(this, vh);
+        }
+
+        /* vertex - outgoing halfedge circulator */
+        VertexOHalfedgeIter voh_end(VertexHandle vh)
+        {
+            return VertexOHalfedgeIter(this, vh, true);
+        }
+
+        /* const vertex - outgoing halfedge circulator */
+        ConstVertexOHalfedgeIter voh_begin(VertexHandle vh) const
+        {
+            return ConstVertexOHalfedgeIter(this, vh);
+        }
+
+        /* const vertex - outgoing halfedge circulator */
+        ConstVertexOHalfedgeIter voh_end(VertexHandle vh) const
+        {
+            return ConstVertexOHalfedgeIter(this, vh, true);
+        }
+
+        /* vertex - outgoing halfedge contour clock wise circulator */
+        VertexOHalfedgeCCWIter voh_ccwbegin(VertexHandle vh)
+        {
+            return VertexOHalfedgeCCWIter(this, vh);
+        }
+
+        /* vertex - outgoing halfedge contour clock wise circulator */
+        VertexOHalfedgeCCWIter voh_ccwend(VertexHandle vh)
+        {
+            return VertexOHalfedgeCCWIter(this, vh, true);
+        }
+
+        /* const vertex - outgoing halfedge contour clock wise circulator */
+        ConstVertexOHalfedgeCCWIter voh_ccwbegin(VertexHandle vh) const
+        {
+            return ConstVertexOHalfedgeCCWIter(this, vh);
+        }
+
+        /* const vertex - outgoing halfedge contour clock wise circulator */
+        ConstVertexOHalfedgeCCWIter voh_ccwend(VertexHandle vh) const
+        {
+            return ConstVertexOHalfedgeCCWIter(this, vh, true);
+        }
+
+        /* vertex - outgoing halfedge clock wise circulator */
+        VertexOHalfedgeCWIter voh_cwbegin(VertexHandle vh)
+        {
+            return VertexOHalfedgeCWIter(this, vh);
+        }
+
+        /* vertex - outgoing halfedge clock wise circulator */
+        VertexOHalfedgeCWIter voh_cwend(VertexHandle vh)
+        {
+            return VertexOHalfedgeCWIter(this, vh, true);
+        }
+
+        /* const vertex - outgoing halfedge clock wise circulator */
+        ConstVertexOHalfedgeCWIter voh_cwbegin(VertexHandle vh) const
+        {
+            return ConstVertexOHalfedgeCWIter(this, vh);
+        }
+
+        /* const vertex - outgoing halfedge clock wise circulator */
+        ConstVertexOHalfedgeCWIter voh_cwend(VertexHandle vh) const
+        {
+            return ConstVertexOHalfedgeCWIter(this, vh, true);
+        }
+
     public:
-        /**
-         * @brief add a new vertex
-         */
+        /* add a new vertex */
         VertexHandle new_vertex()
         {
             _vertices.push_back(VertexItem());
             return VertexHandle(_vertices.size() - 1);
         }
 
-        /**
-         * @brief add a new edge
-         */
+        /* add a new edge */
         HalfedgeHandle new_edge(VertexHandle start, VertexHandle end)
         {
             _edges.push_back(EdgeItem());
@@ -871,9 +988,7 @@ class GraphTopology
             return he0;
         }
 
-        /**
-         * @brief add a new face
-         */
+        /* add a new face */
         FaceHandle new_face()
         {
             _faces.push_back(FaceItem());
@@ -881,42 +996,43 @@ class GraphTopology
         }
 
         /**
-         * @brief find halfedge with corresponding vertexes
-         * @param start start vertex of halfedge
-         * @param end end vertex of halfedge
+         * @brief find halfedge with corresponding end points
+         * @param start end vertex of halfedge 
+         * @param end end vertex of halfedge 
          */
         HalfedgeHandle find_halfedge(VertexHandle start, VertexHandle end)
         {
             return HalfedgeHandle();
         }
 
-        /**
-         * @brief if the vertex has a boundary outgoing halfedge around it, link the halfedge
-         */
+        /* if the vertex has a boundary outgoing halfedge around it, link the halfedge */
         void adjust_outgoing_halfedge(VertexHandle vh)
         {
-
+            for(auto voh_it = voh_begin(vh); voh_it != voh_end(vh); ++voh_it)
+            {
+                if(is_boundary(*voh_it))
+                {
+                    vertex(vh)._halfedge_handle = *voh_it;
+                    break;
+                }
+            }
         }
         
     private:
-        /**
-         * @brief vertex elements
-         */
+        /* vertex elements */
         std::vector<VertexItem> _vertices;
 
-        /**
-         * @brief edge elements
-         */
+        /* edge elements */
         std::vector<EdgeItem>   _edges;
 
-        /**
-         * @brief face elements
-         */
+        /* face elements */
         std::vector<FaceItem>   _faces;
 };
 
+
 /**
  * @brief A graph describe the topological relationship and mesh items of the halfedge data struct
+ * @tparam Traits element attributes
  */
 template<class Traits = DefaultTraits>
 class Graph : public GraphTopology
@@ -930,7 +1046,6 @@ class Graph : public GraphTopology
     public:
         /**
          * @brief add a vertex into graph and attach an attribute information
-         * @param p_attr point attribute
          * @return the new vertex handle
          */
         GraphVertexHandle add_vertex(const PointAttribute& p_attr)
@@ -942,8 +1057,7 @@ class Graph : public GraphTopology
 
         /**
          * @brief add a face into graph and build connectivity information
-         * @param vhs vertex handle container that make up this face
-         * @return the new face handle
+         * @return the new face handle 
          */
         GraphFaceHandle add_face(const std::vector<VertexHandle>& vhs)
         {
@@ -1101,9 +1215,7 @@ class Graph : public GraphTopology
         }
 
     public:
-        /**
-         * @brief get the writable vertex attribute
-        */
+        /* get the writable vertex attribute */
         PointAttribute& vertex_attribute(VertexHandle vh)
         {
             assert(vh.is_valid() && vh.idx() < n_vertices());
@@ -1112,18 +1224,14 @@ class Graph : public GraphTopology
             return _vertex_attr[vh.idx()];
         }
 
-        /**
-         * @brief get a const vertex attribute
-        */
+        /* get a const vertex attribute */
         const PointAttribute& vertex_attribute(VertexHandle vh) const
         {
             assert(vh.is_valid() && vh.idx() < _vertex_attr.size());
             return _vertex_attr[vh.idx()];
         }
 
-        /**
-         * @brief get the writable halfedge attribute
-        */
+        /* get the writable halfedge attribute */
         HalfedgeAttribute& halfedge_attribute(HalfedgeHandle heh)
         {
             assert(heh.is_valid() && heh.idx() < n_halfedges());
@@ -1132,18 +1240,14 @@ class Graph : public GraphTopology
             return _halfedge_attr[heh.idx()];
         }
 
-        /**
-         * @brief get a const halfedge attribute
-        */
+        /* get a const halfedge attribute */
         const HalfedgeAttribute& halfedge_attribute(HalfedgeHandle heh) const
         {
             assert(heh.is_valid() && heh.idx() < _halfedge_attr.size());
             return _halfedge_attr[heh.idx()];
         }
 
-        /**
-         * @brief get the writable edge attribute
-        */
+        /* get the writable edge attribute */
         EdgeAttribute& edge_attribute(EdgeHandle eh)
         {
             assert(eh.is_valid() && eh.idx() < n_edges());
@@ -1152,18 +1256,14 @@ class Graph : public GraphTopology
             return _edge_attr[eh.idx()];
         }
 
-        /**
-         * @brief get a const edge attribute
-        */
+        /* get a const edge attribute */
         const EdgeAttribute& edge_attribute(EdgeHandle eh) const
         {
             assert(eh.is_valid() && eh.idx() < _edge_attr.size());
             return _edge_attr[eh.idx()];
         }
 
-        /**
-         * @brief get the writable face attribute
-        */
+        /* get the writable face attribute */
         FaceAttribute& face_attribute(FaceHandle fh)
         {
             assert(fh.is_valid() && fh.idx() < n_edges());
@@ -1172,9 +1272,7 @@ class Graph : public GraphTopology
             return _edge_attr[fh.idx()];
         }
 
-        /**
-         * @brief get a const edge attribute
-        */
+        /* get a const edge attribute */
         const FaceAttribute& face_attribute(FaceHandle fh) const
         {
             assert(fh.is_valid() && fh.idx() < _face_attr.size());
@@ -1188,34 +1286,22 @@ class Graph : public GraphTopology
             bool is_new;
             bool need_adjust;
         };
-        /**
-         * @brief container that store the edge information when add a new face
-         */
+        /* container that store the edge information when add a new face */
         std::vector<AddFaceEdgeStorage> _tmp_edge_storage;
-        /**
-         * @brief container that store the information used for next halfedge link when add a new face
-         */
+        /* container that store the information used for next halfedge link when add a new face */
         std::vector<std::pair<HalfedgeHandle, HalfedgeHandle> > _he_link_storage;
 
     private:
-        /**
-         * @brief attributes binding at vertices
-         */
+        /* attributes binding at vertices */
         std::vector<PointAttribute>    _vertex_attr;
 
-        /**
-         * @brief attributes binding at halfedges 
-         */
+        /* attributes binding at halfedges  */
         std::vector<HalfedgeAttribute> _halfedge_attr;
 
-        /**
-         * @brief attributes binding at edges 
-         */
+        /* attributes binding at edges  */
         std::vector<EdgeAttribute>     _edge_attr;
 
-        /**
-         * @brief attributes binding at faces 
-         */
+        /* attributes binding at faces  */
         std::vector<FaceAttribute>     _face_attr;
 };
 
