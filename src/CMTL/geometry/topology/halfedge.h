@@ -374,7 +374,7 @@ class VertexVertexIterBase
 
         bool operator==(const VertexVertexIterBase& other) const
         {
-            return _topo == other._topo && _heh == other._heh;
+            return _topo == other._topo && _heh == other._heh && _cycle_count == other._cycle_count;
         }
 
         bool operator!=(const VertexVertexIterBase& other) const
@@ -494,30 +494,11 @@ class VertexOHalfedgeIterBase
 };
 
 /**
- * @brief base class for all traits, usr traits should be derived from this class and override these traits
- */
-struct DefaultTraits
-{
-    typedef int PointAttribute;
-    typedef int HalfedgeAttribute;
-    typedef int EdgeAttribute;
-    typedef int FaceAttribute;
-};
-
-/**
  * @brief base struct that store the mesh handle connectivity information.
  */
 class GraphTopology
 {
     public:
-        GraphTopology() 
-        {
-        };
-
-        virtual ~GraphTopology()
-        {
-        }
-
         typedef IteratorBase<GraphTopology, VertexHandle,   GraphVertexHandle>      VertexIter;
         typedef IteratorBase<GraphTopology, HalfedgeHandle, GraphHalfedgeHandle>    HalfedgeIter;
         typedef IteratorBase<GraphTopology, EdgeHandle,     GraphEdgeHandle>        EdgeIter;
@@ -541,6 +522,15 @@ class GraphTopology
         typedef VertexOHalfedgeIter     ConstVertexOHalfedgeIter;
         typedef VertexOHalfedgeCCWIter  ConstVertexOHalfedgeCCWIter;
         typedef VertexOHalfedgeCWIter   ConstVertexOHalfedgeCWIter;
+
+    public:
+        GraphTopology() 
+        {
+        };
+
+        virtual ~GraphTopology()
+        {
+        }
 
     public:
         /* get the number of vertices */
@@ -1017,41 +1007,15 @@ class GraphTopology
                 }
             }
         }
-        
-    private:
-        /* vertex elements */
-        std::vector<VertexItem> _vertices;
 
-        /* edge elements */
-        std::vector<EdgeItem>   _edges;
-
-        /* face elements */
-        std::vector<FaceItem>   _faces;
-};
-
-
-/**
- * @brief A graph describe the topological relationship and mesh items of the halfedge data struct
- * @tparam Traits element attributes
- */
-template<class Traits = DefaultTraits>
-class Graph : public GraphTopology
-{
-    public:
-        typedef typename Traits::PointAttribute       PointAttribute;
-        typedef typename Traits::HalfedgeAttribute    HalfedgeAttribute;
-        typedef typename Traits::EdgeAttribute        EdgeAttribute;
-        typedef typename Traits::FaceAttribute        FaceAttribute;
-        
     public:
         /**
-         * @brief add a vertex into graph and attach an attribute information
+         * @brief add a vertex into graph 
          * @return the new vertex handle
          */
-        GraphVertexHandle add_vertex(const PointAttribute& p_attr)
+        GraphVertexHandle add_vertex()
         {
             VertexHandle vh = new_vertex();
-            vertex_attribute(vh) = p_attr;
             return GraphVertexHandle(vh.idx(), this);
         }
 
@@ -1162,18 +1126,23 @@ class Graph : public GraphTopology
                     switch(flag)
                     {
                         case 1:
+                        {
                             HalfedgeHandle boundary_prev_he = prev_halfedge_handle(inner_next_he);
                             assert(boundary_prev_he.is_valid());
                             _he_link_storage[link_count++] = std::make_pair(boundary_prev_he, outer_next_he);
                             vertex(vh)._halfedge_handle = outer_next_he;
                             break;
+                        }
                         case 2:
+                        {
                             HalfedgeHandle boundary_next_he = prev_halfedge_handle(inner_prev_he);
                             assert(boundary_next_he.is_valid());
                             _he_link_storage[link_count++] = std::make_pair(outer_prev_he, boundary_next_he);
                             vertex(vh)._halfedge_handle = boundary_next_he;
                             break;
+                        }
                         case 3:
+                        {
                             if(!halfedge_handle(vh).is_valid())
                             {
                                 vertex(vh)._halfedge_handle = outer_next_he;
@@ -1189,7 +1158,9 @@ class Graph : public GraphTopology
                                 _he_link_storage[link_count++] = std::make_pair(outer_prev_he, boundary_next_he);
                             }
                             break;
+                        }
                     }
+                    _he_link_storage[link_count++] = std::make_pair(inner_prev_he, inner_next_he);
                 }
                 else
                 {
@@ -1201,8 +1172,8 @@ class Graph : public GraphTopology
 
             for(unsigned i = 0; i < link_count; ++i)
             {
-                halfedge(_he_link_storage[i].first)._next_halfedge_handle(_he_link_storage[i].second);
-                halfedge(_he_link_storage[i].second)._prev_halfedge_handle(_he_link_storage[i].first);
+                halfedge(_he_link_storage[i].first)._next_halfedge_handle = _he_link_storage[i].second;
+                halfedge(_he_link_storage[i].second)._prev_halfedge_handle = _he_link_storage[i].first;
             }
 
             for(unsigned i = 0; i < n; ++i)
@@ -1212,6 +1183,100 @@ class Graph : public GraphTopology
             }
 
             return GraphFaceHandle(fh.idx(), this);
+        }
+
+    
+    private:
+        struct AddFaceEdgeStorage
+        {
+            HalfedgeHandle halfedge_handle;
+            bool is_new;
+            bool need_adjust;
+        };
+        /* container that store the edge information when add a new face */
+        std::vector<AddFaceEdgeStorage> _tmp_edge_storage;
+        /* container that store the information used for next halfedge link when add a new face */
+        std::vector<std::pair<HalfedgeHandle, HalfedgeHandle> > _he_link_storage;
+        
+    private:
+        /* vertex elements */
+        std::vector<VertexItem> _vertices;
+
+        /* edge elements */
+        std::vector<EdgeItem>   _edges;
+
+        /* face elements */
+        std::vector<FaceItem>   _faces;
+};
+
+/**
+ * @brief base class for all traits, usr traits should be derived from this class and override these traits
+ */
+struct DefaultTraits
+{
+    typedef int PointAttribute;
+    typedef int HalfedgeAttribute;
+    typedef int EdgeAttribute;
+    typedef int FaceAttribute;
+};
+
+/**
+ * @brief A graph describe the topological relationship and mesh items of the halfedge data struct
+ * @tparam Traits element attributes
+ */
+template<class Traits = DefaultTraits>
+class Graph : public GraphTopology
+{
+    public:
+        typedef typename Traits::PointAttribute                     PointAttribute;
+        typedef typename Traits::HalfedgeAttribute                  HalfedgeAttribute;
+        typedef typename Traits::EdgeAttribute                      EdgeAttribute;
+        typedef typename Traits::FaceAttribute                      FaceAttribute;
+
+        typedef typename GraphTopology::VertexIter                   VertexIter;
+        typedef typename GraphTopology::HalfedgeIter                 HalfedgeIter;
+        typedef typename GraphTopology::EdgeIter                     EdgeIter;
+        typedef typename GraphTopology::FaceIter                     FaceIter;
+        typedef typename GraphTopology::ConstVertexIter              ConstVertexIter;
+        typedef typename GraphTopology::ConstHalfedgeIter            ConstHalfedgeIter;
+        typedef typename GraphTopology::ConstEdgeIter                ConstEdgeIter;
+        typedef typename GraphTopology::ConstFaceIter                ConstFaceIter;
+
+        typedef typename GraphTopology::VertexVertexIter             VertexVertexIter;
+        typedef typename GraphTopology::VertexVertexCCWIter          VertexVertexCCWIter;
+        typedef typename GraphTopology::VertexVertexCWIter           VertexVertexCWIter;
+        typedef typename GraphTopology::ConstVertexVertexIter        ConstVertexVertexIter;
+        typedef typename GraphTopology::ConstVertexVertexCCWIter     ConstVertexVertexCCWIter;
+        typedef typename GraphTopology::ConstVertexVertexCWIter      ConstVertexVertexCWIter;
+
+        typedef typename GraphTopology::VertexOHalfedgeIter          VertexOHalfedgeIter;
+        typedef typename GraphTopology::VertexOHalfedgeCCWIter       VertexOHalfedgeCCWIter;
+        typedef typename GraphTopology::VertexOHalfedgeCWIter        VertexOHalfedgeCWIter;
+        typedef typename GraphTopology::ConstVertexOHalfedgeIter     ConstVertexOHalfedgeIter;
+        typedef typename GraphTopology::ConstVertexOHalfedgeCCWIter  ConstVertexOHalfedgeCCWIter;
+        typedef typename GraphTopology::ConstVertexOHalfedgeCWIter   ConstVertexOHalfedgeCWIter;
+
+    public:
+        /* constructor */
+        Graph() : GraphTopology()
+        {
+        }
+
+        /* deconstructor */
+        ~Graph()
+        {
+        }
+        
+    public:
+        /**
+         * @brief add a vertex into graph and attach an attribute information
+         * @return the new vertex handle
+         */
+        GraphVertexHandle add_vertex(const PointAttribute& p_attr)
+        {
+            VertexHandle vh = new_vertex();
+            vertex_attribute(vh) = p_attr;
+            return GraphVertexHandle(vh.idx(), this);
         }
 
     public:
@@ -1278,18 +1343,6 @@ class Graph : public GraphTopology
             assert(fh.is_valid() && fh.idx() < _face_attr.size());
             return _edge_attr[fh.idx()];
         }
-
-    private:
-        struct AddFaceEdgeStorage
-        {
-            HalfedgeHandle halfedge_handle;
-            bool is_new;
-            bool need_adjust;
-        };
-        /* container that store the edge information when add a new face */
-        std::vector<AddFaceEdgeStorage> _tmp_edge_storage;
-        /* container that store the information used for next halfedge link when add a new face */
-        std::vector<std::pair<HalfedgeHandle, HalfedgeHandle> > _he_link_storage;
 
     private:
         /* attributes binding at vertices */
