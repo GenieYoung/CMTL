@@ -372,9 +372,15 @@ class VertexVertexIterBase
             return &_geh;
         }
 
+        /* check whether the iterator is valid in the first circulate */
+        bool is_valid() const
+        {
+            return _heh.is_valid() && _cycle_count == 0;
+        }
+
         bool operator==(const VertexVertexIterBase& other) const
         {
-            return _topo == other._topo && _heh == other._heh && _cycle_count == other._cycle_count;
+            return _topo == other._topo && _start == other._start && _heh == other._heh && _cycle_count == other._cycle_count;
         }
 
         bool operator!=(const VertexVertexIterBase& other) const
@@ -473,6 +479,12 @@ class VertexOHalfedgeIterBase
         {
             _geh =  **this;
             return &_geh;
+        }
+
+        /* check whether the iterator is valid in the first circulate */
+        bool is_valid() const
+        {
+            return _heh.is_valid() && _cycle_count == 0;
         }
 
         bool operator==(const VertexOHalfedgeIterBase& other) const
@@ -990,9 +1002,15 @@ class GraphTopology
          * @param start end vertex of halfedge 
          * @param end end vertex of halfedge 
          */
-        HalfedgeHandle find_halfedge(VertexHandle start, VertexHandle end)
+        GraphHalfedgeHandle find_halfedge(VertexHandle start, VertexHandle end)
         {
-            return HalfedgeHandle();
+            assert(start.is_valid() && end.is_valid());
+            for(ConstVertexOHalfedgeIter voh = voh_begin(start); voh.is_valid(); ++voh)
+            {
+                if(to_vertex_handle(*voh) == end)
+                    return *voh;
+            }
+            return GraphHalfedgeHandle(-1, this);
         }
 
         /* if the vertex has a boundary outgoing halfedge around it, link the halfedge */
