@@ -4,6 +4,7 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
+#include <stdio.h>
 
 namespace CMTL{
 namespace geometry{
@@ -320,7 +321,7 @@ class VertexVertexIterBase
             {
                 _heh = _topo->cw_rotated_halfedge_handle(_heh);
                 if(_heh == _start)
-                    --_cycle_count;
+                    ++_cycle_count;
             }
             return *this;
         }
@@ -338,15 +339,15 @@ class VertexVertexIterBase
         {
             if(CCW)
             {
-                _heh = _topo->cw_rotated_halfedge_handle(_heh);
                 if(_heh == _start)  
-                    ++_cycle_count;
+                    --_cycle_count;
+                _heh = _topo->cw_rotated_halfedge_handle(_heh);
             }
             else
             {
-                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
                 if(_heh == _start)
                     --_cycle_count;
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
             }
             return *this;
         }
@@ -429,7 +430,7 @@ class VertexOHalfedgeIterBase
             {
                 _heh = _topo->cw_rotated_halfedge_handle(_heh);
                 if(_heh == _start)
-                    --_cycle_count;
+                    ++_cycle_count;
             }
             return *this;
         }
@@ -447,15 +448,15 @@ class VertexOHalfedgeIterBase
         {
             if(CCW)
             {
-                _heh = _topo->cw_rotated_halfedge_handle(_heh);
                 if(_heh == _start)  
-                    ++_cycle_count;
+                    --_cycle_count;
+                _heh = _topo->cw_rotated_halfedge_handle(_heh);
             }
             else
             {
-                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
                 if(_heh == _start)
                     --_cycle_count;
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
             }
             return *this;
         }
@@ -1016,7 +1017,7 @@ class GraphTopology
         /* if the vertex has a boundary outgoing halfedge around it, link the halfedge */
         void adjust_outgoing_halfedge(VertexHandle vh)
         {
-            for(auto voh_it = voh_begin(vh); voh_it != voh_end(vh); ++voh_it)
+            for(ConstVertexOHalfedgeIter voh_it = voh_begin(vh); voh_it != voh_end(vh); ++voh_it)
             {
                 if(is_boundary(*voh_it))
                 {
@@ -1098,7 +1099,7 @@ class GraphTopology
                         assert(is_boundary(boundary_next_he));
 
                         HalfedgeHandle patch_start_he = next_halfedge_handle(inner_prev_he);
-                        HalfedgeHandle patch_end_he   = next_halfedge_handle(inner_next_he);
+                        HalfedgeHandle patch_end_he   = prev_halfedge_handle(inner_next_he);
 
                         assert(boundary_prev_he.is_valid());
                         assert(boundary_next_he.is_valid());
@@ -1153,7 +1154,7 @@ class GraphTopology
                         }
                         case 2:
                         {
-                            HalfedgeHandle boundary_next_he = prev_halfedge_handle(inner_prev_he);
+                            HalfedgeHandle boundary_next_he = next_halfedge_handle(inner_prev_he);
                             assert(boundary_next_he.is_valid());
                             _he_link_storage[link_count++] = std::make_pair(outer_prev_he, boundary_next_he);
                             vertex(vh)._halfedge_handle = boundary_next_he;
@@ -1201,6 +1202,27 @@ class GraphTopology
             }
 
             return GraphFaceHandle(fh.idx(), this);
+        }
+
+    public:
+        /* print the halfedge items */
+        void print()
+        {
+            printf("vertex  outgoing_halfedge\n");
+            for(unsigned i = 0; i < n_vertices(); ++i)
+            {
+                printf("%-8d%d\n", i, vertex(vertex_handle(i))._halfedge_handle.idx());
+            }
+            std::cout << std::endl;
+
+            printf("halfedge from_v to_v next_he prev_he oppo_he face\n");
+            for(unsigned i = 0; i < n_halfedges(); ++i)
+            {
+                printf("%-9d%-7d%-5d%-8d%-8d%-8d%d\n", i, from_vertex_handle(halfedge_handle(i)).idx(), to_vertex_handle(halfedge_handle(i)).idx(),
+                                            halfedge(halfedge_handle(i))._next_halfedge_handle.idx(), halfedge(halfedge_handle(i))._prev_halfedge_handle.idx(),
+                                            opposite_halfedge_handle(halfedge_handle(i)).idx(), halfedge(halfedge_handle(i))._face_handle.idx());
+            }
+            printf("");
         }
 
     

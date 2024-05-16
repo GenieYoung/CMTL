@@ -5,6 +5,7 @@ typedef Surface_mesh::PointAttribute Point;
 
 void test1()
 {
+    std::cout << "=====test1=====" << std::endl;
     Surface_mesh sm;
     std::vector<Surface_mesh::VertexHandle> face1;
     face1.push_back(sm.add_vertex(Point(0,0,0)));
@@ -28,7 +29,34 @@ void test1()
     std::cout << std::endl;
 }
 
+void test2()
+{
+    std::cout << "=====test2=====" << std::endl;
+    Surface_mesh sm;
+    std::vector<Surface_mesh::VertexHandle> vertices;
+    vertices.push_back(sm.add_vertex(Point(0,0,0)));
+    vertices.push_back(sm.add_vertex(Point(1,0,0)));
+    vertices.push_back(sm.add_vertex(Point(1,1,0)));
+    vertices.push_back(sm.add_vertex(Point(0,1,0)));
+    vertices.push_back(sm.add_vertex(Point(-1,1,0)));
+    vertices.push_back(sm.add_vertex(Point(-1,0,0)));
+    vertices.push_back(sm.add_vertex(Point(-1,-1,0)));
+    vertices.push_back(sm.add_vertex(Point(0,-1,0)));
+    vertices.push_back(sm.add_vertex(Point(1,-1,0)));
+    sm.add_face(std::vector<Surface_mesh::VertexHandle>{vertices[0], vertices[1], vertices[2], vertices[3]});
+    sm.add_face(std::vector<Surface_mesh::VertexHandle>{vertices[0], vertices[3], vertices[4], vertices[5]});
+    sm.add_face(std::vector<Surface_mesh::VertexHandle>{vertices[0], vertices[5], vertices[6], vertices[7]});
+    sm.add_face(std::vector<Surface_mesh::VertexHandle>{vertices[0], vertices[7], vertices[8], vertices[1]});
+    sm.print();
+    
+    for(auto vv_it = sm.vv_ccwbegin(vertices[0]); vv_it != sm.vv_ccwend(vertices[0]); ++vv_it)
+    {
+        std::cout << sm.vertex_attribute(*vv_it) << std::endl;
+    }
+}
+
 int main()
 {
     test1();
+    test2();
 }
