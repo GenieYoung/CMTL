@@ -11,7 +11,7 @@ namespace geo3d{
 template<typename T>
 struct DefaultSurfaceMeshTraits : public halfedge::DefaultTraits
 {
-    typedef Point<T> PointAttribute;
+    typedef geo3d::Point<T> Point;
 };
 
 template<typename T, class Traits = DefaultSurfaceMeshTraits<T>>
@@ -34,6 +34,7 @@ class SurfaceMesh : public halfedge::Graph<Traits>
         typedef halfedge::GraphEdgeHandle                                       Edge;
         typedef halfedge::GraphFaceHandle                                       Face;
 
+        typedef typename Traits::Point                                          Point;
         typedef typename Traits::PointAttribute                                 PointAttribute;
         typedef typename Traits::HalfedgeAttribute                              HalfedgeAttribute;
         typedef typename Traits::EdgeAttribute                                  EdgeAttribute;
@@ -88,8 +89,8 @@ class SurfaceMesh : public halfedge::Graph<Traits>
         }
 
 };
-    
 
+    
 }   // namespace geo3d
 }   // namespace geometry
 }   // namespace CMTL

@@ -1860,7 +1860,7 @@ class GraphTopology
         /* container that store the information used for next halfedge link when add a new face */
         std::vector<std::pair<HalfedgeHandle, HalfedgeHandle> > _he_link_storage;
         
-    private:
+    protected:
         /* vertex elements */
         std::vector<VertexItem> _vertices;
 
@@ -1912,6 +1912,7 @@ GraphFaceHandle GraphHalfedgeHandle::face() const
  */
 struct DefaultTraits
 {
+    typedef int Point;
     typedef int PointAttribute;
     typedef int HalfedgeAttribute;
     typedef int EdgeAttribute;
@@ -1926,6 +1927,7 @@ template<class Traits = DefaultTraits>
 class Graph : public GraphTopology
 {
     public:
+        typedef typename Traits::Point                              Point;
         typedef typename Traits::PointAttribute                     PointAttribute;
         typedef typename Traits::HalfedgeAttribute                  HalfedgeAttribute;
         typedef typename Traits::EdgeAttribute                      EdgeAttribute;
@@ -1991,14 +1993,30 @@ class Graph : public GraphTopology
          * @brief add a vertex into graph and attach an attribute information
          * @return the new vertex handle
          */
-        GraphVertexHandle add_vertex(const PointAttribute& p_attr)
+        GraphVertexHandle add_vertex(const Point& p)
         {
             VertexHandle vh = new_vertex();
-            vertex_attribute(vh) = p_attr;
+            point(vh) = p;
             return GraphVertexHandle(vh.idx(), this);
         }
 
     public:
+        /* get the writable vertex point */
+        Point& point(VertexHandle vh)
+        {
+            assert(vh.is_valid() && vh.idx() < n_vertices());
+            if(vh.idx() >= _points.size())
+                _points.resize(vh.idx() + 1);
+            return _points[vh.idx()];
+        }
+
+        /* get the writable vertex point */
+        const Point& point(VertexHandle vh) const
+        {
+            assert(vh.is_valid() && vh.idx() < n_vertices() && vh.idx() < _points.size());
+            return _points[vh.idx()];
+        }
+
         /* get the writable vertex attribute */
         PointAttribute& vertex_attribute(VertexHandle vh)
         {
@@ -2011,7 +2029,7 @@ class Graph : public GraphTopology
         /* get a const vertex attribute */
         const PointAttribute& vertex_attribute(VertexHandle vh) const
         {
-            assert(vh.is_valid() && vh.idx() < _vertex_attr.size());
+            assert(vh.is_valid() && vh.idx() < n_vertices() && vh.idx() < _vertex_attr.size());
             return _vertex_attr[vh.idx()];
         }
 
@@ -2027,7 +2045,7 @@ class Graph : public GraphTopology
         /* get a const halfedge attribute */
         const HalfedgeAttribute& halfedge_attribute(HalfedgeHandle heh) const
         {
-            assert(heh.is_valid() && heh.idx() < _halfedge_attr.size());
+            assert(heh.is_valid() && heh.idx() < n_halfedges() && heh.idx() < _halfedge_attr.size());
             return _halfedge_attr[heh.idx()];
         }
 
@@ -2043,7 +2061,7 @@ class Graph : public GraphTopology
         /* get a const edge attribute */
         const EdgeAttribute& edge_attribute(EdgeHandle eh) const
         {
-            assert(eh.is_valid() && eh.idx() < _edge_attr.size());
+            assert(eh.is_valid() && eh.idx() < n_edges() && eh.idx() < _edge_attr.size());
             return _edge_attr[eh.idx()];
         }
 
@@ -2059,11 +2077,14 @@ class Graph : public GraphTopology
         /* get a const edge attribute */
         const FaceAttribute& face_attribute(FaceHandle fh) const
         {
-            assert(fh.is_valid() && fh.idx() < _face_attr.size());
+            assert(fh.is_valid() && fh.idx() < n_edges() && fh.idx() < _face_attr.size());
             return _edge_attr[fh.idx()];
         }
 
-    private:
+    protected:
+        /* geometry information binding at vertices */
+        std::vector<Point>  _points;
+
         /* attributes binding at vertices */
         std::vector<PointAttribute>    _vertex_attr;
 
