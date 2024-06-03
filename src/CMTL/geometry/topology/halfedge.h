@@ -773,6 +773,117 @@ class FaceVertexIterBase
         mutable GraphVertexHandle _gvh;
 };
 
+template<typename Topo, bool CCW>
+class FaceHalfedgeIterBase
+{
+    public:
+        /* default constructor */
+        FaceHalfedgeIterBase() : _topo(0), _cycle_count(0)
+        {
+        }
+
+        FaceHalfedgeIterBase(const Topo* topo, FaceHandle fh, bool end = false)
+                         : _topo(topo), _start(_topo->halfedge_handle(fh)), _heh(_start), _cycle_count(static_cast<int>(end))
+        {
+            if(CCW)
+            {
+                int cc = _cycle_count;
+                ++(*this);
+                _start = _heh;
+                _cycle_count = cc;
+            }
+        }
+
+    public:
+        /* pre-increment */
+        FaceHalfedgeIterBase& operator++()
+        {
+            if(CCW)
+            {
+                _heh = _topo->prev_halfedge_handle(_heh);
+                if(_heh == _start)  
+                    ++_cycle_count;
+            }
+            else
+            {
+                _heh = _topo->next_halfedge_handle(_heh);
+                if(_heh == _start)
+                    ++_cycle_count;
+            }
+            return *this;
+        }
+
+        /* post-increment */
+        FaceHalfedgeIterBase operator++(int)
+        {
+            FaceHalfedgeIterBase copy(*this);
+            ++(*this);
+            return copy;
+        }
+
+        /* pre-decrement */
+        FaceHalfedgeIterBase& operator--()
+        {
+            if(CCW)
+            {
+                if(_heh == _start)  
+                    --_cycle_count;
+                _heh = _topo->prev_halfedge_handle(_heh);
+            }
+            else
+            {
+                if(_heh == _start)
+                    --_cycle_count;
+                _heh = _topo->next_halfedge_handle(_heh);
+            }
+            return *this;
+        }
+
+        /* post-decrement */
+        FaceHalfedgeIterBase operator--(int)
+        {
+            FaceHalfedgeIterBase copy(*this);
+            --(*this);
+            return copy;
+        }
+
+        /* dereferencing opeartor */
+        GraphHalfedgeHandle operator*() const
+        {
+            return GraphHalfedgeHandle(_heh.idx(), _topo);
+        }
+
+        /* pointer operator */
+        GraphHalfedgeHandle* operator->() const
+        {
+            _gheh =  **this;
+            return &_gheh;
+        }
+
+        /* check whether the iterator is valid in the first circulate */
+        bool is_valid() const
+        {
+            return _heh.is_valid() && _cycle_count == 0;
+        }
+
+        bool operator==(const FaceHalfedgeIterBase& other) const
+        {
+            return _topo == other._topo && _start == other._start && _heh == other._heh && _cycle_count == other._cycle_count;
+        }
+
+        bool operator!=(const FaceHalfedgeIterBase& other) const
+        {
+            return !operator==(other);
+        }
+
+
+    public:
+        const Topo* _topo;
+        HalfedgeHandle _start, _heh;
+        int _cycle_count;
+        mutable GraphHalfedgeHandle _gheh;
+};
+
 
 /**
  * @brief base struct that store the mesh handle connectivity information.
@@ -817,6 +928,13 @@ class GraphTopology
         typedef FaceVertexIter      ConstFaceVertexIter;
         typedef FaceVertexCCWIter   ConstFaceVertexCCWIter;
         typedef FaceVertexCWIter    ConstFaceVertexCWIter;
+
+        typedef FaceHalfedgeIterBase<GraphTopology, false>    FaceHalfedgeIter;
+        typedef FaceHalfedgeIterBase<GraphTopology, false>    FaceHalfedgeCCWIter;
+        typedef FaceHalfedgeIterBase<GraphTopology, true>     FaceHalfedgeCWIter;
+        typedef FaceHalfedgeIter      ConstFaceHalfedgeIter;
+        typedef FaceHalfedgeCCWIter   ConstFaceHalfedgeCCWIter;
+        typedef FaceHalfedgeCWIter    ConstFaceHalfedgeCWIter;
 
     public:
         GraphTopology() 
@@ -1331,7 +1449,6 @@ class GraphTopology
             return ConstVertexFaceCWIter(this, vh, true);
         }
 
-        //
         /* face vertex circulator */
         FaceVertexIter fv_begin(FaceHandle vh)
         {
@@ -1402,6 +1519,78 @@ class GraphTopology
         ConstFaceVertexCWIter fv_cwend(FaceHandle vh) const
         {
             return ConstFaceVertexCWIter(this, vh, true);
+        }
+
+        /* face halfedge circulator */
+        FaceHalfedgeIter fh_begin(FaceHandle vh)
+        {
+            return FaceHalfedgeIter(this, vh);
+        }
+
+        /* face halfedge circulator */
+        FaceHalfedgeIter fh_end(FaceHandle vh)
+        {
+            return FaceHalfedgeIter(this, vh, true);
+        }
+
+        /* const face halfedge circulator */
+        ConstFaceHalfedgeIter fh_begin(FaceHandle vh) const
+        {
+            return ConstFaceHalfedgeIter(this, vh);
+        }
+
+        /* const face halfedge circulator */
+        ConstFaceHalfedgeIter fh_end(FaceHandle vh) const
+        {
+            return ConstFaceHalfedgeIter(this, vh, true);
+        }
+
+        /* face halfedge contour clock wise circulator */
+        FaceHalfedgeCCWIter fh_ccwbegin(FaceHandle vh)
+        {
+            return FaceHalfedgeCCWIter(this, vh);
+        }
+
+        /* face halfedge contour clock wise circulator */
+        FaceHalfedgeCCWIter fh_ccwend(FaceHandle vh)
+        {
+            return FaceHalfedgeCCWIter(this, vh, true);
+        }
+
+        /* const face halfedge contour clock wise circulator */
+        ConstFaceHalfedgeCCWIter fh_ccwbegin(FaceHandle vh) const
+        {
+            return ConstFaceHalfedgeCCWIter(this, vh);
+        }
+
+        /* const face halfedge contour clock wise circulator */
+        ConstFaceHalfedgeCCWIter fh_ccwend(FaceHandle vh) const
+        {
+            return ConstFaceHalfedgeCCWIter(this, vh, true);
+        }
+
+        /* face halfedge clock wise circulator */
+        FaceHalfedgeCWIter fh_cwbegin(FaceHandle vh)
+        {
+            return FaceHalfedgeCWIter(this, vh);
+        }
+
+        /* face halfedge clock wise circulator */
+        FaceHalfedgeCWIter fh_cwend(FaceHandle vh)
+        {
+            return FaceHalfedgeCWIter(this, vh, true);
+        }
+
+        /* const face halfedge clock wise circulator */
+        ConstFaceHalfedgeCWIter fh_cwbegin(FaceHandle vh) const
+        {
+            return ConstFaceHalfedgeCWIter(this, vh);
+        }
+
+        /* const face halfedge clock wise circulator */
+        ConstFaceHalfedgeCWIter fh_cwend(FaceHandle vh) const
+        {
+            return ConstFaceHalfedgeCWIter(this, vh, true);
         }
 
     public:
@@ -1778,6 +1967,13 @@ class Graph : public GraphTopology
         typedef typename GraphTopology::ConstFaceVertexIter          ConstFaceVertexIter;
         typedef typename GraphTopology::ConstFaceVertexCCWIter       ConstFaceVertexCCWIter;
         typedef typename GraphTopology::ConstFaceVertexCWIter        ConstFaceVertexCWIter;
+
+        typedef typename GraphTopology::FaceHalfedgeIter             FaceHalfedgeIter;
+        typedef typename GraphTopology::FaceHalfedgeCCWIter          FaceHalfedgeCCWIter;
+        typedef typename GraphTopology::FaceHalfedgeCWIter           FaceHalfedgeCWIter;
+        typedef typename GraphTopology::ConstFaceHalfedgeIter        ConstFaceHalfedgeIter;
+        typedef typename GraphTopology::ConstFaceHalfedgeCCWIter     ConstFaceHalfedgeCCWIter;
+        typedef typename GraphTopology::ConstFaceHalfedgeCWIter      ConstFaceHalfedgeCWIter;
 
     public:
         /* constructor */

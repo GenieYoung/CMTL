@@ -69,12 +69,12 @@ class SurfaceMesh : public halfedge::Graph<Traits>
         typedef typename halfedge::Graph<Traits>::ConstVertexFaceCCWIter        ConstVertexFaceCCWIter;
         typedef typename halfedge::Graph<Traits>::ConstVertexFaceCWIter         ConstVertexFaceCWIter;
 
-        typedef typename halfedge::Graph<Traits>::FaceVertexIter                FaceVertexIter;
-        typedef typename halfedge::Graph<Traits>::FaceVertexCCWIter             FaceVertexCCWIter;
-        typedef typename halfedge::Graph<Traits>::FaceVertexCWIter              FaceVertexCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstFaceVertexIter           ConstFaceVertexIter;
-        typedef typename halfedge::Graph<Traits>::ConstFaceVertexCCWIter        ConstFaceVertexCCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstFaceVertexCWIter         ConstFaceVertexCWIter;
+        typedef typename halfedge::Graph<Traits>::FaceHalfedgeIter              FaceHalfedgeIter;
+        typedef typename halfedge::Graph<Traits>::FaceHalfedgeCCWIter           FaceHalfedgeCCWIter;
+        typedef typename halfedge::Graph<Traits>::FaceHalfedgeCWIter            FaceHalfedgeCWIter;
+        typedef typename halfedge::Graph<Traits>::ConstFaceHalfedgeIter         ConstFaceHalfedgeIter;
+        typedef typename halfedge::Graph<Traits>::ConstFaceHalfedgeCCWIter      ConstFaceHalfedgeCCWIter;
+        typedef typename halfedge::Graph<Traits>::ConstFaceHalfedgeCWIter       ConstFaceHalfedgeCWIter;
 
     public:
         /* constructor */

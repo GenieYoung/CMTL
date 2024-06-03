@@ -58,7 +58,7 @@ void test2()
     sm.add_face(std::vector<Surface_mesh::VertexHandle>{vertices[0], vertices[5], vertices[6], vertices[7]});
     sm.add_face(std::vector<Surface_mesh::VertexHandle>{vertices[0], vertices[7], vertices[8], vertices[1]});
 
-    //sm.print();
+    sm.print();
     check(sm);
 
     for(auto vv_it = sm.vv_ccwbegin(vertices[0]); vv_it != sm.vv_ccwend(vertices[0]); ++vv_it)
@@ -94,6 +94,18 @@ void test2()
     for(auto fv_it = sm.fv_cwbegin(sm.face_handle(0)); fv_it != sm.fv_cwend(sm.face_handle(0)); ++fv_it)
     {
         std::cout << fv_it->idx() << " ";
+    }
+    std::cout << std::endl;
+
+    for(auto fh_it = sm.fh_ccwbegin(sm.face_handle(0)); fh_it != sm.fh_ccwend(sm.face_handle(0)); ++fh_it)
+    {
+        std::cout << fh_it->idx() << " ";
+    }
+    std::cout << std::endl;
+
+    for(auto fh_it = sm.fh_cwbegin(sm.face_handle(0)); fh_it != sm.fh_cwend(sm.face_handle(0)); ++fh_it)
+    {
+        std::cout << fh_it->idx() << " ";
     }
     std::cout << std::endl;
 
