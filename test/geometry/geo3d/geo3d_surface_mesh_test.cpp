@@ -1,6 +1,7 @@
 #include "CMTL/geometry/geo3d/geo3d_surface_mesh.h"
 
-typedef CMTL::geometry::geo3d::SurfaceMesh<double> Surface_mesh;
+typedef CMTL::geometry::geo3d::DefaultSurfaceMeshTraits<double> Surface_mesh_traits;
+typedef CMTL::geometry::geo3d::SurfaceMesh<Surface_mesh_traits> Surface_mesh;
 typedef Surface_mesh::Point Point;
 
 void check(const Surface_mesh& sm)

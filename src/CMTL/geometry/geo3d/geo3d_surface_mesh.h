@@ -14,7 +14,7 @@ struct DefaultSurfaceMeshTraits : public halfedge::DefaultTraits
     typedef geo3d::Point<T> Point;
 };
 
-template<typename T, class Traits = DefaultSurfaceMeshTraits<T>>
+template<class Traits>
 class SurfaceMesh : public halfedge::Graph<Traits>
 {
     public:

@@ -970,6 +970,14 @@ class GraphTopology
             return _faces.size();
         }
 
+        /* clear all elements */
+        void clear()
+        {
+            _vertices.clear();
+            _edges.clear();
+            _faces.clear();
+        }
+
         /* use vertex handle to get the vertex item */
         VertexItem& vertex(VertexHandle vh)
         {
@@ -1998,6 +2006,16 @@ class Graph : public GraphTopology
             VertexHandle vh = new_vertex();
             point(vh) = p;
             return GraphVertexHandle(vh.idx(), this);
+        }
+
+        /* clear all elements and attributes */
+        void clear()
+        {
+            GraphTopology::clear();
+            _vertex_attr.clear();
+            _halfedge_attr.clear();
+            _edge_attr.clear();
+            _face_attr.clear();
         }
 
     public:
