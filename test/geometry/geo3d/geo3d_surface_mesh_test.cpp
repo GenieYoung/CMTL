@@ -1,11 +1,10 @@
 #include "CMTL/geometry/geo3d/geo3d_surface_mesh.h"
 
-typedef CMTL::geometry::geo3d::DefaultSurfaceMeshTraits<double> Surface_mesh_traits;
-typedef CMTL::geometry::geo3d::SurfaceMesh<Surface_mesh_traits> Surface_mesh;
+typedef CMTL::geometry::geo3d::SurfaceMesh<double> Surface_mesh;
 typedef Surface_mesh::Point Point;
 
 void check(const Surface_mesh& sm)
-{
+{   
     for(auto hit = sm.halfedges_begin(); hit != sm.halfedges_end(); ++hit)
     {
         assert(sm.next_halfedge_handle(*hit).idx() == hit->next().idx());
@@ -36,6 +35,17 @@ void test1()
     for(auto it = sm.vv_begin(face1[0]); it != sm.vv_end(face1[0]); ++it)
     {
         std::cout << sm.point(*it) << std::endl;
+    }
+    std::cout << std::endl;
+
+    std::cout << "mark "<< std::endl;
+    for(auto it = sm.vertices_begin(); it != sm.vertices_end(); ++it)
+    {
+        sm.attribute(*it).set<int>("mark") = it->idx();
+    }
+    for(auto it = sm.vertices_begin(); it != sm.vertices_end(); ++it)
+    {
+        std::cout << sm.attribute(*it).get<int>("mark") << " ";
     }
     std::cout << std::endl;
 }

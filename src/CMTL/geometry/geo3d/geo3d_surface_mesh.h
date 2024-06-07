@@ -2,6 +2,7 @@
 #define __geo3d_surface_mesh_h__
 
 #include "topology/halfedge.h"
+#include "common/attributes.h"
 #include "geo3d_point.h"
 
 namespace CMTL{
@@ -9,16 +10,23 @@ namespace geometry{
 namespace geo3d{
 
 template<typename T>
-struct DefaultSurfaceMeshTraits : public halfedge::DefaultTraits
+struct SurfaceMeshTraits : public halfedge::DefaultTraits
 {
     typedef geo3d::Point<T> Point;
+    typedef Attributes VertexAttribute;
+    typedef Attributes HalfedgeAttribute;
+    typedef Attributes EdgeAttribute;
+    typedef Attributes FaceAttribute;
 };
 
-template<class Traits>
-class SurfaceMesh : public halfedge::Graph<Traits>
+template<typename T>
+class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
 {
     public:
         /* alias */
+        typedef T                                                               NT;
+        typedef SurfaceMeshTraits<T>                                            Traits;
+        
         typedef halfedge::VertexItem                                            VertexItem;
         typedef halfedge::HalfedgeItem                                          HalfedgeItem;
         typedef halfedge::EdgeItem                                              EdgeItem;
@@ -35,7 +43,7 @@ class SurfaceMesh : public halfedge::Graph<Traits>
         typedef halfedge::GraphFaceHandle                                       Face;
 
         typedef typename Traits::Point                                          Point;
-        typedef typename Traits::PointAttribute                                 PointAttribute;
+        typedef typename Traits::VertexAttribute                                VertexAttribute;
         typedef typename Traits::HalfedgeAttribute                              HalfedgeAttribute;
         typedef typename Traits::EdgeAttribute                                  EdgeAttribute;
         typedef typename Traits::FaceAttribute                                  FaceAttribute;
@@ -87,9 +95,7 @@ class SurfaceMesh : public halfedge::Graph<Traits>
         ~SurfaceMesh()
         {
         }
-
 };
-
     
 }   // namespace geo3d
 }   // namespace geometry

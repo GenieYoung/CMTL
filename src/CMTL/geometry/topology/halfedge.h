@@ -1921,7 +1921,7 @@ GraphFaceHandle GraphHalfedgeHandle::face() const
 struct DefaultTraits
 {
     typedef int Point;
-    typedef int PointAttribute;
+    typedef int VertexAttribute;
     typedef int HalfedgeAttribute;
     typedef int EdgeAttribute;
     typedef int FaceAttribute;
@@ -1935,11 +1935,11 @@ template<class Traits = DefaultTraits>
 class Graph : public GraphTopology
 {
     public:
-        typedef typename Traits::Point                              Point;
-        typedef typename Traits::PointAttribute                     PointAttribute;
-        typedef typename Traits::HalfedgeAttribute                  HalfedgeAttribute;
-        typedef typename Traits::EdgeAttribute                      EdgeAttribute;
-        typedef typename Traits::FaceAttribute                      FaceAttribute;
+        typedef typename Traits::Point                               Point;
+        typedef typename Traits::VertexAttribute                     VertexAttribute;
+        typedef typename Traits::HalfedgeAttribute                   HalfedgeAttribute;
+        typedef typename Traits::EdgeAttribute                       EdgeAttribute;
+        typedef typename Traits::FaceAttribute                       FaceAttribute;
 
         typedef typename GraphTopology::VertexIter                   VertexIter;
         typedef typename GraphTopology::HalfedgeIter                 HalfedgeIter;
@@ -2036,7 +2036,7 @@ class Graph : public GraphTopology
         }
 
         /* get the writable vertex attribute */
-        PointAttribute& vertex_attribute(VertexHandle vh)
+        VertexAttribute& attribute(VertexHandle vh)
         {
             assert(vh.is_valid() && vh.idx() < n_vertices());
             if(vh.idx() >= _vertex_attr.size())
@@ -2045,14 +2045,14 @@ class Graph : public GraphTopology
         }
 
         /* get a const vertex attribute */
-        const PointAttribute& vertex_attribute(VertexHandle vh) const
+        const VertexAttribute& attribute(VertexHandle vh) const
         {
             assert(vh.is_valid() && vh.idx() < n_vertices() && vh.idx() < _vertex_attr.size());
             return _vertex_attr[vh.idx()];
         }
 
         /* get the writable halfedge attribute */
-        HalfedgeAttribute& halfedge_attribute(HalfedgeHandle heh)
+        HalfedgeAttribute& attribute(HalfedgeHandle heh)
         {
             assert(heh.is_valid() && heh.idx() < n_halfedges());
             if(heh.idx() >= _halfedge_attr.size())
@@ -2061,14 +2061,14 @@ class Graph : public GraphTopology
         }
 
         /* get a const halfedge attribute */
-        const HalfedgeAttribute& halfedge_attribute(HalfedgeHandle heh) const
+        const HalfedgeAttribute& attribute(HalfedgeHandle heh) const
         {
             assert(heh.is_valid() && heh.idx() < n_halfedges() && heh.idx() < _halfedge_attr.size());
             return _halfedge_attr[heh.idx()];
         }
 
         /* get the writable edge attribute */
-        EdgeAttribute& edge_attribute(EdgeHandle eh)
+        EdgeAttribute& attribute(EdgeHandle eh)
         {
             assert(eh.is_valid() && eh.idx() < n_edges());
             if(eh.idx() >= _edge_attr.size())
@@ -2077,14 +2077,14 @@ class Graph : public GraphTopology
         }
 
         /* get a const edge attribute */
-        const EdgeAttribute& edge_attribute(EdgeHandle eh) const
+        const EdgeAttribute& attribute(EdgeHandle eh) const
         {
             assert(eh.is_valid() && eh.idx() < n_edges() && eh.idx() < _edge_attr.size());
             return _edge_attr[eh.idx()];
         }
 
         /* get the writable face attribute */
-        FaceAttribute& face_attribute(FaceHandle fh)
+        FaceAttribute& attribute(FaceHandle fh)
         {
             assert(fh.is_valid() && fh.idx() < n_edges());
             if(fh.idx() >= _face_attr.size())
@@ -2093,7 +2093,7 @@ class Graph : public GraphTopology
         }
 
         /* get a const edge attribute */
-        const FaceAttribute& face_attribute(FaceHandle fh) const
+        const FaceAttribute& attribute(FaceHandle fh) const
         {
             assert(fh.is_valid() && fh.idx() < n_edges() && fh.idx() < _face_attr.size());
             return _edge_attr[fh.idx()];
@@ -2104,7 +2104,7 @@ class Graph : public GraphTopology
         std::vector<Point>  _points;
 
         /* attributes binding at vertices */
-        std::vector<PointAttribute>    _vertex_attr;
+        std::vector<VertexAttribute>    _vertex_attr;
 
         /* attributes binding at halfedges  */
         std::vector<HalfedgeAttribute> _halfedge_attr;
