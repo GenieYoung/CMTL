@@ -1843,7 +1843,6 @@ class GraphTopology
             {
                 printf("%-8d%d\n", i, vertex(vertex_handle(i))._halfedge_handle.idx());
             }
-            std::cout << std::endl;
 
             printf("halfedge from_v to_v next_he prev_he oppo_he face\n");
             for(unsigned i = 0; i < n_halfedges(); ++i)
@@ -1852,7 +1851,6 @@ class GraphTopology
                                             halfedge(halfedge_handle(i))._next_halfedge_handle.idx(), halfedge(halfedge_handle(i))._prev_halfedge_handle.idx(),
                                             opposite_halfedge_handle(halfedge_handle(i)).idx(), halfedge(halfedge_handle(i))._face_handle.idx());
             }
-            printf("");
         }
 
     

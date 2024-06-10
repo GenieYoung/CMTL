@@ -165,7 +165,7 @@ Point<T> Polygon<T>::normal() const
         return Point<T>();
     #if 1
         /* Newells algorithm */
-        T x, y, z;
+        T x = 0, y = 0, z = 0;
         for(unsigned i = 0, j = 1; i < _vertices.size(); ++i, ++j, j%=_vertices.size())
         {
             x += ((_vertices[i].z() + _vertices[j].z())*(_vertices[i].y() - _vertices[j].y()));

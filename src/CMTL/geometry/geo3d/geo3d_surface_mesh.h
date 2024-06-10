@@ -95,6 +95,20 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
         ~SurfaceMesh()
         {
         }
+
+    public:
+        Point normal(FaceHandle fh) const
+        {
+            /* Newells algorithm */
+            T x, y, z;
+            for(auto first_v = this->fv_begin(fh), second_v = first_v; first_v != this->fv_end(fh); ++first_v, ++second_v)
+            {
+                x += ((this->point(*first_v).z() + this->point(*second_v).z())*(this->point(*first_v).y() - this->point(*second_v).y()));
+                y += ((this->point(*first_v).x() + this->point(*second_v).x())*(this->point(*first_v).z() - this->point(*second_v).z()));
+                z += ((this->point(*first_v).y() + this->point(*second_v).y())*(this->point(*first_v).x() - this->point(*second_v).x()));
+            }
+            return Point(x, y, z);
+        }
 };
     
 }   // namespace geo3d
