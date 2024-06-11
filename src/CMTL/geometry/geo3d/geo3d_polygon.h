@@ -155,7 +155,7 @@ T Polygon<T>::area2() const
     {
         p += ((_vertices[i]-_vertices[0]) % (_vertices[j]-_vertices[0]));
     }
-    return p.size2() / T(4);
+    return p.length_square() / T(4);
 }
 
 template<typename T>

@@ -54,14 +54,14 @@ void normal(const Point& p0, const Point& p1, const Point& p2, Point& n)
 template<typename Point>
 Point normalize_3d(const Point& p)
 {
-    return p / sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
+    return p / square_root(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
 }
 
 /* template specialization */
 template<>
 geo3d::Point<mpq_class> normalize_3d<geo3d::Point<mpq_class>>(const geo3d::Point<mpq_class>& p)
 {
-    return p / sqrt(p.size2());
+    return p / square_root(p.length_square());
 }
 
 }   // namespace geometry_process

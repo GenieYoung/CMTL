@@ -1,6 +1,8 @@
 #ifndef __geo3d_point_h__
 #define __geo3d_point_h__
 
+#include "common/number_utils.h"
+
 #include <iostream>
 #include <iomanip>
 #include <assert.h>
@@ -212,7 +214,7 @@ class Point
         /**
          * @brief the square length of the point
          */
-        T size2() const
+        T length_square() const
         {
             return (*this) * (*this);
         }
@@ -258,6 +260,14 @@ class Point
     private:
         T _x, _y, _z;
 };
+
+template<typename T_IN, typename T_OUT>
+Point<T_OUT> point_cast(const Point<T_IN>& p)
+{
+    return Point<T_OUT>(util_cast<T_IN, T_OUT>(p[0]),
+                        util_cast<T_IN, T_OUT>(p[1]),
+                        util_cast<T_IN, T_OUT>(p[2]));
+}
 
 }   // namespace geo3d
 }   // namespace geometry

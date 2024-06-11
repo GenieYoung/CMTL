@@ -1132,16 +1132,22 @@ class GraphTopology
         }
 
         /* check if the vertex is a boundary vertex */
-        bool is_boundary(VertexHandle vh)
+        bool is_boundary(VertexHandle vh) const
         {
             HalfedgeHandle heh(halfedge_handle(vh));
             return !(heh.is_valid() && face_handle(heh).is_valid());
         }
 
-        /* check if a halfedge is a boundary vertex */
-        bool is_boundary(HalfedgeHandle heh)
+        /* check if a halfedge is a boundary halfedge */
+        bool is_boundary(HalfedgeHandle heh) const
         {
             return !face_handle(heh).is_valid();
+        }
+
+        /* check if a edge is a boundary edge */
+        bool is_boundary(EdgeHandle eh) const
+        {
+            return is_boundary(halfedge_handle(eh,0)) || is_boundary(halfedge_handle(eh,1));
         }
 
     public:
