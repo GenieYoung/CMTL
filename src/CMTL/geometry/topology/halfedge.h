@@ -537,6 +537,118 @@ class VertexOHalfedgeIterBase
         mutable GraphHalfedgeHandle _gheh;
 };
 
+//
+template<typename Topo, bool CCW>
+class VertexEdgeIterBase
+{
+    public:
+        /* default constructor */
+        VertexEdgeIterBase() : _topo(0), _cycle_count(0)
+        {
+        }
+
+        VertexEdgeIterBase(const Topo* topo, VertexHandle vh, bool end = false)
+                         : _topo(topo), _start(_topo->halfedge_handle(vh)), _heh(_start), _cycle_count(static_cast<int>(end))
+        {
+            if(CCW)
+            {
+                int cc = _cycle_count;
+                ++(*this);
+                _start = _heh;
+                _cycle_count = cc;
+            }
+        }
+
+    public:
+        /* pre-increment */
+        VertexEdgeIterBase& operator++()
+        {
+            if(CCW)
+            {
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)  
+                    ++_cycle_count;
+            }
+            else
+            {
+                _heh = _topo->cw_rotated_halfedge_handle(_heh);
+                if(_heh == _start)
+                    ++_cycle_count;
+            }
+            return *this;
+        }
+
+        /* post-increment */
+        VertexEdgeIterBase operator++(int)
+        {
+            VertexEdgeIterBase copy(*this);
+            ++(*this);
+            return copy;
+        }
+
+        /* pre-decrement */
+        VertexEdgeIterBase& operator--()
+        {
+            if(CCW)
+            {
+                if(_heh == _start)  
+                    --_cycle_count;
+                _heh = _topo->cw_rotated_halfedge_handle(_heh);
+            }
+            else
+            {
+                if(_heh == _start)
+                    --_cycle_count;
+                _heh = _topo->ccw_rotated_halfedge_handle(_heh);
+            }
+            return *this;
+        }
+
+        /* post-decrement */
+        VertexEdgeIterBase operator--(int)
+        {
+            VertexEdgeIterBase copy(*this);
+            --(*this);
+            return copy;
+        }
+
+        /* dereferencing opeartor */
+        GraphEdgeHandle operator*() const
+        {
+            return GraphEdgeHandle(_topo->edge_handle(_heh).idx(), _topo);
+        }
+
+        /* pointer operator */
+        GraphEdgeHandle* operator->() const
+        {
+            _geh =  **this;
+            return &_geh;
+        }
+
+        /* check whether the iterator is valid in the first circulate */
+        bool is_valid() const
+        {
+            return _heh.is_valid() && _cycle_count == 0;
+        }
+
+        bool operator==(const VertexEdgeIterBase& other) const
+        {
+            return _topo == other._topo && _start == other._start && _heh == other._heh && _cycle_count == other._cycle_count;
+        }
+
+        bool operator!=(const VertexEdgeIterBase& other) const
+        {
+            return !operator==(other);
+        }
+
+
+    public:
+        const Topo* _topo;
+        HalfedgeHandle _start, _heh;
+        int _cycle_count;
+        mutable GraphEdgeHandle _geh;
+};
+
 template<typename Topo, bool CCW>
 class VertexFaceIterBase
 {
@@ -914,6 +1026,13 @@ class GraphTopology
         typedef VertexOHalfedgeIter     ConstVertexOHalfedgeIter;
         typedef VertexOHalfedgeCCWIter  ConstVertexOHalfedgeCCWIter;
         typedef VertexOHalfedgeCWIter   ConstVertexOHalfedgeCWIter;
+
+        typedef VertexEdgeIterBase<GraphTopology, true>    VertexEdgeIter;
+        typedef VertexEdgeIterBase<GraphTopology, true>    VertexEdgeCCWIter;
+        typedef VertexEdgeIterBase<GraphTopology, false>   VertexEdgeCWIter;
+        typedef VertexEdgeIter     ConstVertexEdgeIter;
+        typedef VertexEdgeCCWIter  ConstVertexEdgeCCWIter;
+        typedef VertexEdgeCWIter   ConstVertexEdgeCWIter;
 
         typedef VertexFaceIterBase<GraphTopology, true>     VertexFaceIter;
         typedef VertexFaceIterBase<GraphTopology, true>     VertexFaceCCWIter;
@@ -1967,6 +2086,13 @@ class Graph : public GraphTopology
         typedef typename GraphTopology::ConstVertexOHalfedgeIter     ConstVertexOHalfedgeIter;
         typedef typename GraphTopology::ConstVertexOHalfedgeCCWIter  ConstVertexOHalfedgeCCWIter;
         typedef typename GraphTopology::ConstVertexOHalfedgeCWIter   ConstVertexOHalfedgeCWIter;
+
+        typedef typename GraphTopology::VertexEdgeIter               VertexEdgeIter;
+        typedef typename GraphTopology::VertexEdgeCCWIter            VertexEdgeCCWIter;
+        typedef typename GraphTopology::VertexEdgeCWIter             VertexEdgeCWIter;
+        typedef typename GraphTopology::ConstVertexEdgeIter          ConstVertexEdgeIter;
+        typedef typename GraphTopology::ConstVertexEdgeCCWIter       ConstVertexEdgeCCWIter;
+        typedef typename GraphTopology::ConstVertexEdgeCWIter        ConstVertexEdgeCWIter;
         
         typedef typename GraphTopology::VertexFaceIter               VertexFaceIter;
         typedef typename GraphTopology::VertexFaceCCWIter            VertexFaceCCWIter;

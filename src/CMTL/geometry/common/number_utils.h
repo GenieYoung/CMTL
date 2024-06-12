@@ -26,6 +26,13 @@ inline double to_double(const T& v)
 }
 
 template<typename T>
+inline T absolute(const T& v)
+{
+    if(v > 0)   return v;
+    else    return -v;
+}
+
+template<typename T>
 inline T square_root(const T& v)
 {
     return T(std::sqrt(to_double(v)));

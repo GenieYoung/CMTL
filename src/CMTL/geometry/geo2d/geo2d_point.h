@@ -234,7 +234,7 @@ class Point
         */
         friend std::ostream& operator<<(std::ostream& os, const Point& p)
         {
-            os << "[" << p._x << ", " << p._y << "]";
+            os << "[" << to_double(p._x) << ", " << to_double(p._y) << "]";
             return os;
         }
 

@@ -71,6 +71,13 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
         typedef typename halfedge::Graph<Traits>::ConstVertexOHalfedgeCCWIter   ConstVertexOHalfedgeCCWIter;
         typedef typename halfedge::Graph<Traits>::ConstVertexOHalfedgeCWIter    ConstVertexOHalfedgeCWIter;
 
+        typedef typename halfedge::Graph<Traits>::VertexEdgeIter                VertexEdgeIter;
+        typedef typename halfedge::Graph<Traits>::VertexEdgeCCWIter             VertexEdgeCCWIter;
+        typedef typename halfedge::Graph<Traits>::VertexEdgeCWIter              VertexEdgeCWIter;
+        typedef typename halfedge::Graph<Traits>::ConstVertexEdgeIter           ConstVertexEdgeIter;
+        typedef typename halfedge::Graph<Traits>::ConstVertexEdgeCCWIter        ConstVertexEdgeCCWIter;
+        typedef typename halfedge::Graph<Traits>::ConstVertexEdgeCWIter         ConstVertexEdgeCWIter;
+
         typedef typename halfedge::Graph<Traits>::VertexFaceIter                VertexFaceIter;
         typedef typename halfedge::Graph<Traits>::VertexFaceCCWIter             VertexFaceCCWIter;
         typedef typename halfedge::Graph<Traits>::VertexFaceCWIter              VertexFaceCWIter;
@@ -100,14 +107,32 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
         Point normal(FaceHandle fh) const
         {
             /* Newells algorithm */
-            T x, y, z;
-            for(auto first_v = this->fv_begin(fh), second_v = first_v; first_v != this->fv_end(fh); ++first_v, ++second_v)
+            T x = T(0), y = T(0), z = T(0);
+            auto first_v = this->fv_begin(fh);
+            auto second_v = this->fv_begin(fh);
+            ++second_v;
+            assert(first_v != second_v);
+            for(; first_v != this->fv_end(fh); ++first_v, ++second_v)
             {
                 x += ((this->point(*first_v).z() + this->point(*second_v).z())*(this->point(*first_v).y() - this->point(*second_v).y()));
                 y += ((this->point(*first_v).x() + this->point(*second_v).x())*(this->point(*first_v).z() - this->point(*second_v).z()));
                 z += ((this->point(*first_v).y() + this->point(*second_v).y())*(this->point(*first_v).x() - this->point(*second_v).x()));
             }
             return Point(x, y, z);
+        }
+
+        bool is_triangle_mesh() const
+        {
+            for(auto f_it = this->faces_begin(); f_it != this->faces_end(); ++f_it)
+            {
+                unsigned count = 0;
+                for(auto fv_it = this->fv_begin(*f_it); fv_it != this->fv_end(*f_it); ++fv_it)
+                {
+                    if(count++ > 3)
+                        return false;
+                }
+            }
+            return true;
         }
 };
     

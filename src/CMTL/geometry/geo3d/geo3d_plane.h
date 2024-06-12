@@ -3,6 +3,7 @@
 
 #include "geo2d/geo2d_point.h"
 #include "geo3d_point.h"
+#include "common/number_utils.h"
 #include <vector>
 
 namespace CMTL  {
@@ -29,22 +30,28 @@ class Plane
          */
         Plane(const Point<T>& p, const Point<T>& n) : _origin(p), _normal(n)
         {
-            unsigned first_nonzero_id = (_normal[0] != 0 ? 0 : (_normal[1] != 0 ? 1 : 2));
-            T first_nonzero_value = _normal[first_nonzero_id];
-            assert(first_nonzero_value != 0);
-            _params[0] = _normal[0] / first_nonzero_value;
-            _params[1] = _normal[1] / first_nonzero_value;
-            _params[2] = _normal[2] / first_nonzero_value;
-            _params[first_nonzero_id] = T(1); // avoid numerical error
+            unsigned max_abs_id;
+            if(absolute(_normal[0]) >= absolute(_normal[1]) && absolute(_normal[0]) >= absolute(_normal[1]))
+                max_abs_id = 0;
+            else if(absolute(_normal[1]) >= absolute(_normal[0]) && absolute(_normal[1]) >= absolute(_normal[2]))
+                max_abs_id = 1;
+            else
+                max_abs_id = 2;
+            T max_abs_v = _normal[max_abs_id];
+            assert(max_abs_v != 0);
+            _params[0] = _normal[0] / max_abs_v;
+            _params[1] = _normal[1] / max_abs_v;
+            _params[2] = _normal[2] / max_abs_v;
+            _params[max_abs_id] = T(1); // avoid numerical error
             _params[3] = -(_params[0]*_origin[0] + _params[1]*_origin[1] + _params[2]*_origin[2]);
             unsigned idx = 0;
             for(unsigned i = 0; i < 3; ++i)
             {
-                if(i != first_nonzero_id)
+                if(i != max_abs_id)
                     _project_cood[idx++] = i;
             }
-            _project_cood[idx] = first_nonzero_id;
-            _project_normal[first_nonzero_id] = T(1);
+            _project_cood[idx] = max_abs_id;
+            _project_normal[max_abs_id] = T(1);
         }
 
         /**
