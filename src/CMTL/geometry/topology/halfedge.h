@@ -189,6 +189,11 @@ class GraphVertexHandle : public GraphElemHandle, public VertexHandle
             : GraphElemHandle(graph), VertexHandle(idx)
         {
         }
+
+    public:
+        GraphHalfedgeHandle halfedge() const;
+
+        bool is_boundary() const;
 };
 
 /* edge handle connect to a topology graph */
@@ -199,6 +204,9 @@ class GraphEdgeHandle : public GraphElemHandle, public EdgeHandle
             : GraphElemHandle(graph), EdgeHandle(idx)
         {
         }
+
+    public:
+        bool is_boundary() const;
 };
 
 /* half edge handle connect to a topology graph */
@@ -231,6 +239,8 @@ class GraphHalfedgeHandle : public GraphElemHandle, public HalfedgeHandle
 
         /* incident face */
         GraphFaceHandle face() const;
+
+        bool is_boundary() const;
 };
 
 /* face handle connect to a topology graph */
@@ -2002,6 +2012,23 @@ class GraphTopology
         std::vector<FaceItem>   _faces;
 };
 
+/* GraphVertexHandle make smart*/
+GraphHalfedgeHandle GraphVertexHandle::halfedge() const
+{
+    return GraphHalfedgeHandle(this->graph()->halfedge_handle(*this).idx(), this->graph());
+}
+
+bool GraphVertexHandle::is_boundary() const
+{
+    return this->graph()->is_boundary(*this);
+}
+
+/* GraphEdgeHandle make smart*/
+bool GraphEdgeHandle::is_boundary() const
+{
+    return this->graph()->is_boundary(*this);
+}
+
 /* GraphHalfedgeHandle make smart*/
 GraphHalfedgeHandle GraphHalfedgeHandle::next() const
 {
@@ -2036,6 +2063,11 @@ GraphEdgeHandle GraphHalfedgeHandle::edge() const
 GraphFaceHandle GraphHalfedgeHandle::face() const
 {
     return GraphFaceHandle(this->graph()->face_handle(*this).idx(), this->graph());
+}
+
+bool GraphHalfedgeHandle::is_boundary() const
+{
+    return this->graph()->is_boundary(*this);
 }
 
 /**

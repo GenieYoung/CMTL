@@ -2,7 +2,7 @@
 #include "CMTL/geometry/IO/export_obj.h"
 #include "gmpxx.h"
 
-typedef CMTL::geometry::geo3d::SurfaceMesh<mpq_class> SurfaceMesh;
+typedef CMTL::geometry::geo3d::SurfaceMesh<double> SurfaceMesh;
 typedef SurfaceMesh::Point Point;
 using CMTL::geometry::geometry_process::extrude_surface;
 using CMTL::geometry::io::export_obj;
@@ -11,7 +11,7 @@ void test1()
 {
     SurfaceMesh sm;
     std::vector<SurfaceMesh::VertexHandle> vertices;
-    vertices.push_back(sm.add_vertex(Point(0,0,1)));
+    vertices.push_back(sm.add_vertex(Point(0,0,0)));
     vertices.push_back(sm.add_vertex(Point(1,0,0)));
     vertices.push_back(sm.add_vertex(Point(1,1,0)));
     vertices.push_back(sm.add_vertex(Point(0,1,0)));

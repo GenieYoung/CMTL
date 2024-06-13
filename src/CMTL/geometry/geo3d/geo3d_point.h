@@ -220,6 +220,14 @@ class Point
         }
 
         /**
+         * @brief check whether this point parallel with other point
+         */
+        bool parallel_with(const Point& p) const
+        {
+            return ((*this) % p) == Point();
+        }
+
+        /**
          * @brief less comparator, used for sort.
         */
         bool operator<(const Point& p) const
@@ -235,7 +243,7 @@ class Point
          */
         bool operator==(const Point& p) const
         {
-            return _x == p._x && _y == p._y;
+            return _x == p._x && _y == p._y && _z == p._z;
         }
 
         /**

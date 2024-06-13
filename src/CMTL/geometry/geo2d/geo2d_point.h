@@ -228,6 +228,14 @@ class Point
             return !(*this == p);
         }
 
+        /**
+         * @brief check whether this point parallel with other point
+         */
+        bool parallel_with(const Point& p) const
+        {
+            return ((*this) % p) == Point();
+        }
+
     public:
         /**
          * @brief formatted print.
