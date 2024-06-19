@@ -68,13 +68,13 @@ namespace internal{
                 {
                     if(v_it->is_boundary())
                     {
-                        typename geo3d::SurfaceMesh<T>::Halfedge next_boundary_edge = v_it->halfedge();
-                        typename geo3d::SurfaceMesh<T>::Halfedge prev_boundary_edge = v_it->halfedge().prev();
+                        auto next_boundary_edge = v_it->halfedge();
+                        auto prev_boundary_edge = v_it->halfedge().prev();
                         assert(next_boundary_edge.is_boundary() && prev_boundary_edge.is_boundary());
-                        typename geo3d::SurfaceMesh<T>::VertexHandle prev_vh = prev_boundary_edge.from_vertex();
-                        typename geo3d::SurfaceMesh<T>::VertexHandle next_vh = next_boundary_edge.to_vertex();
-                        typename geo3d::SurfaceMesh<T>::FaceHandle prev_boundary_face = prev_boundary_edge.opposite().face();
-                        typename geo3d::SurfaceMesh<T>::FaceHandle next_boundary_face = next_boundary_edge.opposite().face();
+                        auto prev_vh = prev_boundary_edge.from_vertex();
+                        auto next_vh = next_boundary_edge.to_vertex();
+                        auto prev_boundary_face = prev_boundary_edge.opposite().face();
+                        auto next_boundary_face = next_boundary_edge.opposite().face();
                         geo3d::Point<T> prev_edge_vec = normalize_3d(_origin_mesh.point(*v_it) - _origin_mesh.point(prev_vh));
                         geo3d::Point<T> next_edge_vec = normalize_3d(_origin_mesh.point(next_vh) - _origin_mesh.point(*v_it));
                         geo3d::Point<T> prev_edge_normal = normals[prev_boundary_face.idx()] % prev_edge_vec;

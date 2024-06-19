@@ -9,6 +9,11 @@ namespace CMTL{
 namespace geometry{
 namespace io{
 
+/**
+ * @brief export a surface mesh into .obj format
+ * @param sm surface mesh
+ * @param file target .obj file position
+ */
 template<typename T>
 void export_obj(const geo3d::SurfaceMesh<T>& sm, const std::string& file)
 {

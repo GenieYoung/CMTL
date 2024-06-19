@@ -37,10 +37,10 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
         typedef halfedge::EdgeHandle                                            EdgeHandle;
         typedef halfedge::FaceHandle                                            FaceHandle;
 
-        typedef halfedge::GraphVertexHandle                                     Vertex;
-        typedef halfedge::GraphHalfedgeHandle                                   Halfedge;
-        typedef halfedge::GraphEdgeHandle                                       Edge;
-        typedef halfedge::GraphFaceHandle                                       Face;
+        typedef halfedge::GraphVertexHandle                                     MeshVertexHandle;
+        typedef halfedge::GraphHalfedgeHandle                                   MeshHalfedgeHandle;
+        typedef halfedge::GraphEdgeHandle                                       MeshEdgeHandle;
+        typedef halfedge::GraphFaceHandle                                       MeshFaceHandle;
 
         typedef typename Traits::Point                                          Point;
         typedef typename Traits::VertexAttribute                                VertexAttribute;

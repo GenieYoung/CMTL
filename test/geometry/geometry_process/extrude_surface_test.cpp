@@ -11,10 +11,10 @@ void test1()
 {
     SurfaceMesh sm;
     std::vector<SurfaceMesh::VertexHandle> vertices;
-    vertices.push_back(sm.add_vertex(Point(0,0,0)));
+    vertices.push_back(sm.add_vertex(Point(0,0,1)));
     vertices.push_back(sm.add_vertex(Point(1,0,0)));
     vertices.push_back(sm.add_vertex(Point(1,1,0)));
-    vertices.push_back(sm.add_vertex(Point(0,1,0)));
+    vertices.push_back(sm.add_vertex(Point(0,1,-1)));
     vertices.push_back(sm.add_vertex(Point(-1,1,0)));
     vertices.push_back(sm.add_vertex(Point(-1,0,0)));
     // vertices.push_back(sm.add_vertex(Point(-1,-1,0)));

@@ -193,6 +193,7 @@ class GraphVertexHandle : public GraphElemHandle, public VertexHandle
     public:
         GraphHalfedgeHandle halfedge() const;
 
+        /* check whether the vertex is on boundary*/
         bool is_boundary() const;
 };
 
@@ -206,6 +207,7 @@ class GraphEdgeHandle : public GraphElemHandle, public EdgeHandle
         }
 
     public:
+        /* check whether the edge is on boundary*/
         bool is_boundary() const;
 };
 
@@ -240,6 +242,7 @@ class GraphHalfedgeHandle : public GraphElemHandle, public HalfedgeHandle
         /* incident face */
         GraphFaceHandle face() const;
 
+        /* check whether the halfedge is on boundary*/
         bool is_boundary() const;
 };
 
