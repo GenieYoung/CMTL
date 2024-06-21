@@ -16,15 +16,11 @@ template<typename T>
 class Triangle
 {
     public:
-        /**
-         * @brief number type
-         */
+        /* number type */
         typedef T NT;
 
     public:
-        /**
-         * @brief default constructor
-        */
+        /* default constructor */
         Triangle()
         {
         }
@@ -41,50 +37,38 @@ class Triangle
             _vertices[2][0] = p2[0]; _vertices[2][1] = p2[1];
         }
 
-        /**
-         * @brief deconstructor
-         */
+        /* deconstructor */
         ~Triangle()
         {
         }
 
     public:
-        /**
-         * @brief return the number of points
-         */
+        /* return the number of points */
         size_t size() const
         {
             return 3;
         }
 
-        /**
-         * @brief get the writable ith point
-         */
+        /* get the writable ith point */
         Point<T>& operator[](unsigned int i)
         {
             return _vertices[i];
         }
 
-        /**
-         * @brief get the const ith point
-         */
+        /* get the const ith point */
         const Point<T>& operator[](unsigned int i) const
         {
             return _vertices[i];
         }
 
-        /**
-         * @brief get the writable ith point with range check
-         */
+        /* get the writable ith point with range check */
         Point<T>& at(unsigned int i)
         {
             assert(i < 3);
             return _vertices[i];
         }
 
-        /**
-         * @brief get the const ith point with range check
-         */
+        /* get the const ith point with range check */
         const Point<T>& at(unsigned int i) const
         {
             assert(i < 3);
@@ -92,15 +76,11 @@ class Triangle
         }
 
     public:
-        /**
-         * @brief get the area of the triangle
-         */
+        /* get the area of the triangle */
         T area() const;
 
     public:
-        /**
-         * @brief formatted print.
-        */
+        /* formatted print. */
         friend std::ostream& operator<<(std::ostream& os, const Triangle& tri)
         {
             os << tri[0] << " " << tri[1] << " " << tri[2];

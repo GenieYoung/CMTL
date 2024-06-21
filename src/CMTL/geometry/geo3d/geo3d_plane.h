@@ -19,15 +19,11 @@ template<typename T>
 class Plane
 {
     public:
-        /**
-         * @brief number type
-         */
+        /* number type */
         typedef T NT;
 
     public:
-        /**
-         * @brief construct from a point on plane and plane normal
-         */
+        /* construct from a point on plane and plane normal */
         Plane(const Point<T>& p, const Point<T>& n) : _origin(p), _normal(n)
         {
             unsigned max_abs_id;
@@ -54,9 +50,7 @@ class Plane
             _project_normal[max_abs_id] = T(1);
         }
 
-        /**
-         * @brief construct from three points on plane
-         */
+        /* construct from three points on plane */
         Plane(const Point<T>& p0, const Point<T>& p1, const Point<T>& p2) : Plane(p0, (p1 - p0) % (p2 - p0))
         {
         }
@@ -71,9 +65,7 @@ class Plane
             return geo2d::Point<T>(p[_project_cood[0]], p[_project_cood[1]]);
         }
 
-        /**
-         * @brief project a 2d point on the local coordinate system to origin coordinate system
-         */
+        /* project a 2d point on the local coordinate system to origin coordinate system */
         Point<T> project_3d(const geo2d::Point<T>& p) const
         {
             Point<T> p_;
@@ -85,29 +77,19 @@ class Plane
         }
 
     private:
-        /**
-         * @brief a point on the plane
-         */
+        /* a point on the plane */
         Point<T> _origin;
 
-        /**
-         * @brief plane normal
-         */
+        /* plane normal */
         Point<T> _normal;
 
-        /**
-         * @brief parameters of plane function
-         */
+        /* parameters of plane function */
         NT _params[4];
 
-        /**
-         * @brief vector used for tranform from 2d coordinate system and 3d coordinate system
-         */
+        /* vector used for tranform from 2d coordinate system and 3d coordinate system */
         unsigned char _project_cood[3];
 
-        /**
-         * @brief the normal of local 2d coordinate system
-         */
+        /* the normal of local 2d coordinate system */
         Point<T> _project_normal;
 };
 

@@ -17,15 +17,11 @@ template<typename T>
 class Polygon
 {
     public:
-        /**
-         * @brief number type
-         */
+        /* number type */
         typedef T NT;
 
     public:
-        /**
-         * @brief default constructor
-        */
+        /* default constructor */
         Polygon()
         {
         }
@@ -45,66 +41,50 @@ class Polygon
             }
         }
 
-        /**
-         * @brief construct from a point list
-        */
+        /* construct from a point list */
         Polygon(const std::vector<Point<T>>& vertices)
         {
             _vertices.assign(vertices.begin(), vertices.end());
         }
         
-        /**
-         * @brief copy constructor
-         */
+        /* copy constructor */
         Polygon(const Polygon& poly)
         {
             _vertices.assign(poly._vertices.begin(), poly._vertices.end());
         }
 
-        /**
-         * @brief deconstructor
-         */
+        /* deconstructor */
         ~Polygon()
         {
         }
 
     public:
-        /**
-         * @brief return the number of points
-         */
+        /* return the number of points */
         size_t size() const
         {
             return _vertices.size();
         }
 
-        /**
-         * @brief get the writable ith point
-         */
+        /* get the writable ith point */
         Point<T>& operator[](unsigned int i)
         {
             return _vertices[i];
         }
 
-        /**
-         * @brief get the const ith point
-         */
+        /* get the const ith point */
         const Point<T>& operator[](unsigned int i) const
         {
             return _vertices[i];
         }
 
-        /**
-         * @brief get the writable ith point with range check
-         */
+        /* get the writable ith point with range check */
         Point<T>& at(unsigned int i)
         {
             assert(i < _vertices.size());
             return _vertices[i];
         }
 
-        /**
-         * @brief get the const ith point with range check
-         */
+        /* get the const ith point with range check */
         const Point<T>& at(unsigned int i) const
         {
             assert(i < _vertices.size());
@@ -112,15 +92,11 @@ class Polygon
         }
 
     public:
-        /**
-         * @brief get the area of the polygon
-         */
+        /* get the area of the polygon */
         T area() const;
 
     public:
-        /**
-         * @brief formatted print.
-        */
+        /* formatted print. */
         friend std::ostream& operator<<(std::ostream& os, const Polygon& poly)
         {
             os << "{ ";

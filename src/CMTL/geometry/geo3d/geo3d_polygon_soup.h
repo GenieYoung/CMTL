@@ -16,15 +16,11 @@ template<typename T>
 class PolygonSoup
 {
     public:
-        /**
-         * @brief number type
-         */
+        /* number type */
         typedef T NT;
 
     public:
-        /**
-         * @brief default constructor
-        */
+        /* default constructor */
         PolygonSoup()
         {
         }
@@ -48,50 +44,38 @@ class PolygonSoup
             }
         }
 
-        /**
-         * @brief copy constructor
-         */
+        /* copy constructor */
         PolygonSoup(const PolygonSoup& other)
         {
             _vertices.assign(other._vertices.begin(), other._vertices.end());
             _faces.assign(other._faces.begin(), other._faces.end());
         }
 
-        /**
-         * @brief deconstructor
-         */
+        /* deconstructor */
         ~PolygonSoup()
         {
         }
 
     public:
-        /**
-         * @brief return the number of points
-         */
+        /* return the number of points */
         size_t n_points() const
         {
             return _vertices.size();
         }
 
-        /**
-         * @brief return the number of polygons
-         */
+        /* return the number of polygons */
         size_t n_faces() const
         {
             return _faces.size();
         }
 
-        /**
-         * @brief get the ith point
-         */
+        /* get the ith point */
         Point<T>& point(unsigned i)
         {
             return _vertices[i];
         }
 
-        /**
-         * @brief get the const ith point
-         */
+        /* get the const ith point */
         const Point<T>& point(unsigned i) const
         {
             return _vertices[i];
