@@ -46,7 +46,7 @@ class VectorT
         }
 
         /* construct using DIM values */
-        template<typename ... TT>
+        template<typename ... TT, typename = typename std::enable_if<sizeof...(TT) == DIM>::type>
         constexpr VectorT(TT... vs) : _values{{util_cast<TT, T>(vs)...}}
         {
         }
@@ -54,15 +54,15 @@ class VectorT
         /* default copy constructor*/
         VectorT(const VectorT& other) = default;
 
-        /* default assign constructor */
-        VectorT& operator=(const VectorT& other) = default;
-
         /* copy & cast constructor */
         template<typename TT>
         explicit VectorT(const VectorT<TT, DIM>& other)
         {
             operator=(other);
         }
+
+        /* default assign operator */
+        VectorT& operator=(const VectorT& other) = default;
 
         /* assign & cast operator */
         template<typename TT>

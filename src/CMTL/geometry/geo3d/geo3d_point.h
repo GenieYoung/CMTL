@@ -24,6 +24,11 @@ class Point
          */
         typedef T NT;
 
+        /**
+         * @brief origin point
+         */
+        static Point<T> Origin;
+
     public:
         /**
          * @brief constructor.
@@ -224,7 +229,7 @@ class Point
          */
         bool parallel_with(const Point& p) const
         {
-            return ((*this) % p) == Point();
+            return ((*this) % p) == Origin;
         }
 
         /**
@@ -268,6 +273,9 @@ class Point
     private:
         T _x, _y, _z;
 };
+
+template<typename T>
+Point<T> Point<T>::Origin = Point<T>();
 
 template<typename T_IN, typename T_OUT>
 Point<T_OUT> point_cast(const Point<T_IN>& p)
