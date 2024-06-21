@@ -1,10 +1,12 @@
 #include "CMTL/geometry/geometry_process/extrude_surface.h"
+#include "CMTL/geometry/IO/import_obj.h"
 #include "CMTL/geometry/IO/export_obj.h"
 #include "gmpxx.h"
 
 typedef CMTL::geometry::geo3d::SurfaceMesh<double> SurfaceMesh;
 typedef SurfaceMesh::Point Point;
 using CMTL::geometry::geometry_process::extrude_surface;
+using CMTL::geometry::io::import_obj;
 using CMTL::geometry::io::export_obj;
 
 void test1()
@@ -32,7 +34,18 @@ void test1()
     export_obj(extrude_mesh, "test1_output.obj");
 }
 
+void test2()
+{
+    SurfaceMesh sm;
+    import_obj(sm, "/home/yangjinlin/Work/FinFET/Process_Exact/28/operation/exposed.obj");
+    export_obj(sm, "test2_input.obj");
+    SurfaceMesh extrude_mesh;
+    extrude_surface(sm, 0.1, extrude_mesh);
+    export_obj(extrude_mesh, "test2_input.obj");
+}
+
 int main()
 {
-    test1();
+    //test1();
+    test2();
 }
