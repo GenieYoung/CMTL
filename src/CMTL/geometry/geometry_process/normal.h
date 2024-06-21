@@ -1,7 +1,6 @@
 #ifndef __geometry_process_normal__
 #define __geometry_process_normal__
 
-#include "common/number_utils.h"
 #include "geo3d/geo3d_point.h"
 
 namespace CMTL{
@@ -35,14 +34,16 @@ void normal(const Polygon& poly, Point& n)
  * @brief compute a normal vector of a 3d simple triangle
  * @tparam Point point type
  * @note the point type should have operator[] to get coordinate,
- *       the result point must have size more than 3 before call this method.
+ *       and has a fixed size.
  */
 template<typename Point>
-void normal(const Point& p0, const Point& p1, const Point& p2, Point& n)
+Point normal(const Point& p0, const Point& p1, const Point& p2)
 {
+    Point n;
     n[0] = (p1[1]-p0[1])*(p2[2]-p1[2])-(p1[2]-p0[2])*(p2[1]-p1[1]);
     n[1] = (p1[2]-p0[2])*(p2[0]-p1[0])-(p1[0]-p0[0])*(p2[2]-p1[2]);
     n[2] = (p1[0]-p0[0])*(p2[1]-p1[1])-(p1[1]-p0[1])*(p2[0]-p1[0]);
+    return n;
 }
 
 /**

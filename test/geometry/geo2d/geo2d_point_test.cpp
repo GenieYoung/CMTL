@@ -5,6 +5,9 @@ int main()
 {
     CMTL::geometry::geo2d::Point<double> p(1, 2);
     CMTL::geometry::geo2d::Point<double> q(3, 4);
+    CMTL::geometry::geo2d::Point<mpq_class> rp(5, 6);
+
+    // operator test
     std::cout << p << std::endl;
     std::cout << p*q << std::endl;
     std::cout << p%q << std::endl;
