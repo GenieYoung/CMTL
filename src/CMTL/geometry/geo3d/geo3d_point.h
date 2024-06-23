@@ -1,7 +1,7 @@
 #ifndef __geo3d_point_h__
 #define __geo3d_point_h__
 
-#include "common/number_utils.h"
+#include "common/vectorT.h"
 
 #include <iostream>
 #include <iomanip>
@@ -16,7 +16,7 @@ namespace geo3d{
  * @tparam T value type of coordinate
 */
 template<typename T>
-class Point
+class Point : public VectorT<T, 3, Point<T>>
 {
     public:
         /* number type */
@@ -27,14 +27,28 @@ class Point
 
     public:
         /* constructor. */
-        Point(const T& x = 0, const T& y = 0, const T& z = 0) : _x(x), _y(y), _z(z) {}
+        Point(const T& x = 0, const T& y = 0, const T& z = 0) : VectorT<T, 3, Point>(x, y, z) 
+        {
+        }
 
         /* copy constructor */
-        Point(const Point& p)
+        Point(const Point& other) = default;
+
+        /* copy & cast constructor */
+        template<typename TT>
+        explicit Point(const Point<TT>& other) : VectorT<T, 3, Point>(other)
         {
-            _x = p._x;
-            _y = p._y;
-            _z = p._z;
+        }
+
+        /* default assign operator */
+        Point& operator=(const Point& other) = default;
+
+        /* assign & cast operator */
+        template<typename TT>
+        Point& operator=(const Point<TT>& other)
+        {
+            VectorT<T, 3, Point>::operator=(other);
+            return *this;
         }
 
         /* deconstructor */
@@ -46,148 +60,50 @@ class Point
         /* get the writable x coordinate. */
         T& x()  
         {
-            return _x; 
+            return this->operator[](0);
         }
 
         /* get the const x coordinate. */
         const T& x() const 
         {
-            return _x; 
+            return this->operator[](0);
         }
         
         /* get the writable y coordinate. */
         T& y() 
         {
-            return _y; 
+            return this->operator[](1); 
         }
 
         /* get the const y coordinate. */
         const T& y() const 
         {
-            return _y; 
+            return this->operator[](1); 
         }
 
         /* get the writable z coordinate. */
         T& z() 
         {
-            return _z; 
+            return this->operator[](2); 
         }
 
         /* get the const y coordinate. */
         const T& z() const 
         {
-            return _z; 
-        }
-
-        /* get the writable ith coordinate. */
-        T& operator[](unsigned int i)
-        {
-            if(i == 0)  return _x;
-            if(i == 1)  return _y;
-            if(i == 2)  return _z;
-            assert(false);
-        }
-
-        /* get the const ith coordinate. */
-        const T& operator[](unsigned int i) const
-        {
-            if(i == 0)  return _x;
-            if(i == 1)  return _y;
-            if(i == 2)  return _z;
-            assert(false);
+            return this->operator[](2); 
         }
 
     public:
-        /* add two point. */
-        Point operator+(const Point& p) const
-        {
-            return Point(_x + p._x, _y + p._y, _z + p._z);
-        }
-
-        /* self-addition. */
-        const Point& operator+=(const Point& p)
-        {
-            _x += p._x;
-            _y += p._y;
-            _z += p._z;
-            return *this;
-        }
-
-        /* subtract two point. */
-        Point operator-(const Point& p) const
-        {
-            return Point(_x - p._x, _y - p._y, _z - p._z);
-        }
-
-        /* self-subtract. */
-        const Point& operator-=(const Point& p)
-        {
-            _x -= p._x;
-            _y -= p._y;
-            _z -= p._z;
-            return *this;
-        }
-
-        /* do scale by multiply. */
-        Point operator*(T scale) const
-        {
-            return Point(_x * scale, _y * scale, _z * scale);
-        }
-
-        /* self-scale by multiply. */
-        const Point& operator*=(T scale)
-        {
-            _x *= scale;
-            _y *= scale;
-            _z *= scale;
-            return *this;
-        }
-
-        /* do scale by divide. */
-        Point operator/(T scale) const
-        {
-            assert(scale != 0);
-            return Point(_x / scale, _y / scale, _z / scale);
-        }
-
-        /* self-scale by divide. */
-        const Point& operator/=(T scale)
-        {
-            assert(scale != 0);
-            _x /= scale;
-            _y /= scale;
-            _z /= scale;
-            return *this;
-        }
-
-        /* dot product. */
-        T operator*(const Point& p) const
-        {
-            return _x * p._x + _y * p._y + _z * p._z;
-        }
-
-        /* dot product. */
-        T dot(const Point& p) const
-        {
-            return _x * p._x + _y * p._y + _z * p._z;
-        }
-
         /* cross product. */
         Point operator%(const Point& p) const
         {
-            return Point(_y*p._z-_z*p._y, _z*p._x-_x*p._z, _x*p._y-_y*p._x);
+            return Point(y()*p.z()-z()*p.y(), z()*p.x()-x()*p.z(), x()*p.y()-y()*p.z());
         }
 
         /* cross product. */
         Point cross(const Point& p) const
         {
-            return Point(_y*p._z-_z*p._y, _z*p.x-_x*p._z, _x*p._y-_y*p._x);
-        }
-
-        /* the square length of the point */
-        T length_square() const
-        {
-            return (*this) * (*this);
+            return (*this) % p;
         }
 
         /* check whether this point parallel with other point */
@@ -195,39 +111,6 @@ class Point
         {
             return ((*this) % p) == Origin;
         }
-
-        /* less comparator, used for sort. */
-        bool operator<(const Point& p) const
-        {
-            if(_x != p._x)  return _x < p._x;
-            if(_y != p._y)  return _y < p._y;
-            if(_z != p._z)  return _z < p._z;
-            return false;
-        }
-
-        /* comparator */
-        bool operator==(const Point& p) const
-        {
-            return _x == p._x && _y == p._y && _z == p._z;
-        }
-
-        /* comparator */
-        bool operator!=(const Point& p) const
-        {
-            return !(*this == p);
-        }
-
-    public:
-        /* formatted print. */
-        friend std::ostream& operator<<(std::ostream& os, const Point& p)
-        {
-            os << "[" << to_double(p._x) << ", " << to_double(p._y) << ", " << to_double(p._z) << "]";
-            return os;
-        }
-
-
-    private:
-        T _x, _y, _z;
 };
 
 template<typename T>

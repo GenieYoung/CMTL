@@ -16,7 +16,7 @@ namespace geometry{
  * @tparam T value type
  * @tparam DIM dimension of vector
  */
-template<typename T, unsigned DIM>
+template<typename T, unsigned DIM, typename Derived>
 class VectorT
 {
     protected:
@@ -55,8 +55,8 @@ class VectorT
         VectorT(const VectorT& other) = default;
 
         /* copy & cast constructor */
-        template<typename TT>
-        explicit VectorT(const VectorT<TT, DIM>& other)
+        template<typename TT, typename Derived2>
+        explicit VectorT(const VectorT<TT, DIM, Derived2>& other)
         {
             operator=(other);
         }
@@ -65,8 +65,8 @@ class VectorT
         VectorT& operator=(const VectorT& other) = default;
 
         /* assign & cast operator */
-        template<typename TT>
-        VectorT& operator=(const VectorT<TT, DIM>& other)
+        template<typename TT, typename Derived2>
+        VectorT& operator=(const VectorT<TT, DIM, Derived2>& other)
         {
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] = util_cast<TT, T>(other[i]);
@@ -93,58 +93,58 @@ class VectorT
         }
 
         /* self-addition */
-        const VectorT& operator+=(const VectorT& other)
+        const Derived& operator+=(const VectorT& other)
         {
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] += other._values[i];
-            return *this;
+            return static_cast<const Derived &>(*this);
         }
 
         /* add two vector */
-        VectorT operator+(const VectorT& other) const
+        Derived operator+(const VectorT& other) const
         {
             return VectorT(*this) += other;
         }
 
         /* self-subtract */
-        const VectorT& operator-=(const VectorT& other)
+        const Derived& operator-=(const VectorT& other)
         {
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] -= other._values[i];
-            return *this;
+            return static_cast<const Derived &>(*this);
         }
 
         /* subtract two vector */
-        VectorT operator-(const VectorT& other) const
+        Derived operator-(const VectorT& other) const
         {
             return VectorT(*this) -= other;
         }
 
         /* self-scale by multiply */
-        const VectorT& operator*=(const T& scale)
+        const Derived& operator*=(const T& scale)
         {
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] *= scale;
-            return *this;
+            return static_cast<const Derived &>(*this);
         }
 
         /* do scale by multiply */
-        VectorT operator*(const T& scale) const
+        Derived operator*(const T& scale) const
         {
             return VectorT(*this) *= scale;
         }
 
         /* self-scale by divide */
-        const VectorT& operator/=(const T& scale)
+        const Derived& operator/=(const T& scale)
         {
             assert(scale != T(0));
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] /= scale;
-            return *this;
+            return static_cast<const Derived &>(*this);
         }
 
         /* do scale by divide */
-        VectorT operator/(const T& scale) const
+        Derived operator/(const T& scale) const
         {
             return VectorT(*this) /= scale;
         }

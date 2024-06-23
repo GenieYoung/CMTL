@@ -37,7 +37,7 @@ void test1()
 void test2()
 {
     SurfaceMesh sm;
-    import_obj(sm, "/home/yangjinlin/Work/FinFET/Process_Exact/28/operation/exposed.obj");
+    import_obj(sm, "../mesh_data/exposed.obj");
     export_obj(sm, "test2_input.obj");
     SurfaceMesh extrude_mesh;
     extrude_surface(sm, 0.1, extrude_mesh);

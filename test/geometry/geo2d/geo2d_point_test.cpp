@@ -3,15 +3,23 @@
 
 int main()
 {
+    CMTL::geometry::geo2d::Point<double> origin;
     CMTL::geometry::geo2d::Point<double> p(1, 2);
-    CMTL::geometry::geo2d::Point<double> q(3, 4);
+    CMTL::geometry::geo2d::Point<double> q(p);
+    std::cout << "origin :      " << origin << std::endl;
+    std::cout << "p :           " << p << std::endl;
+    std::cout << "q :           " << q << std::endl;
+    std::cout << "assign :      " << (p=q) << std::endl;
+    std::cout << "p add q :     " << (p+q) << std::endl;
+    std::cout << "p cross q :   " << (p%q) << std::endl;
+    std::cout << "p norm2 :     " << p.length_square() << std::endl;
+    std::cout << "p == q :      " << (p==q) << std::endl;
+
+    CMTL::geometry::geo2d::Point<mpq_class> r_origin(origin);
     CMTL::geometry::geo2d::Point<mpq_class> rp(5, 6);
-
-    // operator test
-    std::cout << p << std::endl;
-    std::cout << p*q << std::endl;
-    std::cout << p%q << std::endl;
-
-    std::vector<int> a;
-    std::vector<int> b(a.begin(), a.end());
+    CMTL::geometry::geo2d::Point<mpq_class> rq(q);
+    std::cout << "rorigin :     " << r_origin << std::endl;
+    std::cout << "rp :          " << rp << std::endl;
+    std::cout << "rq :          " << rq << std::endl;
+    std::cout << "rp assign p : " << (p = rp) << std::endl;
 }
