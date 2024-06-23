@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <assert.h>
 #include <array>
+#include <algorithm>
 
 namespace CMTL{
 namespace geometry{
@@ -43,6 +44,12 @@ class VectorT
         /* default constructor */
         constexpr VectorT()
         {
+        }
+
+        /* set all values to v */
+        explicit VectorT(const T& v)
+        {
+            std::fill(_values.begin(), _values.end(), v);
         }
 
         /* construct using DIM values */
@@ -225,6 +232,11 @@ class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>>
 
     public:
         using VectorT<T, DIM, VecTBase<T, DIM>>::VectorT;
+
+        /* set all values to v */
+        VecTBase(const T& v = 0) : VectorT<T, DIM, VecTBase>(v)
+        {
+        }
 
         /* copy constructor */
         VecTBase(const VecTBase& other) = default;
