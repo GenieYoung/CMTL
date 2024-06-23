@@ -212,6 +212,55 @@ class VectorT
         }
 };
 
+template<typename T, unsigned DIM>
+class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>>
+{
+    public:
+        /* number type */
+        typedef T NT;
+        typedef typename VectorT<T, DIM, VecTBase<T, DIM>>::value_type value_type;
+
+        /* origin vector */
+        static VecTBase<T, DIM> Origin;
+
+    public:
+        using VectorT<T, DIM, VecTBase<T, DIM>>::VectorT;
+
+        /* copy constructor */
+        VecTBase(const VecTBase& other) = default;
+
+        /* copy & cast constructor */
+        template<typename TT>
+        explicit VecTBase(const VecTBase<TT, DIM>& other) : VectorT<T, DIM, VecTBase>(other)
+        {
+        }
+
+        /* default assign operator */
+        VecTBase& operator=(const VecTBase& other) = default;
+
+        /* assign & cast operator */
+        template<typename TT>
+        VecTBase& operator=(const VecTBase<TT, DIM>& other)
+        {
+            VectorT<T, DIM, VecTBase>::operator=(other);
+            return *this;
+        }
+
+        ~VecTBase()
+        {
+        }
+};
+
+/* specialized versions */
+typedef VecTBase<float, 1>  Vec1f;
+typedef VecTBase<double, 1> Vec1d;
+
+typedef VecTBase<float, 2>  Vec2f;
+typedef VecTBase<double, 2> Vec2d;
+
+typedef VecTBase<float, 3>  Vec3f;
+typedef VecTBase<double, 3> Vec3d;
+
 }   // namespace geometry
 }   // namespace CMTL
 
