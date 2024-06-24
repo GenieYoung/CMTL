@@ -23,9 +23,6 @@ class Point : public VectorT<T, 2, Point<T>>
         typedef T NT;
         typedef typename VectorT<T, 2, Point<T>>::value_type value_type;
 
-        /* origin point */
-        static Point<T> Origin;
-
     public:
         /* constructor */
         Point(const T& x = 0, const T& y = 0) : VectorT<T, 2, Point>(x, y) 
@@ -98,12 +95,9 @@ class Point : public VectorT<T, 2, Point<T>>
         /* check whether this point parallel with other point */
         bool parallel_with(const Point& p) const
         {
-            return ((*this) % p) == Origin;
+            return ((*this) % p) == T(0);
         }
 };
-
-template<typename T>
-Point<T> Point<T>::Origin = Point<T>();
 
 template<typename T_IN, typename T_OUT>
 Point<T_OUT> point_cast(const Point<T_IN>& p)

@@ -4,8 +4,9 @@
 int main()
 {
     CMTL::geometry::geo2d::Point<double> origin;
-    CMTL::geometry::geo2d::Point<double> p(1, 2);
+    CMTL::geometry::geo2d::Point<double> p(1);
     CMTL::geometry::geo2d::Point<double> q(p);
+    std::cout << "origin :      " << CMTL::geometry::geo2d::Point<double>::Origin << std::endl;
     std::cout << "origin :      " << origin << std::endl;
     std::cout << "p :           " << p << std::endl;
     std::cout << "q :           " << q << std::endl;

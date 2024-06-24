@@ -29,6 +29,9 @@ class VectorT
         /* value type */
         typedef T value_type;
 
+        /* origin vector */
+        static Derived Origin;
+
         /* return dimension of this vector */
         static const unsigned dimension()
         {
@@ -178,18 +181,6 @@ class VectorT
             return *this * other;
         }
 
-        /* square norm */
-        T norm_square() const
-        {
-            return (*this) * (*this);
-        }
-
-        /* square norm */
-        T length_square() const
-        {
-            return norm_square();
-        }
-
         /* comparator */
         bool operator==(const VectorT& other) const
         {
@@ -214,6 +205,18 @@ class VectorT
             return false;
         }
 
+        /* square norm */
+        T norm_square() const
+        {
+            return (*this) * (*this);
+        }
+
+        /* square norm */
+        T length_square() const
+        {
+            return norm_square();
+        }
+
         friend std::ostream& operator<<(std::ostream& os, const VectorT& vec)
         {
             os << "[" << vec[0];
@@ -226,6 +229,9 @@ class VectorT
         }
 };
 
+template<typename T, unsigned DIM, typename Derived>
+Derived VectorT<T, DIM, Derived>::Origin = Derived(T(0));
+
 template<typename T, unsigned DIM>
 class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>>
 {
@@ -233,9 +239,6 @@ class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>>
         /* number type */
         typedef T NT;
         typedef typename VectorT<T, DIM, VecTBase<T, DIM>>::value_type value_type;
-
-        /* origin vector */
-        static VecTBase<T, DIM> Origin;
 
     public:
         using VectorT<T, DIM, VecTBase<T, DIM>>::VectorT;
@@ -270,9 +273,6 @@ class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>>
         {
         }
 };
-
-template<typename T, unsigned DIM>
-VecTBase<T, DIM> VecTBase<T, DIM>::Origin =VecTBase<T, DIM>();
 
 /* specialized versions */
 typedef VecTBase<float, 1>  Vec1f;
