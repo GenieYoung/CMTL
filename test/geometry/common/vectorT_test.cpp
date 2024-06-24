@@ -9,9 +9,12 @@ int main()
 
     Vec2d vd1(0, 1);     // specific constructor
     Vec2d vd2 = vd1;     // default constructor
+    vd2.fill(10);
+    std::cout << vd2 << std::endl;
+    std::cout << Vec2d::Origin << std::endl;
     vd2 = vd1;    // default copy constructor
 
-    Vec2f vf1(0, 1);
+    Vec2f vf1(0);
     //Vec2f vf2 = vd1;    // call the copy constructor, but can not implicit convert from vec2d to vef2d
     Vec2f vf3(vd1);     // specific copy constructor
     vf3 = vd1;      // specific assign operator

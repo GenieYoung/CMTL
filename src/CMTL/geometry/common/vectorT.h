@@ -49,7 +49,7 @@ class VectorT
         /* set all values to v */
         explicit VectorT(const T& v)
         {
-            std::fill(_values.begin(), _values.end(), v);
+            fill(v);
         }
 
         /* construct using DIM values */
@@ -97,6 +97,13 @@ class VectorT
         {
             assert(i < DIM);
             return _values[i];
+        }
+
+        /* set all valuest to v */
+        Derived& fill(const T& v)
+        {
+            std::fill(_values.begin(), _values.end(), v);
+            return static_cast<Derived &>(*this);
         }
 
         /* self-addition */
@@ -258,10 +265,14 @@ class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>>
             return *this;
         }
 
+        /* deconstructor */
         ~VecTBase()
         {
         }
 };
+
+template<typename T, unsigned DIM>
+VecTBase<T, DIM> VecTBase<T, DIM>::Origin =VecTBase<T, DIM>();
 
 /* specialized versions */
 typedef VecTBase<float, 1>  Vec1f;
