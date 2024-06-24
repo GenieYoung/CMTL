@@ -24,4 +24,7 @@ int main()
     std::cout << vd0 << std::endl;
     Vec1d v1d2 = v1d1;  // specific constructor
     //Vec1f v1f1 = v1d1;    // call the specific constructor, wrong
+
+    VecXT<double, 10> v10d(10);
+    std::cout << v10d << std::endl;
 }

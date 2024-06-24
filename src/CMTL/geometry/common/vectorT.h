@@ -284,6 +284,9 @@ typedef VecTBase<double, 2> Vec2d;
 typedef VecTBase<float, 3>  Vec3f;
 typedef VecTBase<double, 3> Vec3d;
 
+template<typename T, unsigned DIM>
+using VecXT = VecTBase<T, DIM>;
+
 }   // namespace geometry
 }   // namespace CMTL
 
