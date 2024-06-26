@@ -71,16 +71,20 @@ class VectorT
             operator=(other);
         }
 
-        /* default assign operator */
-        VectorT& operator=(const VectorT& other) = default;
+        /* assign operator */
+        Derived& operator=(const VectorT& other)
+        {
+            _values = other._values;
+            return static_cast<Derived&>(*this);
+        }
 
         /* assign & cast operator */
         template<typename TT, typename Derived2>
-        VectorT& operator=(const VectorT<TT, DIM, Derived2>& other)
+        Derived& operator=(const VectorT<TT, DIM, Derived2>& other)
         {
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] = util_cast<TT, T>(other[i]);
-            return *this;
+            return static_cast<Derived&>(*this);
         }
 
         /* deconstructor */
@@ -242,30 +246,11 @@ class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>>
 
     public:
         using VectorT<T, DIM, VecTBase<T, DIM>>::VectorT;
+        using VectorT<T, DIM, VecTBase<T, DIM>>::operator=;
 
         /* set all values to v */
-        VecTBase(const T& v = 0) : VectorT<T, DIM, VecTBase>(v)
+        explicit VecTBase(const T& v = 0) : VectorT<T, DIM, VecTBase>(v)
         {
-        }
-
-        /* copy constructor */
-        VecTBase(const VecTBase& other) = default;
-
-        /* copy & cast constructor */
-        template<typename TT>
-        explicit VecTBase(const VecTBase<TT, DIM>& other) : VectorT<T, DIM, VecTBase>(other)
-        {
-        }
-
-        /* default assign operator */
-        VecTBase& operator=(const VecTBase& other) = default;
-
-        /* assign & cast operator */
-        template<typename TT>
-        VecTBase& operator=(const VecTBase<TT, DIM>& other)
-        {
-            VectorT<T, DIM, VecTBase>::operator=(other);
-            return *this;
         }
 
         /* deconstructor */

@@ -24,29 +24,12 @@ class Point : public VectorT<T, 3, Point<T>>
         typedef typename VectorT<T, 3, Point<T>>::value_type value_type;
 
     public:
+        using VectorT<T, 3, Point>::VectorT;
+        using VectorT<T, 3, Point>::operator=;
+
         /* constructor. */
         Point(const T& x = 0, const T& y = 0, const T& z = 0) : VectorT<T, 3, Point>(x, y, z) 
         {
-        }
-
-        /* copy constructor */
-        Point(const Point& other) = default;
-
-        /* copy & cast constructor */
-        template<typename TT>
-        explicit Point(const Point<TT>& other) : VectorT<T, 3, Point>(other)
-        {
-        }
-
-        /* default assign operator */
-        Point& operator=(const Point& other) = default;
-
-        /* assign & cast operator */
-        template<typename TT>
-        Point& operator=(const Point<TT>& other)
-        {
-            VectorT<T, 3, Point>::operator=(other);
-            return *this;
         }
 
         /* deconstructor */
