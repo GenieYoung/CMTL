@@ -24,73 +24,72 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
 {
     public:
         /* alias */
-        typedef T                                                               NT;
-        typedef SurfaceMeshTraits<T>                                            Traits;
+        typedef T                                       NT;
+        typedef SurfaceMeshTraits<T>                    Traits;
         
-        typedef halfedge::VertexItem                                            VertexItem;
-        typedef halfedge::HalfedgeItem                                          HalfedgeItem;
-        typedef halfedge::EdgeItem                                              EdgeItem;
-        typedef halfedge::FaceItem                                              FaceItem;
+        typedef halfedge::HalfedgeItem                  HalfedgeItem;
+        typedef halfedge::EdgeItem                      EdgeItem;
+        typedef halfedge::FaceItem                      FaceItem;
 
-        typedef halfedge::VertexHandle                                          VertexHandle;
-        typedef halfedge::HalfedgeHandle                                        HalfedgeHandle;
-        typedef halfedge::EdgeHandle                                            EdgeHandle;
-        typedef halfedge::FaceHandle                                            FaceHandle;
+        typedef halfedge::VertexHandle                  VertexHandle;
+        typedef halfedge::HalfedgeHandle                HalfedgeHandle;
+        typedef halfedge::EdgeHandle                    EdgeHandle;
+        typedef halfedge::FaceHandle                    FaceHandle;
 
-        typedef halfedge::GraphVertexHandle                                     MeshVertexHandle;
-        typedef halfedge::GraphHalfedgeHandle                                   MeshHalfedgeHandle;
-        typedef halfedge::GraphEdgeHandle                                       MeshEdgeHandle;
-        typedef halfedge::GraphFaceHandle                                       MeshFaceHandle;
+        typedef halfedge::GraphVertexHandle             MeshVertexHandle;
+        typedef halfedge::GraphHalfedgeHandle           MeshHalfedgeHandle;
+        typedef halfedge::GraphEdgeHandle               MeshEdgeHandle;
+        typedef halfedge::GraphFaceHandle               MeshFaceHandle;
 
-        typedef typename Traits::Point                                          Point;
-        typedef typename Traits::VertexAttribute                                VertexAttribute;
-        typedef typename Traits::HalfedgeAttribute                              HalfedgeAttribute;
-        typedef typename Traits::EdgeAttribute                                  EdgeAttribute;
-        typedef typename Traits::FaceAttribute                                  FaceAttribute;
+        typedef typename Traits::Point                  Point;
+        typedef typename Traits::VertexAttribute        VertexAttribute;
+        typedef typename Traits::HalfedgeAttribute      HalfedgeAttribute;
+        typedef typename Traits::EdgeAttribute          EdgeAttribute;
+        typedef typename Traits::FaceAttribute          FaceAttribute;
 
-        typedef typename halfedge::Graph<Traits>::VertexIter                    VertexIter;
-        typedef typename halfedge::Graph<Traits>::HalfedgeIter                  HalfedgeIter;
-        typedef typename halfedge::Graph<Traits>::EdgeIter                      EdgeIter;
-        typedef typename halfedge::Graph<Traits>::FaceIter                      FaceIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexIter               ConstVertexIter;
-        typedef typename halfedge::Graph<Traits>::ConstHalfedgeIter             ConstHalfedgeIter;
-        typedef typename halfedge::Graph<Traits>::ConstEdgeIter                 ConstEdgeIter;
-        typedef typename halfedge::Graph<Traits>::ConstFaceIter                 ConstFaceIter;
+        typedef halfedge::VertexIter                    VertexIter;
+        typedef halfedge::HalfedgeIter                  HalfedgeIter;
+        typedef halfedge::EdgeIter                      EdgeIter;
+        typedef halfedge::FaceIter                      FaceIter;
+        typedef halfedge::ConstVertexIter               ConstVertexIter;
+        typedef halfedge::ConstHalfedgeIter             ConstHalfedgeIter;
+        typedef halfedge::ConstEdgeIter                 ConstEdgeIter;
+        typedef halfedge::ConstFaceIter                 ConstFaceIter;
 
-        typedef typename halfedge::Graph<Traits>::VertexVertexIter              VertexVertexIter;
-        typedef typename halfedge::Graph<Traits>::VertexVertexCCWIter           VertexVertexCCWIter;
-        typedef typename halfedge::Graph<Traits>::VertexVertexCWIter            VertexVertexCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexVertexIter         ConstVertexVertexIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexVertexCCWIter      ConstVertexVertexCCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexVertexCWIter       ConstVertexVertexCWIter;
+        typedef halfedge::VertexVertexIter              VertexVertexIter;
+        typedef halfedge::VertexVertexCCWIter           VertexVertexCCWIter;
+        typedef halfedge::VertexVertexCWIter            VertexVertexCWIter;
+        typedef halfedge::ConstVertexVertexIter         ConstVertexVertexIter;
+        typedef halfedge::ConstVertexVertexCCWIter      ConstVertexVertexCCWIter;
+        typedef halfedge::ConstVertexVertexCWIter       ConstVertexVertexCWIter;
 
-        typedef typename halfedge::Graph<Traits>::VertexOHalfedgeIter           VertexOHalfedgeIter;
-        typedef typename halfedge::Graph<Traits>::VertexOHalfedgeCCWIter        VertexOHalfedgeCCWIter;
-        typedef typename halfedge::Graph<Traits>::VertexOHalfedgeCWIter         VertexOHalfedgeCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexOHalfedgeIter      ConstVertexOHalfedgeIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexOHalfedgeCCWIter   ConstVertexOHalfedgeCCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexOHalfedgeCWIter    ConstVertexOHalfedgeCWIter;
+        typedef halfedge::VertexOHalfedgeIter           VertexOHalfedgeIter;
+        typedef halfedge::VertexOHalfedgeCCWIter        VertexOHalfedgeCCWIter;
+        typedef halfedge::VertexOHalfedgeCWIter         VertexOHalfedgeCWIter;
+        typedef halfedge::ConstVertexOHalfedgeIter      ConstVertexOHalfedgeIter;
+        typedef halfedge::ConstVertexOHalfedgeCCWIter   ConstVertexOHalfedgeCCWIter;
+        typedef halfedge::ConstVertexOHalfedgeCWIter    ConstVertexOHalfedgeCWIter;
 
-        typedef typename halfedge::Graph<Traits>::VertexEdgeIter                VertexEdgeIter;
-        typedef typename halfedge::Graph<Traits>::VertexEdgeCCWIter             VertexEdgeCCWIter;
-        typedef typename halfedge::Graph<Traits>::VertexEdgeCWIter              VertexEdgeCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexEdgeIter           ConstVertexEdgeIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexEdgeCCWIter        ConstVertexEdgeCCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexEdgeCWIter         ConstVertexEdgeCWIter;
+        typedef halfedge::VertexEdgeIter                VertexEdgeIter;
+        typedef halfedge::VertexEdgeCCWIter             VertexEdgeCCWIter;
+        typedef halfedge::VertexEdgeCWIter              VertexEdgeCWIter;
+        typedef halfedge::ConstVertexEdgeIter           ConstVertexEdgeIter;
+        typedef halfedge::ConstVertexEdgeCCWIter        ConstVertexEdgeCCWIter;
+        typedef halfedge::ConstVertexEdgeCWIter         ConstVertexEdgeCWIter;
 
-        typedef typename halfedge::Graph<Traits>::VertexFaceIter                VertexFaceIter;
-        typedef typename halfedge::Graph<Traits>::VertexFaceCCWIter             VertexFaceCCWIter;
-        typedef typename halfedge::Graph<Traits>::VertexFaceCWIter              VertexFaceCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexFaceIter           ConstVertexFaceIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexFaceCCWIter        ConstVertexFaceCCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstVertexFaceCWIter         ConstVertexFaceCWIter;
+        typedef halfedge::VertexFaceIter                VertexFaceIter;
+        typedef halfedge::VertexFaceCCWIter             VertexFaceCCWIter;
+        typedef halfedge::VertexFaceCWIter              VertexFaceCWIter;
+        typedef halfedge::ConstVertexFaceIter           ConstVertexFaceIter;
+        typedef halfedge::ConstVertexFaceCCWIter        ConstVertexFaceCCWIter;
+        typedef halfedge::ConstVertexFaceCWIter         ConstVertexFaceCWIter;
 
-        typedef typename halfedge::Graph<Traits>::FaceHalfedgeIter              FaceHalfedgeIter;
-        typedef typename halfedge::Graph<Traits>::FaceHalfedgeCCWIter           FaceHalfedgeCCWIter;
-        typedef typename halfedge::Graph<Traits>::FaceHalfedgeCWIter            FaceHalfedgeCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstFaceHalfedgeIter         ConstFaceHalfedgeIter;
-        typedef typename halfedge::Graph<Traits>::ConstFaceHalfedgeCCWIter      ConstFaceHalfedgeCCWIter;
-        typedef typename halfedge::Graph<Traits>::ConstFaceHalfedgeCWIter       ConstFaceHalfedgeCWIter;
+        typedef halfedge::FaceHalfedgeIter              FaceHalfedgeIter;
+        typedef halfedge::FaceHalfedgeCCWIter           FaceHalfedgeCCWIter;
+        typedef halfedge::FaceHalfedgeCWIter            FaceHalfedgeCWIter;
+        typedef halfedge::ConstFaceHalfedgeIter         ConstFaceHalfedgeIter;
+        typedef halfedge::ConstFaceHalfedgeCCWIter      ConstFaceHalfedgeCCWIter;
+        typedef halfedge::ConstFaceHalfedgeCWIter       ConstFaceHalfedgeCWIter;
 
     public:
         /* constructor */

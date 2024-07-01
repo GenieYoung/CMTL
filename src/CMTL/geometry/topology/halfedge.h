@@ -1009,65 +1009,63 @@ class FaceHalfedgeIterBase
         mutable GraphHalfedgeHandle _gheh;
 };
 
+typedef IteratorBase<GraphTopology, VertexHandle,   GraphVertexHandle>      VertexIter;
+typedef IteratorBase<GraphTopology, HalfedgeHandle, GraphHalfedgeHandle>    HalfedgeIter;
+typedef IteratorBase<GraphTopology, EdgeHandle,     GraphEdgeHandle>        EdgeIter;
+typedef IteratorBase<GraphTopology, FaceHandle,     GraphFaceHandle>        FaceIter;
+typedef VertexIter                                                          ConstVertexIter;
+typedef HalfedgeIter                                                        ConstHalfedgeIter;
+typedef EdgeIter                                                            ConstEdgeIter;
+typedef FaceIter                                                            ConstFaceIter;
+
+typedef VertexVertexIterBase<GraphTopology, true>       VertexVertexIter;
+typedef VertexVertexIterBase<GraphTopology, true>       VertexVertexCCWIter;
+typedef VertexVertexIterBase<GraphTopology, false>      VertexVertexCWIter;
+typedef VertexVertexIter                                ConstVertexVertexIter;
+typedef VertexVertexCCWIter                             ConstVertexVertexCCWIter;
+typedef VertexVertexCWIter                              ConstVertexVertexCWIter;
+
+typedef VertexOHalfedgeIterBase<GraphTopology, true>    VertexOHalfedgeIter;
+typedef VertexOHalfedgeIterBase<GraphTopology, true>    VertexOHalfedgeCCWIter;
+typedef VertexOHalfedgeIterBase<GraphTopology, false>   VertexOHalfedgeCWIter;
+typedef VertexOHalfedgeIter                             ConstVertexOHalfedgeIter;
+typedef VertexOHalfedgeCCWIter                          ConstVertexOHalfedgeCCWIter;
+typedef VertexOHalfedgeCWIter                           ConstVertexOHalfedgeCWIter;
+
+typedef VertexEdgeIterBase<GraphTopology, true>         VertexEdgeIter;
+typedef VertexEdgeIterBase<GraphTopology, true>         VertexEdgeCCWIter;
+typedef VertexEdgeIterBase<GraphTopology, false>        VertexEdgeCWIter;
+typedef VertexEdgeIter                                  ConstVertexEdgeIter;
+typedef VertexEdgeCCWIter                               ConstVertexEdgeCCWIter;
+typedef VertexEdgeCWIter                                ConstVertexEdgeCWIter;
+
+typedef VertexFaceIterBase<GraphTopology, true>         VertexFaceIter;
+typedef VertexFaceIterBase<GraphTopology, true>         VertexFaceCCWIter;
+typedef VertexFaceIterBase<GraphTopology, false>        VertexFaceCWIter;
+typedef VertexFaceIter                                  ConstVertexFaceIter;
+typedef VertexFaceCCWIter                               ConstVertexFaceCCWIter;
+typedef VertexFaceCWIter                                ConstVertexFaceCWIter;
+
+typedef FaceVertexIterBase<GraphTopology, false>        FaceVertexIter;
+typedef FaceVertexIterBase<GraphTopology, false>        FaceVertexCCWIter;
+typedef FaceVertexIterBase<GraphTopology, true>         FaceVertexCWIter;
+typedef FaceVertexIter                                  ConstFaceVertexIter;
+typedef FaceVertexCCWIter                               ConstFaceVertexCCWIter;
+typedef FaceVertexCWIter                                ConstFaceVertexCWIter;
+
+typedef FaceHalfedgeIterBase<GraphTopology, false>      FaceHalfedgeIter;
+typedef FaceHalfedgeIterBase<GraphTopology, false>      FaceHalfedgeCCWIter;
+typedef FaceHalfedgeIterBase<GraphTopology, true>       FaceHalfedgeCWIter;
+typedef FaceHalfedgeIter                                ConstFaceHalfedgeIter;
+typedef FaceHalfedgeCCWIter                             ConstFaceHalfedgeCCWIter;
+typedef FaceHalfedgeCWIter                              ConstFaceHalfedgeCWIter;
+
 
 /**
  * @brief base struct that store the mesh handle connectivity information.
  */
 class GraphTopology
 {
-    public:
-        typedef IteratorBase<GraphTopology, VertexHandle,   GraphVertexHandle>      VertexIter;
-        typedef IteratorBase<GraphTopology, HalfedgeHandle, GraphHalfedgeHandle>    HalfedgeIter;
-        typedef IteratorBase<GraphTopology, EdgeHandle,     GraphEdgeHandle>        EdgeIter;
-        typedef IteratorBase<GraphTopology, FaceHandle,     GraphFaceHandle>        FaceIter;
-        
-        typedef VertexIter      ConstVertexIter;
-        typedef HalfedgeIter    ConstHalfedgeIter;
-        typedef EdgeIter        ConstEdgeIter;
-        typedef FaceIter        ConstFaceIter;
-
-        typedef VertexVertexIterBase<GraphTopology, true>   VertexVertexIter;
-        typedef VertexVertexIterBase<GraphTopology, true>   VertexVertexCCWIter;
-        typedef VertexVertexIterBase<GraphTopology, false>  VertexVertexCWIter;
-        typedef VertexVertexIter    ConstVertexVertexIter;
-        typedef VertexVertexCCWIter ConstVertexVertexCCWIter;
-        typedef VertexVertexCWIter  ConstVertexVertexCWIter;
-
-        typedef VertexOHalfedgeIterBase<GraphTopology, true>    VertexOHalfedgeIter;
-        typedef VertexOHalfedgeIterBase<GraphTopology, true>    VertexOHalfedgeCCWIter;
-        typedef VertexOHalfedgeIterBase<GraphTopology, false>   VertexOHalfedgeCWIter;
-        typedef VertexOHalfedgeIter     ConstVertexOHalfedgeIter;
-        typedef VertexOHalfedgeCCWIter  ConstVertexOHalfedgeCCWIter;
-        typedef VertexOHalfedgeCWIter   ConstVertexOHalfedgeCWIter;
-
-        typedef VertexEdgeIterBase<GraphTopology, true>    VertexEdgeIter;
-        typedef VertexEdgeIterBase<GraphTopology, true>    VertexEdgeCCWIter;
-        typedef VertexEdgeIterBase<GraphTopology, false>   VertexEdgeCWIter;
-        typedef VertexEdgeIter     ConstVertexEdgeIter;
-        typedef VertexEdgeCCWIter  ConstVertexEdgeCCWIter;
-        typedef VertexEdgeCWIter   ConstVertexEdgeCWIter;
-
-        typedef VertexFaceIterBase<GraphTopology, true>     VertexFaceIter;
-        typedef VertexFaceIterBase<GraphTopology, true>     VertexFaceCCWIter;
-        typedef VertexFaceIterBase<GraphTopology, false>    VertexFaceCWIter;
-        typedef VertexFaceIter      ConstVertexFaceIter;
-        typedef VertexFaceCCWIter   ConstVertexFaceCCWIter;
-        typedef VertexFaceCWIter    ConstVertexFaceCWIter;
-
-        typedef FaceVertexIterBase<GraphTopology, false>    FaceVertexIter;
-        typedef FaceVertexIterBase<GraphTopology, false>    FaceVertexCCWIter;
-        typedef FaceVertexIterBase<GraphTopology, true>     FaceVertexCWIter;
-        typedef FaceVertexIter      ConstFaceVertexIter;
-        typedef FaceVertexCCWIter   ConstFaceVertexCCWIter;
-        typedef FaceVertexCWIter    ConstFaceVertexCWIter;
-
-        typedef FaceHalfedgeIterBase<GraphTopology, false>    FaceHalfedgeIter;
-        typedef FaceHalfedgeIterBase<GraphTopology, false>    FaceHalfedgeCCWIter;
-        typedef FaceHalfedgeIterBase<GraphTopology, true>     FaceHalfedgeCWIter;
-        typedef FaceHalfedgeIter      ConstFaceHalfedgeIter;
-        typedef FaceHalfedgeCCWIter   ConstFaceHalfedgeCCWIter;
-        typedef FaceHalfedgeCWIter    ConstFaceHalfedgeCWIter;
-
     public:
         GraphTopology() 
         {
@@ -2098,57 +2096,6 @@ class Graph : public GraphTopology
         typedef typename Traits::HalfedgeAttribute                   HalfedgeAttribute;
         typedef typename Traits::EdgeAttribute                       EdgeAttribute;
         typedef typename Traits::FaceAttribute                       FaceAttribute;
-
-        typedef typename GraphTopology::VertexIter                   VertexIter;
-        typedef typename GraphTopology::HalfedgeIter                 HalfedgeIter;
-        typedef typename GraphTopology::EdgeIter                     EdgeIter;
-        typedef typename GraphTopology::FaceIter                     FaceIter;
-        typedef typename GraphTopology::ConstVertexIter              ConstVertexIter;
-        typedef typename GraphTopology::ConstHalfedgeIter            ConstHalfedgeIter;
-        typedef typename GraphTopology::ConstEdgeIter                ConstEdgeIter;
-        typedef typename GraphTopology::ConstFaceIter                ConstFaceIter;
-
-        typedef typename GraphTopology::VertexVertexIter             VertexVertexIter;
-        typedef typename GraphTopology::VertexVertexCCWIter          VertexVertexCCWIter;
-        typedef typename GraphTopology::VertexVertexCWIter           VertexVertexCWIter;
-        typedef typename GraphTopology::ConstVertexVertexIter        ConstVertexVertexIter;
-        typedef typename GraphTopology::ConstVertexVertexCCWIter     ConstVertexVertexCCWIter;
-        typedef typename GraphTopology::ConstVertexVertexCWIter      ConstVertexVertexCWIter;
-
-        typedef typename GraphTopology::VertexOHalfedgeIter          VertexOHalfedgeIter;
-        typedef typename GraphTopology::VertexOHalfedgeCCWIter       VertexOHalfedgeCCWIter;
-        typedef typename GraphTopology::VertexOHalfedgeCWIter        VertexOHalfedgeCWIter;
-        typedef typename GraphTopology::ConstVertexOHalfedgeIter     ConstVertexOHalfedgeIter;
-        typedef typename GraphTopology::ConstVertexOHalfedgeCCWIter  ConstVertexOHalfedgeCCWIter;
-        typedef typename GraphTopology::ConstVertexOHalfedgeCWIter   ConstVertexOHalfedgeCWIter;
-
-        typedef typename GraphTopology::VertexEdgeIter               VertexEdgeIter;
-        typedef typename GraphTopology::VertexEdgeCCWIter            VertexEdgeCCWIter;
-        typedef typename GraphTopology::VertexEdgeCWIter             VertexEdgeCWIter;
-        typedef typename GraphTopology::ConstVertexEdgeIter          ConstVertexEdgeIter;
-        typedef typename GraphTopology::ConstVertexEdgeCCWIter       ConstVertexEdgeCCWIter;
-        typedef typename GraphTopology::ConstVertexEdgeCWIter        ConstVertexEdgeCWIter;
-        
-        typedef typename GraphTopology::VertexFaceIter               VertexFaceIter;
-        typedef typename GraphTopology::VertexFaceCCWIter            VertexFaceCCWIter;
-        typedef typename GraphTopology::VertexFaceCWIter             VertexFaceCWIter;
-        typedef typename GraphTopology::ConstVertexFaceIter          ConstVertexFaceIter;
-        typedef typename GraphTopology::ConstVertexFaceCCWIter       ConstVertexFaceCCWIter;
-        typedef typename GraphTopology::ConstVertexFaceCWIter        ConstVertexFaceCWIter;
-
-        typedef typename GraphTopology::FaceVertexIter               FaceVertexIter;
-        typedef typename GraphTopology::FaceVertexCCWIter            FaceVertexCCWIter;
-        typedef typename GraphTopology::FaceVertexCWIter             FaceVertexCWIter;
-        typedef typename GraphTopology::ConstFaceVertexIter          ConstFaceVertexIter;
-        typedef typename GraphTopology::ConstFaceVertexCCWIter       ConstFaceVertexCCWIter;
-        typedef typename GraphTopology::ConstFaceVertexCWIter        ConstFaceVertexCWIter;
-
-        typedef typename GraphTopology::FaceHalfedgeIter             FaceHalfedgeIter;
-        typedef typename GraphTopology::FaceHalfedgeCCWIter          FaceHalfedgeCCWIter;
-        typedef typename GraphTopology::FaceHalfedgeCWIter           FaceHalfedgeCWIter;
-        typedef typename GraphTopology::ConstFaceHalfedgeIter        ConstFaceHalfedgeIter;
-        typedef typename GraphTopology::ConstFaceHalfedgeCCWIter     ConstFaceHalfedgeCCWIter;
-        typedef typename GraphTopology::ConstFaceHalfedgeCWIter      ConstFaceHalfedgeCWIter;
 
     public:
         /* constructor */
