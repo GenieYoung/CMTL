@@ -135,8 +135,7 @@ T Polygon<T>::area2() const
 template<typename T>
 Point<T> Polygon<T>::normal() const
 {
-    if(_vertices.size() <= 2 )
-        return Point<T>();
+    assert(_vertices.size() >= 3);
     #if 1
         /* Newells algorithm */
         T x = 0, y = 0, z = 0;

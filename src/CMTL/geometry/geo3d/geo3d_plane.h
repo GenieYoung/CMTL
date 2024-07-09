@@ -27,7 +27,7 @@ class Plane
         Plane(const Point<T>& p, const Point<T>& n) : _origin(p), _normal(n)
         {
             unsigned max_abs_id;
-            if(absolute(_normal[0]) >= absolute(_normal[1]) && absolute(_normal[0]) >= absolute(_normal[1]))
+            if(absolute(_normal[0]) >= absolute(_normal[1]) && absolute(_normal[0]) >= absolute(_normal[2]))
                 max_abs_id = 0;
             else if(absolute(_normal[1]) >= absolute(_normal[0]) && absolute(_normal[1]) >= absolute(_normal[2]))
                 max_abs_id = 1;
@@ -84,7 +84,7 @@ class Plane
         Point<T> _normal;
 
         /* parameters of plane function */
-        NT _params[4];
+        T _params[4];
 
         /* vector used for tranform from 2d coordinate system and 3d coordinate system */
         unsigned char _project_cood[3];
