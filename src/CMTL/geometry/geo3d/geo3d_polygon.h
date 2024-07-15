@@ -121,9 +121,9 @@ T Polygon<T>::area2() const
     if(_vertices.size() <= 2 )
         return 0;
     Point<T> p;
-    for(size_t i = 1, j = 2; i < _vertices.size()-1; ++i, ++j, j%=_vertices.size())
+    for(size_t i = 1; i < _vertices.size()-1; ++i)
     {
-        p += ((_vertices[i]-_vertices[0]) % (_vertices[j]-_vertices[0]));
+        p += ((_vertices[i]-_vertices[0]) % (_vertices[i+1]-_vertices[0]));
     }
     return p.length_square() / T(4);
 }
