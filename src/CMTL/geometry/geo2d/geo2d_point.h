@@ -21,7 +21,6 @@ class Point : public VectorT<T, 2, Point<T>>
     public:
         /* number type */
         typedef T NT;
-        typedef typename VectorT<T, 2, Point<T>>::value_type value_type;
 
     public:
         using VectorT<T, 2, Point>::VectorT;
@@ -33,9 +32,7 @@ class Point : public VectorT<T, 2, Point<T>>
         }
 
         /* deconstructor */
-        ~Point()
-        {
-        }
+        ~Point() = default;
 
     public:
         /* get the writable x coordinate. */

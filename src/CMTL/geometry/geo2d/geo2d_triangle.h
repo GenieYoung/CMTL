@@ -21,9 +21,7 @@ class Triangle
 
     public:
         /* default constructor */
-        Triangle()
-        {
-        }
+        Triangle() = default;
 
         /**
          * @brief construct from three points
@@ -38,9 +36,7 @@ class Triangle
         }
 
         /* deconstructor */
-        ~Triangle()
-        {
-        }
+        ~Triangle() = default;
 
     public:
         /* return the number of points */
@@ -90,6 +86,8 @@ class Triangle
     private:
         std::array<Point<T>, 3> _vertices;
 };
+
+/* Implementation */
 
 template<typename T>
 T Triangle<T>::area() const

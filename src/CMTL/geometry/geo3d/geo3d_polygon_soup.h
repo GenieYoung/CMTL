@@ -21,9 +21,7 @@ class PolygonSoup
 
     public:
         /* default constructor */
-        PolygonSoup()
-        {
-        }
+        PolygonSoup() = default;
 
         /**
          * @brief construct from point container and face container.
@@ -52,9 +50,7 @@ class PolygonSoup
         }
 
         /* deconstructor */
-        ~PolygonSoup()
-        {
-        }
+        ~PolygonSoup() = default;
 
     public:
         /* return the number of points */

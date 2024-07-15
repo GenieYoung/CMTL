@@ -55,6 +55,9 @@ class Plane
         {
         }
 
+        /* deconstructor */
+        ~Plane() = default;
+
     public:
         /**
          * @brief project a plane point to a local 2d coordinate system, 

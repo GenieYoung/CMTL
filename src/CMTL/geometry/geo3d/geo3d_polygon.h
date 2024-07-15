@@ -22,9 +22,7 @@ class Polygon
 
     public:
         /* default constructor */
-        Polygon()
-        {
-        }
+        Polygon() = default;
 
         /**
          * @brief construct from iterator range of points list.
@@ -54,9 +52,7 @@ class Polygon
         }
 
         /* deconstructor */
-        ~Polygon()
-        {
-        }
+        ~Polygon() = default;
 
     public:
         /* return the number of points */

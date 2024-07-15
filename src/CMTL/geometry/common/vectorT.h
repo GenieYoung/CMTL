@@ -13,7 +13,7 @@ namespace CMTL{
 namespace geometry{
 
 /**
- * @brief fixed size valu type container
+ * @brief fixed size value type container
  * @tparam T value type
  * @tparam DIM dimension of vector
  */

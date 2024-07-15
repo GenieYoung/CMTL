@@ -93,14 +93,10 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
 
     public:
         /* constructor */
-        SurfaceMesh()
-        {
-        }
+        SurfaceMesh() = default;
 
         /* deconstructor */
-        ~SurfaceMesh()
-        {
-        }
+        ~SurfaceMesh() = default;
 
     public:
         Point normal(FaceHandle fh) const
