@@ -9,16 +9,28 @@ namespace CMTL{
 namespace geometry{
 namespace geo3d{
 
+/**
+ * @brief surface mesh traits, user specified traits should inherit this class and override these members.
+ * @tparam T point coordinate type
+ */
 template<typename T>
 struct SurfaceMeshTraits : public halfedge::DefaultTraits
 {
     typedef geo3d::Point<T> Point;
+    /* attributes attach to a vertex */
     typedef Attributes VertexAttribute;
+    /* attributes attach to a halfedge */
     typedef Attributes HalfedgeAttribute;
+    /* attributes attach to an edge */
     typedef Attributes EdgeAttribute;
+    /* attributes attach to a face */
     typedef Attributes FaceAttribute;
 };
 
+/**
+ * @brief a halfedge data structure used to represent a polyhedral surface
+ * @tparam T point coordinate type
+ */
 template<typename T>
 class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
 {
@@ -99,6 +111,7 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
         ~SurfaceMesh() = default;
 
     public:
+        /* calculate a face normal */
         Point normal(FaceHandle fh) const
         {
             /* Newells algorithm */
@@ -116,6 +129,7 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
             return Point(x, y, z);
         }
 
+        /* check whether the surface mesh has been triangulated */
         bool is_triangle_mesh() const
         {
             for(auto f_it = this->faces_begin(); f_it != this->faces_end(); ++f_it)
