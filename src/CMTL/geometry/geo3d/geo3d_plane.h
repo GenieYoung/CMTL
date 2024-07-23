@@ -26,13 +26,8 @@ class Plane
         /* construct from a point on plane and plane normal */
         Plane(const Point<T>& p, const Point<T>& n) : _origin(p), _normal(n)
         {
-            unsigned max_abs_id;
-            if(absolute(_normal[0]) >= absolute(_normal[1]) && absolute(_normal[0]) >= absolute(_normal[2]))
-                max_abs_id = 0;
-            else if(absolute(_normal[1]) >= absolute(_normal[0]) && absolute(_normal[1]) >= absolute(_normal[2]))
-                max_abs_id = 1;
-            else
-                max_abs_id = 2;
+            std::pair<unsigned, T> max_abs = _normal.max_abs();
+            unsigned max_abs_id = max_abs.first;
             T max_abs_v = _normal[max_abs_id];
             assert(max_abs_v != 0);
             _params[0] = _normal[0] / max_abs_v;

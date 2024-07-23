@@ -209,6 +209,36 @@ class VectorT
             return false;
         }
 
+        /* return the first maximal component and corresponding index*/
+        std::pair<unsigned, T> max() const
+        {
+            auto max_iter = std::max_element(_values.cbegin(), _values.cend());
+            return std::make_pair(max_iter - _values.begin(), *max_iter);
+        }
+
+        /* return the first minimal component and corresponding index*/
+        std::pair<unsigned, T> min() const
+        {
+            auto min_iter = std::min_element(_values.cbegin(), _values.cend());
+            return std::make_pair(min_iter - _values.begin(), *min_iter);
+        }
+        
+        /* return the first maximal absolute component and corresponding index*/
+        std::pair<unsigned, T> max_abs() const
+        {
+            auto max_iter = std::max_element(_values.cbegin(), _values.cend(), 
+                            [](const T& a, const T& b) { return absolute(a) < absolute(b); });
+            return std::make_pair(max_iter - _values.begin(), absolute(*max_iter));
+        }
+
+        /* return the first minimal absolute component and corresponding index*/
+        std::pair<unsigned, T> min_abs() const
+        {
+            auto min_iter = std::min_element(_values.cbegin(), _values.cend(), 
+                            [](const T& a, const T& b) { return absolute(a) < absolute(b); });
+            return std::make_pair(min_iter - _values.begin(), absolute(*min_iter));
+        }
+
         /* square norm */
         T norm_square() const
         {

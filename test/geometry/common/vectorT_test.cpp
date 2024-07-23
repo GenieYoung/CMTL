@@ -27,4 +27,11 @@ int main()
 
     VecXT<double, 10> v10d(10);
     std::cout << v10d << std::endl;
+
+    Vec3d v3d0(5, 9, 4);
+    std::cout << v3d0.max().first << " " << v3d0.max().second << std::endl;
+    Vec3d v3d1(5, -9, 4);
+    std::cout << v3d1.max_abs().first << " " << v3d1.max_abs().second << std::endl;
+    Vec3d v3d2(5, -9, 4);
+    std::cout << v3d2.min_abs().first << " " << v3d2.min_abs().second << std::endl;
 }
