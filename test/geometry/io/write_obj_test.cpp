@@ -1,5 +1,5 @@
 #include "CMTL/geometry/geo3d/geo3d_surface_mesh.h"
-#include "CMTL/geometry/IO/export_obj.h"
+#include "CMTL/geometry/io/surface_mesh/write_obj.h"
 
 typedef CMTL::geometry::geo3d::SurfaceMesh<double> Surface_mesh;
 typedef Surface_mesh::Point Point;
@@ -21,7 +21,7 @@ void test1()
     sm.add_face(std::vector<Surface_mesh::VertexHandle>{vertices[0], vertices[3], vertices[4], vertices[5]});
     sm.add_face(std::vector<Surface_mesh::VertexHandle>{vertices[0], vertices[5], vertices[6], vertices[7]});
     sm.add_face(std::vector<Surface_mesh::VertexHandle>{vertices[0], vertices[7], vertices[8], vertices[1]});
-    CMTL::geometry::io::export_obj(sm, "out.obj");
+    CMTL::geometry::io::write_obj(sm, "out.obj");
 }
 
 int main()

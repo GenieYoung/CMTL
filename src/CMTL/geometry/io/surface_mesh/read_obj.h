@@ -1,7 +1,6 @@
-#ifndef __io_import_obj__
-#define __io_import_obj__
+#ifndef __io_surface_mesh_read_obj__
+#define __io_surface_mesh_read_obj__
 
-#include "common/number_utils.h"
 #include "geo3d/geo3d_surface_mesh.h"
 #include <fstream>
 
@@ -24,7 +23,7 @@ inline void trim_line_string(std::string& str)
 }
 
 template<typename T>
-bool import_obj(geo3d::SurfaceMesh<T>& sm, std::istream& in)
+bool read_obj(geo3d::SurfaceMesh<T>& sm, std::istream& in)
 {
     sm.clear();
 
@@ -112,7 +111,7 @@ bool import_obj(geo3d::SurfaceMesh<T>& sm, std::istream& in)
  * @return true if sucessfully import, otherwise false
  */
 template<typename T>
-bool import_obj(geo3d::SurfaceMesh<T>& sm, const std::string& file)
+bool read_obj(geo3d::SurfaceMesh<T>& sm, const std::string& file)
 {
     std::fstream in(file.c_str(), std::ios_base::in);
     
@@ -122,7 +121,7 @@ bool import_obj(geo3d::SurfaceMesh<T>& sm, const std::string& file)
         return false;
     }
     
-    bool result = import_obj(sm, in);
+    bool result = read_obj(sm, in);
     in.close();
 
     return result;
@@ -132,4 +131,4 @@ bool import_obj(geo3d::SurfaceMesh<T>& sm, const std::string& file)
 }   // namespace geometry
 }   // namespace CMTL
 
-#endif  // __io_export_obj__
+#endif  // __io_surface_mesh_read_obj__

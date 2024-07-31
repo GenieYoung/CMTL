@@ -1,6 +1,8 @@
 #include <set>
 #include "CMTL/geometry/geo2d/geo2d_polygon.h"
 #include "CMTL/geometry/geometry_process/triangulate.h"
+#include "CMTL/geometry/io/polygon/write_obj.h"
+#include "CMTL/geometry/io/polygon_soup/write_obj.h"
 
 void test1()
 {
@@ -10,8 +12,10 @@ void test1()
     points.push_back(CMTL::geometry::geo2d::Point<double>{0.3,0.3});
     points.push_back(CMTL::geometry::geo2d::Point<double>{0,1});
     CMTL::geometry::geo2d::Polygon<double> polygon(points);
+    CMTL::geometry::io::write_obj(polygon, "test1_input.obj");
     std::vector<std::array<unsigned int, 3>> clip_triangles;
     CMTL::geometry::geometry_process::triangulate_2d(polygon, clip_triangles);
+    CMTL::geometry::io::write_obj(CMTL::geometry::geo2d::PolygonSoup<double>(points, clip_triangles), "test1_output.obj");
     std::cout << "test1 : " << std::endl;
     for(unsigned i = 0; i < clip_triangles.size(); ++i)
     {

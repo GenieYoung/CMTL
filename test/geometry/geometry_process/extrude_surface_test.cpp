@@ -1,13 +1,13 @@
 #include "CMTL/geometry/geometry_process/extrude_surface.h"
-#include "CMTL/geometry/IO/import_obj.h"
-#include "CMTL/geometry/IO/export_obj.h"
+#include "CMTL/geometry/io/surface_mesh/read_obj.h"
+#include "CMTL/geometry/io/surface_mesh/write_obj.h"
 #include "gmpxx.h"
 
 typedef CMTL::geometry::geo3d::SurfaceMesh<double> SurfaceMesh;
 typedef SurfaceMesh::Point Point;
 using CMTL::geometry::geometry_process::extrude_surface;
-using CMTL::geometry::io::import_obj;
-using CMTL::geometry::io::export_obj;
+using CMTL::geometry::io::read_obj;
+using CMTL::geometry::io::write_obj;
 
 void test1()
 {
@@ -28,20 +28,20 @@ void test1()
     sm.add_face(std::vector<SurfaceMesh::VertexHandle>{vertices[0], vertices[4], vertices[5]});
     // sm.add_face(std::vector<SurfaceMesh::VertexHandle>{vertices[0], vertices[5], vertices[6], vertices[7]});
     // sm.add_face(std::vector<SurfaceMesh::VertexHandle>{vertices[0], vertices[7], vertices[8], vertices[1]});
-    export_obj(sm, "test1_input.obj");
+    write_obj(sm, "test1_input.obj");
     SurfaceMesh extrude_mesh;
     extrude_surface(sm, 0.1, extrude_mesh);
-    export_obj(extrude_mesh, "test1_output.obj");
+    write_obj(extrude_mesh, "test1_output.obj");
 }
 
 void test2()
 {
     SurfaceMesh sm;
-    import_obj(sm, "../mesh_data/exposed.obj");
-    export_obj(sm, "test2_input.obj");
+    read_obj(sm, "../mesh_data/exposed.obj");
+    write_obj(sm, "test2_input.obj");
     SurfaceMesh extrude_mesh;
     extrude_surface(sm, 0.1, extrude_mesh);
-    export_obj(extrude_mesh, "test2_input.obj");
+    write_obj(extrude_mesh, "test2_input.obj");
 }
 
 int main()

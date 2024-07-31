@@ -1,15 +1,15 @@
-#ifndef __geo3d_polygon_soup_h__
-#define __geo3d_polygon_soup_h__
+#ifndef __geo2d_polygon_soup_h__
+#define __geo2d_polygon_soup_h__
 
-#include "geo3d_point.h"
+#include "geo2d_point.h"
 #include <vector>
 
 namespace CMTL{
 namespace geometry{
-namespace geo3d{
+namespace geo2d{
 
 /**
- * @brief 3 dimension polygon soup
+ * @brief 2 dimension polygon soup
  * @tparam T value type of point coordinate 
 */
 template<typename T>
@@ -34,7 +34,7 @@ class PolygonSoup
         {
             for(auto v_it = points.begin(); v_it != points.end(); ++v_it)
             {
-                _vertices.emplace_back((*v_it)[0], (*v_it)[1], (*v_it)[2]);
+                _vertices.emplace_back((*v_it)[0], (*v_it)[1]);
             }
             for(auto f_it = polygons.begin(); f_it != polygons.end(); ++f_it)
             {
@@ -55,12 +55,6 @@ class PolygonSoup
             return _vertices.size();
         }
 
-        /* return the number of polygons */
-        size_t n_polygons() const
-        {
-            return _polygons.size();
-        }
-
         /* get the ith point */
         Point<T>& point(unsigned i)
         {
@@ -73,6 +67,24 @@ class PolygonSoup
             return _vertices[i];
         }
 
+        /* return the number of polygons */
+        size_t n_polygons() const
+        {
+            return _polygons.size();
+        }
+
+        /* get the ith polygon */
+        std::vector<unsigned>& polygon(unsigned i)
+        {
+            return _polygons[i];
+        }
+
+        /* get the const ith polygon */
+        const std::vector<unsigned>& polygon(unsigned i) const
+        {
+            return _polygons[i];
+        }
+
     private:
         std::vector<Point<T>> _vertices;
 
@@ -82,9 +94,8 @@ class PolygonSoup
 
 /* Implementation */
 
-
-}   // namespace geo3d
+}   // namespace geo2d
 }   // namespace geometry
 }   // namespace CMTL
 
-#endif // __geo3d_polygon_soup_h__
+#endif // __geo2d_polygon_soup_h__
