@@ -1108,62 +1108,13 @@ class GraphTopology
             _faces.clear();
         }
 
-        /* use vertex handle to get the vertex item */
-        VertexItem& vertex(VertexHandle vh)
+        /* get i'th graph vertex */
+        GraphVertexHandle vertex(VertexHandle vh) const
         {
-            assert(vh.is_valid());
-            return _vertices[vh.idx()];
+            assert(vh.is_valid() && vh.idx() < n_vertices());
+            return GraphVertexHandle(vh.idx(), this);
         }
-
-        /* use vertex handle to get the vertex item */
-        const VertexItem& vertex(VertexHandle vh) const
-        {
-            assert(vh.is_valid());
-            return _vertices[vh.idx()];
-        }
-
-        /* use halfedge handle to get the halfedge item */
-        HalfedgeItem& halfedge(HalfedgeHandle heh)
-        {
-            assert(heh.is_valid());
-            return _edges[heh.idx() >> 1]._halfedges[heh.idx() & 1];
-        }
-
-        /* use halfedge handle to get the halfedge item */
-        const HalfedgeItem& halfedge(HalfedgeHandle heh) const
-        {
-            assert(heh.is_valid());
-            return _edges[heh.idx() >> 1]._halfedges[heh.idx() & 1];
-        }
-
-        /* use edge handle to get the edge item */
-        EdgeItem& edge(EdgeHandle eh)
-        {
-            assert(eh.is_valid());
-            return _edges[eh.idx()];
-        }
-
-        /* use edge handle to get the edge item */
-        const EdgeItem& edge(EdgeHandle eh) const
-        {
-            assert(eh.is_valid());
-            return _edges[eh.idx()];
-        }
-        
-        /* use face handle to get the face item */
-        FaceItem& face(FaceHandle fh)
-        {
-            assert(fh.is_valid());
-            return _faces[fh.idx()];
-        }
-
-        /* use face handle to get the face item */
-        const FaceItem& face(FaceHandle fh) const
-        {
-            assert(fh.is_valid());
-            return _faces[fh.idx()];
-        }
-
+    
         /* get i'th vertex handle */
         VertexHandle vertex_handle(unsigned i) const
         {
@@ -1173,13 +1124,20 @@ class GraphTopology
         /* get the destination of the halfedge */
         VertexHandle to_vertex_handle(HalfedgeHandle heh) const
         {
-            return halfedge(heh)._vertex_handle;
+            return halfedge_item(heh)._vertex_handle;
         }
 
         /* get the destination of the halfedge */
         VertexHandle from_vertex_handle(HalfedgeHandle heh) const
         {
             return to_vertex_handle(opposite_halfedge_handle(heh));
+        }
+
+        /* get i'th graph halfedge */
+        GraphHalfedgeHandle vertex(HalfedgeHandle heh) const
+        {
+            assert(heh.is_valid() && heh.idx() < n_halfedges());
+            return GraphHalfedgeHandle(heh.idx(), this);
         }
 
         /* get i'th halfedge handle */
@@ -1191,7 +1149,7 @@ class GraphTopology
         /* get the handle of a vertex's outgoing halfedge */
         HalfedgeHandle halfedge_handle(VertexHandle vh) const
         {
-            return vertex(vh)._halfedge_handle;
+            return vertex_item(vh)._halfedge_handle;
         }
 
         /* get halfedge handle with edge handle and a side */
@@ -1204,7 +1162,7 @@ class GraphTopology
         /* get halfedge handle of a face */
         HalfedgeHandle halfedge_handle(FaceHandle fh) const
         {
-            return (fh.idx()<n_faces() ? face(fh)._halfedge_handle : HalfedgeHandle());
+            return (fh.idx()<n_faces() ? face_item(fh)._halfedge_handle : HalfedgeHandle());
         }
 
         /* get handle of the opposite halfedge */
@@ -1216,13 +1174,13 @@ class GraphTopology
         /* get handle of the previous halfedge */
         HalfedgeHandle prev_halfedge_handle(HalfedgeHandle heh) const
         {
-            return(heh.idx()<n_halfedges() ? halfedge(heh)._prev_halfedge_handle : HalfedgeHandle());
+            return(heh.idx()<n_halfedges() ? halfedge_item(heh)._prev_halfedge_handle : HalfedgeHandle());
         }
 
         /* get handle of the next halfedge */
         HalfedgeHandle next_halfedge_handle(HalfedgeHandle heh) const
         {
-            return(heh.idx()<n_halfedges() ? halfedge(heh)._next_halfedge_handle : HalfedgeHandle());
+            return(heh.idx()<n_halfedges() ? halfedge_item(heh)._next_halfedge_handle : HalfedgeHandle());
         }
 
         /* get the first halfedge handle in the clock-wise order */
@@ -1237,6 +1195,13 @@ class GraphTopology
             return opposite_halfedge_handle(prev_halfedge_handle(heh));
         }
 
+        /* get i'th graph edge */
+        GraphEdgeHandle edge(EdgeHandle eh) const
+        {
+            assert(eh.is_valid() && eh.idx() < n_edges());
+            return GraphEdgeHandle(eh.idx(), this);
+        }
+
         /* get i'th edge handle */
         EdgeHandle edge_handle(unsigned i) const
         {
@@ -1249,6 +1214,13 @@ class GraphTopology
             return (heh.idx()<n_halfedges() ? EdgeHandle(heh.idx() >> 1) : EdgeHandle());
         }
 
+        /* get i'th graph face */
+        GraphFaceHandle face(FaceHandle fh) const
+        {
+            assert(fh.is_valid() && fh.idx() < n_faces());
+            return GraphFaceHandle(fh.idx(), this);
+        }
+
         /* get i'th face handle */
         FaceHandle face_handle(unsigned i) const
         {
@@ -1258,7 +1230,7 @@ class GraphTopology
         /* get face handle the halfedge lies on */
         FaceHandle face_handle(HalfedgeHandle heh) const
         {
-            return (heh.idx()<n_halfedges() ? halfedge(heh)._face_handle : FaceHandle());
+            return (heh.idx()<n_halfedges() ? halfedge_item(heh)._face_handle : FaceHandle());
         }
 
         /* check if the vertex is a boundary vertex */
@@ -1752,8 +1724,8 @@ class GraphTopology
             EdgeHandle eh(_edges.size() - 1);
             HalfedgeHandle he0 = halfedge_handle(eh, 0);
             HalfedgeHandle he1 = halfedge_handle(eh, 1);
-            halfedge(he0)._vertex_handle = end;
-            halfedge(he1)._vertex_handle = start;
+            halfedge_item(he0)._vertex_handle = end;
+            halfedge_item(he1)._vertex_handle = start;
             return he0;
         }
 
@@ -1787,7 +1759,7 @@ class GraphTopology
             {
                 if(is_boundary(*voh_it))
                 {
-                    vertex(vh)._halfedge_handle = *voh_it;
+                    vertex_item(vh)._halfedge_handle = *voh_it;
                     break;
                 }
             }
@@ -1800,8 +1772,7 @@ class GraphTopology
          */
         GraphVertexHandle add_vertex()
         {
-            VertexHandle vh = new_vertex();
-            return GraphVertexHandle(vh.idx(), this);
+            return vertex(new_vertex());
         }
 
         /**
@@ -1888,7 +1859,7 @@ class GraphTopology
             }
 
             FaceHandle fh(new_face());
-            face(fh)._halfedge_handle = _tmp_edge_storage[n-1].halfedge_handle;
+            face_item(fh)._halfedge_handle = _tmp_edge_storage[n-1].halfedge_handle;
 
             for(unsigned i = 0, j = 1; i < n; ++i, ++j, j%=n)
             {
@@ -1915,7 +1886,7 @@ class GraphTopology
                             HalfedgeHandle boundary_prev_he = prev_halfedge_handle(inner_next_he);
                             assert(boundary_prev_he.is_valid());
                             _he_link_storage[link_count++] = std::make_pair(boundary_prev_he, outer_next_he);
-                            vertex(vh)._halfedge_handle = outer_next_he;
+                            vertex_item(vh)._halfedge_handle = outer_next_he;
                             break;
                         }
                         case 2:
@@ -1923,14 +1894,14 @@ class GraphTopology
                             HalfedgeHandle boundary_next_he = next_halfedge_handle(inner_prev_he);
                             assert(boundary_next_he.is_valid());
                             _he_link_storage[link_count++] = std::make_pair(outer_prev_he, boundary_next_he);
-                            vertex(vh)._halfedge_handle = boundary_next_he;
+                            vertex_item(vh)._halfedge_handle = boundary_next_he;
                             break;
                         }
                         case 3:
                         {
                             if(!halfedge_handle(vh).is_valid())
                             {
-                                vertex(vh)._halfedge_handle = outer_next_he;
+                                vertex_item(vh)._halfedge_handle = outer_next_he;
                                 _he_link_storage[link_count++] = std::make_pair(outer_prev_he, outer_next_he);
                             }
                             else
@@ -1952,13 +1923,13 @@ class GraphTopology
                     _tmp_edge_storage[j].need_adjust = (halfedge_handle(vh) == inner_next_he);
                 }
 
-                halfedge(_tmp_edge_storage[i].halfedge_handle)._face_handle = fh;
+                halfedge_item(_tmp_edge_storage[i].halfedge_handle)._face_handle = fh;
             }
 
             for(unsigned i = 0; i < link_count; ++i)
             {
-                halfedge(_he_link_storage[i].first)._next_halfedge_handle = _he_link_storage[i].second;
-                halfedge(_he_link_storage[i].second)._prev_halfedge_handle = _he_link_storage[i].first;
+                halfedge_item(_he_link_storage[i].first)._next_halfedge_handle = _he_link_storage[i].second;
+                halfedge_item(_he_link_storage[i].second)._prev_halfedge_handle = _he_link_storage[i].first;
             }
 
             for(unsigned i = 0; i < n; ++i)
@@ -1967,7 +1938,7 @@ class GraphTopology
                     adjust_outgoing_halfedge(vhs[i]);
             }
 
-            return GraphFaceHandle(fh.idx(), this);
+            return face(fh);
         }
 
     public:
@@ -1977,15 +1948,15 @@ class GraphTopology
             printf("vertex  outgoing_halfedge\n");
             for(unsigned i = 0; i < n_vertices(); ++i)
             {
-                printf("%-8d%d\n", i, vertex(vertex_handle(i))._halfedge_handle.idx());
+                printf("%-8d%d\n", i, vertex_item(vertex_handle(i))._halfedge_handle.idx());
             }
 
             printf("halfedge from_v to_v next_he prev_he oppo_he face\n");
             for(unsigned i = 0; i < n_halfedges(); ++i)
             {
                 printf("%-9d%-7d%-5d%-8d%-8d%-8d%d\n", i, from_vertex_handle(halfedge_handle(i)).idx(), to_vertex_handle(halfedge_handle(i)).idx(),
-                                            halfedge(halfedge_handle(i))._next_halfedge_handle.idx(), halfedge(halfedge_handle(i))._prev_halfedge_handle.idx(),
-                                            opposite_halfedge_handle(halfedge_handle(i)).idx(), halfedge(halfedge_handle(i))._face_handle.idx());
+                                            halfedge_item(halfedge_handle(i))._next_halfedge_handle.idx(), halfedge_item(halfedge_handle(i))._prev_halfedge_handle.idx(),
+                                            opposite_halfedge_handle(halfedge_handle(i)).idx(), halfedge_item(halfedge_handle(i))._face_handle.idx());
             }
         }
 
@@ -2003,6 +1974,62 @@ class GraphTopology
         std::vector<std::pair<HalfedgeHandle, HalfedgeHandle> > _he_link_storage;
         
     protected:
+        /* use vertex handle to get the vertex item */
+        VertexItem& vertex_item(VertexHandle vh)
+        {
+            assert(vh.is_valid() && vh.idx() < n_vertices());
+            return _vertices[vh.idx()];
+        }
+
+        /* use vertex handle to get the vertex item */
+        const VertexItem& vertex_item(VertexHandle vh) const
+        {
+            assert(vh.is_valid() && vh.idx() < n_vertices());
+            return _vertices[vh.idx()];
+        }
+
+        /* use halfedge handle to get the halfedge item */
+        HalfedgeItem& halfedge_item(HalfedgeHandle heh)
+        {
+            assert(heh.is_valid() && heh.idx() < n_halfedges());
+            return _edges[heh.idx() >> 1]._halfedges[heh.idx() & 1];
+        }
+
+        /* use halfedge handle to get the halfedge item */
+        const HalfedgeItem& halfedge_item(HalfedgeHandle heh) const
+        {
+            assert(heh.is_valid() && heh.idx() < n_halfedges());
+            return _edges[heh.idx() >> 1]._halfedges[heh.idx() & 1];
+        }
+
+        /* use edge handle to get the edge item */
+        EdgeItem& edge_item(EdgeHandle eh)
+        {
+            assert(eh.is_valid() && eh.idx() < n_edges());
+            return _edges[eh.idx()];
+        }
+
+        /* use edge handle to get the edge item */
+        const EdgeItem& edge_item(EdgeHandle eh) const
+        {
+            assert(eh.is_valid() && eh.idx() < n_edges());
+            return _edges[eh.idx()];
+        }
+        
+        /* use face handle to get the face item */
+        FaceItem& face_item(FaceHandle fh)
+        {
+            assert(fh.is_valid() && fh.idx() < n_faces());
+            return _faces[fh.idx()];
+        }
+
+        /* use face handle to get the face item */
+        const FaceItem& face_item(FaceHandle fh) const
+        {
+            assert(fh.is_valid() && fh.idx() < n_faces());
+            return _faces[fh.idx()];
+        }
+
         /* vertex elements */
         std::vector<VertexItem> _vertices;
 
@@ -2117,13 +2144,14 @@ class Graph : public GraphTopology
         {
             VertexHandle vh = new_vertex();
             point(vh) = p;
-            return GraphVertexHandle(vh.idx(), this);
+            return vertex(vh);
         }
 
         /* clear all elements and attributes */
         void clear()
         {
             GraphTopology::clear();
+            _points.clear();
             _vertex_attr.clear();
             _halfedge_attr.clear();
             _edge_attr.clear();
@@ -2140,7 +2168,7 @@ class Graph : public GraphTopology
             return _points[vh.idx()];
         }
 
-        /* get the writable vertex point */
+        /* get the const vertex point */
         const Point& point(VertexHandle vh) const
         {
             assert(vh.is_valid() && vh.idx() < n_vertices() && vh.idx() < _points.size());
