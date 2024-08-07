@@ -11,10 +11,11 @@ namespace io{
 /**
  * @brief export a surface mesh into .obj format
  * @param sm surface mesh
+ * @param exact if exact is true, we print point into rational format
  * @param file target .obj file position
  */
 template<typename T>
-void write_obj(const geo3d::SurfaceMesh<T>& sm, const std::string& file)
+void write_obj(const geo3d::SurfaceMesh<T>& sm, const std::string& file, bool exact = false)
 {
     std::ofstream fout;
     fout.open(file.c_str(), std::ofstream::trunc);
@@ -22,7 +23,10 @@ void write_obj(const geo3d::SurfaceMesh<T>& sm, const std::string& file)
     for(auto vit = sm.vertices_begin(); vit != sm.vertices_end(); ++vit)
     {
         const typename geo3d::SurfaceMesh<T>::Point& p = sm.point(*vit);
-        fout << "v " << std::setprecision(15) << to_double(p[0]) << " \t" << to_double(p[1]) << " \t " << to_double(p[2]) << '\n';
+        if(!exact)
+            fout << "v " << std::setprecision(15) << to_double(p[0]) << " \t" << to_double(p[1]) << " \t " << to_double(p[2]) << '\n';
+        else
+            fout << "v " << to_string(p[0]) << " \t" << to_string(p[1]) << " \t " << to_string(p[2]) << '\n';
     }
     fout << std::endl;
 

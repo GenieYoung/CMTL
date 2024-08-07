@@ -32,7 +32,7 @@ bool read_obj(geo3d::SurfaceMesh<T>& sm, std::istream& in)
 
     std::vector<VertexHandle> vhandles;
     std::vector<VertexHandle> fvhs;
-    float x, y, z;
+    T x, y, z;
 
     std::string line;
     std::string key;
@@ -58,7 +58,7 @@ bool read_obj(geo3d::SurfaceMesh<T>& sm, std::istream& in)
         if(key == "v")
         {
             stream >> x; stream >> y; stream >> z;
-            if(stream.bad())
+            if(stream.bad() || stream.fail())
             {
                 std::cerr << "error while reading obj vertex." << std::endl;
                 return false;
