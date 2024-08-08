@@ -1,5 +1,5 @@
-#ifndef __geometry_process_orient__
-#define __geometry_process_orient__
+#ifndef __geometry_process_predicate__
+#define __geometry_process_predicate__
 
 #include "geo2d/geo2d_polygon.h"
 #include "geo2d/geo2d_triangle.h"
@@ -31,4 +31,4 @@ int orient_2d(const Point& pa, const Point& pb, const Point& pc)
 }   // namespace geometry
 }   // namespace CMTL
 
-#endif  // __geometry_process_area__
+#endif  // __geometry_process_predicate__
