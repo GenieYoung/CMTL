@@ -21,7 +21,7 @@ namespace internal{
             surface_extrude_modifier(const geo3d::SurfaceMesh<T>& input_mesh, const T& shift)
                 : _origin_mesh(input_mesh), _shift(shift)
             {
-                assert(_origin_mesh.is_triangle_mesh());
+                assert(_origin_mesh.has_constant_face_degree(3));
             }
 
             ~surface_extrude_modifier()

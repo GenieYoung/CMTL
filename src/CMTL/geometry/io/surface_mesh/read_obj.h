@@ -1,6 +1,7 @@
 #ifndef __io_surface_mesh_read_obj__
 #define __io_surface_mesh_read_obj__
 
+#include "geo2d/geo2d_surface_mesh.h"
 #include "geo3d/geo3d_surface_mesh.h"
 #include <fstream>
 
@@ -22,17 +23,18 @@ inline void trim_line_string(std::string& str)
         str = str.substr( start, end-start+1 );
 }
 
-template<typename T>
-bool read_obj(geo3d::SurfaceMesh<T>& sm, std::istream& in)
+template<typename SurfaceMesh>
+bool read_surface_mesh(SurfaceMesh& sm, std::istream& in)
 {
     sm.clear();
 
-    typedef typename geo3d::SurfaceMesh<T>::VertexHandle VertexHandle;
-    typedef typename geo3d::SurfaceMesh<T>::Point        Point;
+    typedef typename SurfaceMesh::VertexHandle VertexHandle;
+    typedef typename SurfaceMesh::Point        Point;
+    typedef typename SurfaceMesh::NT           NT;
 
     std::vector<VertexHandle> vhandles;
     std::vector<VertexHandle> fvhs;
-    T x, y, z;
+    NT x, y, z;
 
     std::string line;
     std::string key;
@@ -63,7 +65,10 @@ bool read_obj(geo3d::SurfaceMesh<T>& sm, std::istream& in)
                 std::cerr << "error while reading obj vertex." << std::endl;
                 return false;
             }
-            vhandles.push_back(sm.add_vertex(Point(x, y, z)));
+            if(Point::dimension() == 2)
+                vhandles.push_back(sm.add_vertex(Point(x, y)));
+            else
+                vhandles.push_back(sm.add_vertex(Point(x, y, z)));
         }
         else if(key == "f")
         {
@@ -105,7 +110,30 @@ bool read_obj(geo3d::SurfaceMesh<T>& sm, std::istream& in)
 }
 
 /**
- * @brief build a surface mesh form .obj format file
+ * @brief build a 2d surface mesh form .obj format file
+ * @param sm surface mesh
+ * @param file target .obj file position
+ * @return true if sucessfully import, otherwise false
+ */
+template<typename T>
+bool read_obj(geo2d::SurfaceMesh<T>& sm, const std::string& file)
+{
+    std::fstream in(file.c_str(), std::ios_base::in);
+    
+    if(!in.is_open() || !in.good())
+    {
+        std::cerr << "error while opening file " << file << std::endl;
+        return false;
+    }
+    
+    bool result = read_surface_mesh(sm, in);
+    in.close();
+
+    return result;
+}
+
+/**
+ * @brief build a 3d surface mesh form .obj format file
  * @param sm surface mesh
  * @param file target .obj file position
  * @return true if sucessfully import, otherwise false
@@ -121,7 +149,7 @@ bool read_obj(geo3d::SurfaceMesh<T>& sm, const std::string& file)
         return false;
     }
     
-    bool result = read_obj(sm, in);
+    bool result = read_surface_mesh(sm, in);
     in.close();
 
     return result;

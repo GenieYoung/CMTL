@@ -1,13 +1,13 @@
-#ifndef __geo3d_surface_mesh_h__
-#define __geo3d_surface_mesh_h__
+#ifndef __geo2d_surface_mesh_h__
+#define __geo2d_surface_mesh_h__
 
 #include "topology/halfedge.h"
 #include "common/attributes.h"
-#include "geo3d_point.h"
+#include "geo2d_point.h"
 
 namespace CMTL{
 namespace geometry{
-namespace geo3d{
+namespace geo2d{
 
 /**
  * @brief surface mesh traits, user specified traits should inherit this class and override these members.
@@ -16,7 +16,7 @@ namespace geo3d{
 template<typename T>
 struct SurfaceMeshTraits : public halfedge::DefaultTraits
 {
-    typedef geo3d::Point<T> Point;
+    typedef geo2d::Point<T> Point;
     /* attributes attach to a vertex */
     typedef Attributes VertexAttribute;
     /* attributes attach to a halfedge */
@@ -109,29 +109,10 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
 
         /* deconstructor */
         ~SurfaceMesh() = default;
-
-    public:
-        /* calculate a face normal */
-        Point normal(FaceHandle fh) const
-        {
-            /* Newells algorithm */
-            T x = T(0), y = T(0), z = T(0);
-            auto first_v = this->fv_begin(fh);
-            auto second_v = this->fv_begin(fh);
-            ++second_v;
-            assert(first_v != second_v);
-            for(; first_v != this->fv_end(fh); ++first_v, ++second_v)
-            {
-                x += ((this->point(*first_v).z() + this->point(*second_v).z())*(this->point(*first_v).y() - this->point(*second_v).y()));
-                y += ((this->point(*first_v).x() + this->point(*second_v).x())*(this->point(*first_v).z() - this->point(*second_v).z()));
-                z += ((this->point(*first_v).y() + this->point(*second_v).y())*(this->point(*first_v).x() - this->point(*second_v).x()));
-            }
-            return Point(x, y, z);
-        }
 };
     
-}   // namespace geo3d
+}   // namespace geo2d
 }   // namespace geometry
 }   // namespace CMTL
 
-#endif // __geo3d_surface_mesh_h__
+#endif // __geo2d_surface_mesh_h__
