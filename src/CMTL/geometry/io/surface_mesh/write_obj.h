@@ -23,7 +23,7 @@ void write_obj(const geo2d::SurfaceMesh<T>& sm, const std::string& file, bool ex
 
     for(auto vit = sm.vertices_begin(); vit != sm.vertices_end(); ++vit)
     {
-        const typename geo3d::SurfaceMesh<T>::Point& p = sm.point(*vit);
+        const typename geo2d::SurfaceMesh<T>::Point& p = sm.point(*vit);
         if(!exact)
             fout << "v " << std::setprecision(15) << to_double(p[0]) << " \t" << to_double(p[1]) << " \t " << 0 << '\n';
         else

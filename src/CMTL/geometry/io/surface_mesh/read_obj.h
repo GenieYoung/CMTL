@@ -34,7 +34,6 @@ bool read_surface_mesh(SurfaceMesh& sm, std::istream& in)
 
     std::vector<VertexHandle> vhandles;
     std::vector<VertexHandle> fvhs;
-    NT x, y, z;
 
     std::string line;
     std::string key;
@@ -59,16 +58,17 @@ bool read_surface_mesh(SurfaceMesh& sm, std::istream& in)
         
         if(key == "v")
         {
-            stream >> x; stream >> y; stream >> z;
+            Point p;
+            stream >> p[0]; 
+            stream >> p[1];
+            if(Point::dimension() == 3)
+                stream >> p[2];
             if(stream.bad() || stream.fail())
             {
                 std::cerr << "error while reading obj vertex." << std::endl;
                 return false;
             }
-            if(Point::dimension() == 2)
-                vhandles.push_back(sm.add_vertex(Point(x, y)));
-            else
-                vhandles.push_back(sm.add_vertex(Point(x, y, z)));
+            vhandles.push_back(sm.add_vertex(p));
         }
         else if(key == "f")
         {

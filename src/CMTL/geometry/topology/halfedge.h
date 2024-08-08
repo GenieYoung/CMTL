@@ -1779,6 +1779,88 @@ class GraphTopology
         }
 
     public:
+        /* check whether flip eh is topologically correct */
+        bool is_flip_ok(EdgeHandle eh) const
+        {
+            if(!eh.is_valid()) 
+                return false;
+
+            // boundary edges can not be flipped
+            if(is_boundary(eh))
+                return false;
+            
+            HalfedgeHandle h0 = halfedge_handle(eh, 0);
+            HalfedgeHandle h1 = halfedge_handle(eh, 1);
+
+            // neighbor faces must have degree 3
+            if(next_halfedge_handle(next_halfedge_handle(h0)) != prev_halfedge_handle(h0) || 
+               next_halfedge_handle(next_halfedge_handle(h1)) != prev_halfedge_handle(h1) )
+                return false;
+
+            VertexHandle va = to_vertex_handle(next_halfedge_handle(h0));
+            VertexHandle vb = to_vertex_handle(next_halfedge_handle(h1));
+
+            if(va == vb)
+                return false;
+            
+            for(auto vv_it = vv_begin(va); vv_it != vv_end(va); ++vv_it)
+                if(*vv_it == vb)
+                    return false;
+            
+            return true;
+        }
+
+        void flip(EdgeHandle eh)
+        {
+            assert(is_flip_ok(eh));
+            
+            HalfedgeHandle a0 = halfedge_handle(eh, 0);
+            HalfedgeHandle a1 = next_halfedge_handle(a0);
+            HalfedgeHandle a2 = prev_halfedge_handle(a0);
+            HalfedgeHandle b0 = halfedge_handle(eh, 1);
+            HalfedgeHandle b1 = next_halfedge_handle(b0);
+            HalfedgeHandle b2 = prev_halfedge_handle(b0);
+
+            VertexHandle v0 = to_vertex_handle(b0);
+            VertexHandle v1 = to_vertex_handle(a0);
+            VertexHandle va = to_vertex_handle(a1);
+            VertexHandle vb = to_vertex_handle(b1);
+
+            FaceHandle fa = face_handle(a0);
+            FaceHandle fb = face_handle(b0);
+
+            halfedge_item(a0)._vertex_handle = va;
+            halfedge_item(a0)._next_halfedge_handle = a2;
+            halfedge_item(a0)._prev_halfedge_handle = b1;
+
+            halfedge_item(a1)._next_halfedge_handle = b0;
+            halfedge_item(a1)._prev_halfedge_handle = b2;
+            halfedge_item(a1)._face_handle = fb;
+
+            halfedge_item(a2)._next_halfedge_handle = b1;
+            halfedge_item(a2)._prev_halfedge_handle = a0;
+
+            halfedge_item(b0)._vertex_handle = vb;
+            halfedge_item(b0)._next_halfedge_handle = b2;
+            halfedge_item(b0)._prev_halfedge_handle = a1;
+
+            halfedge_item(b1)._next_halfedge_handle = a0;
+            halfedge_item(b1)._prev_halfedge_handle = a2;
+            halfedge_item(b1)._face_handle = fa;
+
+            halfedge_item(b2)._next_halfedge_handle = a1;
+            halfedge_item(b2)._prev_halfedge_handle = b0;
+
+            face_item(fa)._halfedge_handle = a0;
+            face_item(fb)._halfedge_handle = b0;
+
+            if(halfedge_handle(v0) == a0)
+                vertex_item(v0)._halfedge_handle = b1;
+            if(halfedge_handle(v1) == b0)
+                vertex_item(v1)._halfedge_handle = a1;
+        }
+
+    public:
         /* add a new vertex */
         VertexHandle new_vertex()
         {
@@ -1842,6 +1924,15 @@ class GraphTopology
         GraphVertexHandle add_vertex()
         {
             return vertex(new_vertex());
+        }
+
+        /**
+         * @brief add a 3-degree face into graph and build connectivity information
+         * @return the new face handle 
+         */
+        GraphFaceHandle add_face(VertexHandle vh0, VertexHandle vh1, VertexHandle vh2)
+        {
+            return add_face(std::vector<VertexHandle>{vh0, vh1, vh2});
         }
 
         /**
