@@ -99,9 +99,9 @@ namespace internal  {
 
             void check_concavity(vertex& v)
             {
-                int orientation = orient_2d(_polygon[v.prev_id], _polygon[v.cur_id], _polygon[v.next_id]);
-                v.is_convex = (orientation == 1);
-                v.is_reflex = (orientation == -1);
+                ORIENTATION orientation = orient_2d(_polygon[v.prev_id], _polygon[v.cur_id], _polygon[v.next_id]);
+                v.is_convex = (orientation == ORIENTATION::POSITIVE);
+                v.is_reflex = (orientation == ORIENTATION::NEGATIVE);
             }
 
             void check_ear(vertex& v) const
@@ -114,7 +114,7 @@ namespace internal  {
                         loc = _vertex_list[loc].next_id;
                         continue;
                     }
-                    if(orient_2d(_polygon[v.prev_id], _polygon[v.next_id], _polygon[loc]) != 1)
+                    if(orient_2d(_polygon[v.prev_id], _polygon[v.next_id], _polygon[loc]) != ORIENTATION::POSITIVE)
                     {
                         v.is_ear = false;
                         return;

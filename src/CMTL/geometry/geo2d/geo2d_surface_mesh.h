@@ -109,6 +109,13 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
 
         /* deconstructor */
         ~SurfaceMesh() = default;
+
+    public:
+        /* check whether the mesh is a triangle mesh */
+        bool is_triangle_mesh() const
+        {
+            return this->has_constant_face_degree(3);
+        }
 };
     
 }   // namespace geo2d

@@ -209,6 +209,18 @@ class VectorT
             return false;
         }
 
+        /* access to scalar array*/
+        T* data()
+        {
+            return _values.data();
+        }
+
+        /* access to const scalar array*/
+        const T* data() const
+        {
+            return _values.data();
+        }
+
         /* return the first maximal component and corresponding index*/
         std::pair<unsigned, T> max() const
         {
