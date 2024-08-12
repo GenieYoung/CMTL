@@ -207,6 +207,9 @@ class GraphEdgeHandle : public GraphElemHandle, public EdgeHandle
         }
 
     public:
+        /* the halfedges near the edge*/
+        GraphHalfedgeHandle halfedge(unsigned i) const;
+
         /* check whether the edge is on boundary*/
         bool is_boundary() const;
 };
@@ -2212,6 +2215,11 @@ bool GraphVertexHandle::is_boundary() const
 }
 
 /* GraphEdgeHandle make smart*/
+GraphHalfedgeHandle GraphEdgeHandle::halfedge(unsigned i) const
+{
+    return GraphHalfedgeHandle(this->graph()->halfedge_handle(*this, i).idx(), this->graph());
+}
+
 bool GraphEdgeHandle::is_boundary() const
 {
     return this->graph()->is_boundary(*this);

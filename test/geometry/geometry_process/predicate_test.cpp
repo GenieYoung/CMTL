@@ -22,7 +22,7 @@ void orient3d_test()
 void locally_delaunay_test()
 {
     typedef CMTL::geometry::geo2d::Point<double> PointF;
-    PointF p1(0,0), p2(1,0), p3(0.5, 0.5), p4(0.5, -0.5);
+    PointF p1(0,0), p2(1,0), p3(0.5, 0.5), p4(0.5, -0.1);
     std::cout << p1 << " " << p2 << " " << p3 << " " << p4 << " "
               << (CMTL::geometry::geometry_process::is_locally_delaunay(p1, p2, p3, p4) ? "delaunay" : "not delaunay") << std::endl;
 }
