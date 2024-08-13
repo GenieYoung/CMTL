@@ -1,6 +1,8 @@
 #ifndef __geometry_process_predicate__
 #define __geometry_process_predicate__
 
+#include <array>
+
 namespace CMTL{
 namespace geometry{
 
@@ -48,18 +50,19 @@ ORIENTATION orient_2d(const Point& pa, const Point& pb, const Point& pc)
 /**
  * @brief 3d orientation test, non-robust if point type is not exact
  * @return return positive if the point pd lies above the plane passing through pa, pb, and pc,
+ *         "above" is defined so that pa, pb, and pc appear in counterclockwise order when viewed from above the plane,
  *         return on if the points are coplanar, otherwise return negative.
  * @note the point must has operator[] method to get coordinate
  */
 template<typename Point>
 ORIENTATION orient_3d(const Point& pa, const Point& pb, const Point& pc, const Point& pd)
 {
-    auto adx = pd[0] - pa[0], ady = pd[1] - pa[1], adz = pd[2] - pa[2],
-         abx = pb[0] - pa[0], aby = pb[1] - pb[1], abz = pb[2] - pa[2],
-         acx = pc[0] - pa[0], acy = pc[1] - pa[1], acz = pc[2] - pa[2];
-    auto flag = adx * (aby * acz - abz * acy) +
-                ady * (abz * acx - abx * acz) +
-                adz * (abx * acy - aby * acx);
+    typename Point::value_type adx = pd[0] - pa[0], ady = pd[1] - pa[1], adz = pd[2] - pa[2],
+                               abx = pb[0] - pa[0], aby = pb[1] - pa[1], abz = pb[2] - pa[2],
+                               acx = pc[0] - pa[0], acy = pc[1] - pa[1], acz = pc[2] - pa[2];
+    typename Point::value_type flag = adx * (aby * acz - abz * acy) +
+                                      ady * (abz * acx - abx * acz) +
+                                      adz * (abx * acy - aby * acx);
     if(flag > 0)
         return ORIENTATION::POSITIVE;
     else if(flag < 0)
@@ -76,10 +79,10 @@ ORIENTATION orient_3d(const Point& pa, const Point& pb, const Point& pc, const P
 template<typename Point>
 bool is_locally_delaunay(const Point& pa, const Point& pb, const Point& pc, const Point& pd)
 {
-    typename Point::value_type pa_[3] = {pa[0], pa[1], pa[0]*pa[0] + pa[1]*pa[1]};
-    typename Point::value_type pb_[3] = {pb[0], pb[1], pb[0]*pb[0] + pb[1]*pb[1]};
-    typename Point::value_type pc_[3] = {pc[0], pc[1], pc[0]*pc[0] + pc[1]*pc[1]};
-    typename Point::value_type pd_[3] = {pd[0], pd[1], pd[0]*pd[0] + pd[1]*pd[1]};
+    std::array<typename Point::value_type, 3> pa_ = {pa[0], pa[1], pa[0]*pa[0] + pa[1]*pa[1]};
+    std::array<typename Point::value_type, 3> pb_ = {pb[0], pb[1], pb[0]*pb[0] + pb[1]*pb[1]};
+    std::array<typename Point::value_type, 3> pc_ = {pc[0], pc[1], pc[0]*pc[0] + pc[1]*pc[1]};
+    std::array<typename Point::value_type, 3> pd_ = {pd[0], pd[1], pd[0]*pd[0] + pd[1]*pd[1]};
     ORIENTATION flag = orient_3d(pa_, pb_, pc_, pd_);
     return flag == ORIENTATION::POSITIVE || flag == ORIENTATION::ON;
 }

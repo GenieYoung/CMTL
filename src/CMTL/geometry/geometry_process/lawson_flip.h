@@ -2,8 +2,8 @@
 #define __geometry_process_lawson_flip__
 
 #include "geo2d/geo2d_surface_mesh.h"
-#include "io/surface_mesh/write_obj.h"
 #include "predicate.h"
+#include <queue>
 
 namespace CMTL{
 namespace geometry{
@@ -16,7 +16,36 @@ namespace geometry_process{
 template<typename T>
 void lawson_flip(geo2d::SurfaceMesh<T>& sm)
 {
-    unsigned count = 0;
+    typedef typename geo2d::SurfaceMesh<T>::VertexHandle    VertexHandle;
+    typedef typename geo2d::SurfaceMesh<T>::HalfedgeHandle  HalfedgeHandle;
+    typedef typename geo2d::SurfaceMesh<T>::EdgeHandle      EdgeHandle;
+    std::queue<EdgeHandle> queue;
+    for(auto eit = sm.edges_begin(); eit != sm.edges_end(); ++eit)
+        queue.push(*eit);
+    while(!queue.empty())
+    {
+        EdgeHandle eh = queue.front();
+        queue.pop();
+        if(sm.is_boundary(eh))
+            continue;
+        HalfedgeHandle h0 = sm.halfedge_handle(eh, 0);
+        HalfedgeHandle h1 = sm.halfedge_handle(eh, 1);
+        VertexHandle v0 = sm.from_vertex_handle(h0);
+        VertexHandle v1 = sm.to_vertex_handle(h0);
+        VertexHandle va = sm.to_vertex_handle(sm.next_halfedge_handle(h0));
+        VertexHandle vb = sm.to_vertex_handle(sm.next_halfedge_handle(h1));
+        if(!is_locally_delaunay(sm.point(va), sm.point(v0), sm.point(v1), sm.point(vb)) && sm.is_flip_ok(eh))
+        {
+            sm.flip(eh);
+            queue.push(sm.edge_handle(sm.next_halfedge_handle(h0)));
+            queue.push(sm.edge_handle(sm.prev_halfedge_handle(h0)));
+            queue.push(sm.edge_handle(sm.next_halfedge_handle(h1)));
+            queue.push(sm.edge_handle(sm.prev_halfedge_handle(h1)));
+        }
+    }
+
+#if 0
+    // check
     for(auto eit = sm.edges_begin(); eit != sm.edges_end(); ++eit)
     {
         if(sm.is_boundary(*eit))
@@ -27,12 +56,9 @@ void lawson_flip(geo2d::SurfaceMesh<T>& sm)
         auto v1 = h0.to_vertex();
         auto va = h0.next().to_vertex();
         auto vb = h1.next().to_vertex();
-        if(!is_locally_delaunay(sm.point(va), sm.point(v0), sm.point(v1), sm.point(vb)) && sm.is_flip_ok(*eit))
-        {
-            sm.flip(*eit);
-            io::write_obj(sm, std::string("sm_") + std::to_string(count++) + ".obj");
-        }
+        assert(!sm.is_flip_ok(*eit) || is_locally_delaunay(sm.point(va), sm.point(v0), sm.point(v1), sm.point(vb)));
     }
+#endif
 }
 
 }   // namespace geometry_process
