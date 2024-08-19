@@ -1939,6 +1939,15 @@ class GraphTopology
         }
 
         /**
+         * @brief add a 4-degree face into graph and build connectivity information
+         * @return the new face handle 
+         */
+        GraphFaceHandle add_face(VertexHandle vh0, VertexHandle vh1, VertexHandle vh2, VertexHandle vh3)
+        {
+            return add_face(std::vector<VertexHandle>{vh0, vh1, vh2, vh3});
+        }
+
+        /**
          * @brief add a face into graph and build connectivity information
          * @return the new face handle 
          */

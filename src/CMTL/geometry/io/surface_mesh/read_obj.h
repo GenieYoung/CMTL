@@ -30,7 +30,6 @@ bool read_surface_mesh(SurfaceMesh& sm, std::istream& in)
 
     typedef typename SurfaceMesh::VertexHandle VertexHandle;
     typedef typename SurfaceMesh::Point        Point;
-    typedef typename SurfaceMesh::NT           NT;
 
     std::vector<VertexHandle> vhandles;
     std::vector<VertexHandle> fvhs;
