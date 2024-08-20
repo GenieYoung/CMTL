@@ -1813,6 +1813,7 @@ class GraphTopology
             return true;
         }
 
+        /* flip an edge */
         void flip(EdgeHandle eh)
         {
             assert(is_flip_ok(eh));
@@ -1863,6 +1864,27 @@ class GraphTopology
                 vertex_item(v1)._halfedge_handle = a1;
         }
 
+        /**
+         * @brief split an edge, split the adjacent faces when split_face is true
+         * @note split_face only works if all the adjacent faces have degree 3
+         */
+        VertexHandle split(EdgeHandle eh, bool split_face = true)
+        {
+            return VertexHandle();
+        }
+        
+        /* check whether collapse heh is topologically correct */
+        bool is_collapse_ok(HalfedgeHandle heh) const
+        {
+            return false;
+        }
+
+        /* collapse a halfedge */
+        void collapse(HalfedgeHandle heh)
+        {
+
+        }
+
     public:
         /* add a new vertex */
         VertexHandle new_vertex()
@@ -1904,19 +1926,6 @@ class GraphTopology
                     return *voh;
             }
             return GraphHalfedgeHandle(-1, this);
-        }
-
-        /* if the vertex has a boundary outgoing halfedge around it, link the halfedge */
-        void adjust_outgoing_halfedge(VertexHandle vh)
-        {
-            for(ConstVertexOHalfedgeIter voh_it = voh_begin(vh); voh_it != voh_end(vh); ++voh_it)
-            {
-                if(is_boundary(*voh_it))
-                {
-                    vertex_item(vh)._halfedge_handle = *voh_it;
-                    break;
-                }
-            }
         }
 
     public:
@@ -2144,6 +2153,19 @@ class GraphTopology
         std::vector<AddFaceEdgeStorage> _tmp_edge_storage;
         /* container that store the information used for next halfedge link when add a new face */
         std::vector<std::pair<HalfedgeHandle, HalfedgeHandle> > _he_link_storage;
+
+        /* if the vertex has a boundary outgoing halfedge around it, link the halfedge */
+        void adjust_outgoing_halfedge(VertexHandle vh)
+        {
+            for(ConstVertexOHalfedgeIter voh_it = voh_begin(vh); voh_it != voh_end(vh); ++voh_it)
+            {
+                if(is_boundary(*voh_it))
+                {
+                    vertex_item(vh)._halfedge_handle = *voh_it;
+                    break;
+                }
+            }
+        }
         
     protected:
         /* use vertex handle to get the vertex item */

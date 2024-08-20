@@ -116,6 +116,16 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
         {
             return this->has_constant_face_degree(3);
         }
+    
+    public:
+        /**
+         * @brief split an edge on point p, split the adjacent faces when split_face is true
+         * @note split_face only works if all the adjacent faces have degree 3
+         */
+        void split(EdgeHandle eh, const Point& p, bool split_face = true)
+        {
+            
+        }
 };
     
 }   // namespace geo2d
