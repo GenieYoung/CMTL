@@ -1,7 +1,7 @@
 #ifndef __geo2d_point_h__
 #define __geo2d_point_h__
 
-#include "common/vectorT.h"
+#include "../../common/vectorT.h"
 
 #include <iostream>
 #include <iomanip>

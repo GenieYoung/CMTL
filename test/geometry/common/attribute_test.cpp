@@ -1,4 +1,4 @@
-#include "CMTL/geometry/common/attributes.h"
+#include "CMTL/common/attributes.h"
 #include <iostream>
 
 int main()

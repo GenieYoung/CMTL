@@ -1,8 +1,8 @@
 #ifndef __geometry_process_extrude_surface__
 #define __geometry_process_extrude_surface__
 
-#include "geo3d/geo3d_surface_mesh.h"
-#include "geo3d/geo3d_polygon_soup.h"
+#include "../geo3d/geo3d_surface_mesh.h"
+#include "../geo3d/geo3d_polygon_soup.h"
 #include "normal.h"
 
 #include <algorithm>

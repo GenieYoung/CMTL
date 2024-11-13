@@ -1,8 +1,8 @@
 #ifndef __geometry_process_triangulate__
 #define __geometry_process_triangulate__
 
-#include "geo2d/geo2d_polygon.h"
-#include "geo3d/geo3d_polygon.h"
+#include "../geo2d/geo2d_polygon.h"
+#include "../geo3d/geo3d_polygon.h"
 #include "predicate.h"
 
 #include <vector>

@@ -1,8 +1,8 @@
 #ifndef __geo3d_surface_mesh_h__
 #define __geo3d_surface_mesh_h__
 
-#include "topology/halfedge.h"
-#include "common/attributes.h"
+#include "../topology/halfedge.h"
+#include "../../common/attributes.h"
 #include "geo3d_point.h"
 
 namespace CMTL{

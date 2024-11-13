@@ -1,7 +1,7 @@
 #ifndef __geometry_process_normal__
 #define __geometry_process_normal__
 
-#include "geo3d/geo3d_point.h"
+#include "../geo3d/geo3d_point.h"
 
 namespace CMTL{
 namespace geometry{

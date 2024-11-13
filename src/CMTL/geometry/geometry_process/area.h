@@ -1,8 +1,8 @@
 #ifndef __geometry_process_area__
 #define __geometry_process_area__
 
-#include "geo2d/geo2d_polygon.h"
-#include "geo2d/geo2d_triangle.h"
+#include "../geo2d/geo2d_polygon.h"
+#include "../geo2d/geo2d_triangle.h"
 
 namespace CMTL{
 namespace geometry{

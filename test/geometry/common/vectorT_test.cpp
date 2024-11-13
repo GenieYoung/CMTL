@@ -1,4 +1,4 @@
-#include "CMTL/geometry/common/vectorT.h"
+#include "CMTL/common/vectorT.h"
 
 using namespace CMTL::geometry;
 

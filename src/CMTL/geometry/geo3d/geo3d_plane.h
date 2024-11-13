@@ -1,9 +1,9 @@
 #ifndef __geo3d_plane_h__
 #define __geo3d_plane_h__
 
-#include "geo2d/geo2d_point.h"
+#include "../geo2d/geo2d_point.h"
 #include "geo3d_point.h"
-#include "common/number_utils.h"
+#include "../../common/number_utils.h"
 #include <vector>
 
 namespace CMTL  {

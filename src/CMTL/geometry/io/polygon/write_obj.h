@@ -1,8 +1,8 @@
 #ifndef __io_polygon_write_obj__
 #define __io_polygon_write_obj__
 
-#include "geo2d/geo2d_polygon.h"
-#include "geo3d/geo3d_polygon.h"
+#include "../../geo2d/geo2d_polygon.h"
+#include "../../geo3d/geo3d_polygon.h"
 #include <fstream>
 
 namespace CMTL{

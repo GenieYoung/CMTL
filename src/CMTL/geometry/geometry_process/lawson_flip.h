@@ -1,7 +1,7 @@
 #ifndef __geometry_process_lawson_flip__
 #define __geometry_process_lawson_flip__
 
-#include "geo2d/geo2d_surface_mesh.h"
+#include "../geo2d/geo2d_surface_mesh.h"
 #include "predicate.h"
 #include <queue>
 
