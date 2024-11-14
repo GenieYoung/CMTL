@@ -5,7 +5,6 @@
 #include <cmath>
 
 namespace CMTL{
-namespace geometry{
 
 template<typename T_IN, typename T_OUT>
 struct util_cast_impl
@@ -68,7 +67,6 @@ inline T square_root(const T& v)
     return T(std::sqrt(to_double(v)));
 }
 
-}   // namespace geometry
 }   // namespace CMTL
 
 #endif  // __common_utils_h__

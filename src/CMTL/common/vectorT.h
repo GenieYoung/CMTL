@@ -4,13 +4,11 @@
 #include "number_utils.h"
 
 #include <iostream>
-#include <iomanip>
 #include <assert.h>
 #include <array>
 #include <algorithm>
 
 namespace CMTL{
-namespace geometry{
 
 /**
  * @brief fixed size value type container
@@ -65,8 +63,8 @@ class VectorT
         VectorT(const VectorT& other) = default;
 
         /* copy & cast constructor */
-        template<typename TT, typename Derived2>
-        explicit VectorT(const VectorT<TT, DIM, Derived2>& other)
+        template<typename TT, unsigned DIM2, typename Derived2>
+        explicit VectorT(const VectorT<TT, DIM2, Derived2>& other)
         {
             operator=(other);
         }
@@ -75,16 +73,16 @@ class VectorT
         Derived& operator=(const VectorT& other)
         {
             _values = other._values;
-            return static_cast<Derived&>(*this);
+            return static_cast<Derived &>(*this);
         }
 
         /* assign & cast operator */
-        template<typename TT, typename Derived2>
-        Derived& operator=(const VectorT<TT, DIM, Derived2>& other)
+        template<typename TT, unsigned DIM2, typename Derived2>
+        Derived& operator=(const VectorT<TT, DIM2, Derived2>& other)
         {
-            for(unsigned i = 0; i < DIM; ++i)
+            for(unsigned i = 0; i < std::min(DIM, DIM2); ++i)
                 _values[i] = util_cast<TT, T>(other[i]);
-            return static_cast<Derived&>(*this);
+            return static_cast<Derived &>(*this);
         }
 
         /* deconstructor */
@@ -314,7 +312,6 @@ typedef VecTBase<double, 3> Vec3d;
 template<typename T, unsigned DIM>
 using VecXT = VecTBase<T, DIM>;
 
-}   // namespace geometry
 }   // namespace CMTL
 
 #endif  // __common_vectorT_h__

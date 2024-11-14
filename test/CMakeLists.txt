@@ -1,3 +1,7 @@
 project(test)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/geometry)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/common)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/geo2d)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/geo3d)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/geometry_process)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/io)

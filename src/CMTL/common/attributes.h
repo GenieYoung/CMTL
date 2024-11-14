@@ -8,7 +8,6 @@
 #include <map>
 
 namespace CMTL{
-namespace geometry{
 
 /**
  * @brief struct used to store attributes
@@ -166,7 +165,6 @@ class Attributes
 		std::map<std::string, Value*> _values;
 };
 
-}   // namespace geometry
 }   // namespace CMTL
 
 #endif	// __common_attributes_h__
