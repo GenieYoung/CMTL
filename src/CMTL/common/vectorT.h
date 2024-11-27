@@ -112,29 +112,33 @@ class VectorT
         }
 
         /* self-addition */
-        Derived& operator+=(const VectorT& other)
+        template<typename TT, typename Derived2>
+        Derived& operator+=(const VectorT<TT, DIM, Derived2>& other)
         {
             for(unsigned i = 0; i < DIM; ++i)
-                _values[i] += other._values[i];
+                _values[i] += util_cast<TT, T>(other[i]);
             return static_cast<Derived &>(*this);
         }
 
         /* add two vector */
-        Derived operator+(const VectorT& other) const
+        template<typename TT, typename Derived2>
+        Derived operator+(const VectorT<TT, DIM, Derived2>& other) const
         {
             return VectorT(*this) += other;
         }
 
         /* self-subtract */
-        Derived& operator-=(const VectorT& other)
+        template<typename TT, typename Derived2>
+        Derived& operator-=(const VectorT<TT, DIM, Derived2>& other)
         {
             for(unsigned i = 0; i < DIM; ++i)
-                _values[i] -= other._values[i];
+                _values[i] -= util_cast<TT, T>(other[i]);
             return static_cast<Derived &>(*this);
         }
 
         /* subtract two vector */
-        Derived operator-(const VectorT& other) const
+        template<typename TT, typename Derived2>
+        Derived operator-(const VectorT<TT, DIM, Derived2>& other) const
         {
             return VectorT(*this) -= other;
         }
@@ -169,16 +173,18 @@ class VectorT
         }
 
         /* scalar product */
-        T operator*(const VectorT& other) const
+        template<typename TT, typename Derived2>
+        T operator*(const VectorT<TT, DIM, Derived2>& other) const
         {
             T result(0);
             for(unsigned i = 0; i < DIM; ++i)
-                result += (_values[i] * other._values[i]);
+                result += (_values[i] * util_cast<TT, T>(other[i]));
             return result;
         }
 
         /* scalar product */
-        T dot(const VectorT& other) const
+        template<typename TT, typename Derived2>
+        T dot(const VectorT<TT, DIM, Derived2>& other) const
         {
             return *this * other;
         }
