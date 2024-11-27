@@ -12,7 +12,7 @@ int main()
     vd2.fill(10);
     std::cout << vd2 << std::endl;
     std::cout << Vec2d::Origin << std::endl;
-    vd2 = vd1;    // default copy constructor
+    vd2 = vd1;    // assign operator
 
     Vec2f vf1(0);
     //Vec2f vf2 = vd1;    // call the copy constructor, but can not implicit convert from vec2d to vef2d

@@ -112,11 +112,11 @@ class VectorT
         }
 
         /* self-addition */
-        const Derived& operator+=(const VectorT& other)
+        Derived& operator+=(const VectorT& other)
         {
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] += other._values[i];
-            return static_cast<const Derived &>(*this);
+            return static_cast<Derived &>(*this);
         }
 
         /* add two vector */
@@ -126,11 +126,11 @@ class VectorT
         }
 
         /* self-subtract */
-        const Derived& operator-=(const VectorT& other)
+        Derived& operator-=(const VectorT& other)
         {
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] -= other._values[i];
-            return static_cast<const Derived &>(*this);
+            return static_cast<Derived &>(*this);
         }
 
         /* subtract two vector */
@@ -140,11 +140,11 @@ class VectorT
         }
 
         /* self-scale by multiply */
-        const Derived& operator*=(const T& scale)
+        Derived& operator*=(const T& scale)
         {
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] *= scale;
-            return static_cast<const Derived &>(*this);
+            return static_cast<Derived &>(*this);
         }
 
         /* do scale by multiply */
@@ -154,12 +154,12 @@ class VectorT
         }
 
         /* self-scale by divide */
-        const Derived& operator/=(const T& scale)
+        Derived& operator/=(const T& scale)
         {
             assert(scale != T(0));
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] /= scale;
-            return static_cast<const Derived &>(*this);
+            return static_cast<Derived &>(*this);
         }
 
         /* do scale by divide */
