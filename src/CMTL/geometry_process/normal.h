@@ -18,7 +18,7 @@ template<typename Point, typename Polygon>
 void normal(const Polygon& poly, Point& n)
 {
     assert(poly.size() >= 3);
-    /* Newells algorithm */
+    // Newells algorithm
     n[0] = 0; n[1] = 0; n[2] = 0;
     for(unsigned i=0, j=1; i<poly.size(); ++i, ++j, j%=poly.size())
     {

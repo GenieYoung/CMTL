@@ -15,6 +15,7 @@ namespace geo3d{
 template<typename T>
 struct SurfaceMeshTraits : public halfedge::DefaultTraits
 {
+    /* vertex position */
     typedef geo3d::Point<T> Point;
     /* attributes attach to a vertex */
     typedef Attributes VertexAttribute;
@@ -103,23 +104,25 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
         typedef halfedge::ConstFaceHalfedgeCWIter       ConstFaceHalfedgeCWIter;
 
     public:
-        /* constructor */
         SurfaceMesh() = default;
 
-        /* deconstructor */
         ~SurfaceMesh() = default;
 
     public:
-        /* check whether the mesh is a triangle mesh */
+        /**
+         * @brief check whether the mesh is a triangle mesh
+         */
         bool is_triangle_mesh() const
         {
             return this->has_constant_face_degree(3);
         }
 
-        /* calculate a face normal */
+        /**
+         * @brief calculate a face normal without normalized
+         */
         Point normal(FaceHandle fh) const
         {
-            /* Newells algorithm */
+            // Newells algorithm
             T x = T(0), y = T(0), z = T(0);
             auto first_v = this->fv_begin(fh);
             auto second_v = this->fv_begin(fh);

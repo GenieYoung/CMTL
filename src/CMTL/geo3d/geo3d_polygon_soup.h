@@ -9,17 +9,15 @@ namespace geo3d{
 
 /**
  * @brief 3 dimension polygon soup
- * @tparam T value type of point coordinate 
+ * @tparam T number type of point coordinate 
 */
 template<typename T>
 class PolygonSoup
 {
     public:
-        /* number type */
         typedef T NT;
 
     public:
-        /* default constructor */
         PolygonSoup() = default;
 
         /**
@@ -41,32 +39,38 @@ class PolygonSoup
             }
         }
 
-        /* copy constructor */
         PolygonSoup(const PolygonSoup& other) = default;
 
-        /* deconstructor */
         ~PolygonSoup() = default;
 
     public:
-        /* return the number of points */
+        /**
+         * @brief return the number of points
+         */
         size_t n_points() const
         {
             return _vertices.size();
         }
 
-        /* return the number of polygons */
+        /**
+         * @brief return the number of polygons
+         */
         size_t n_polygons() const
         {
             return _polygons.size();
         }
 
-        /* get the ith point */
+        /**
+         * @brief get the ith point
+         */
         Point<T>& point(unsigned i)
         {
             return _vertices[i];
         }
 
-        /* get the const ith point */
+        /**
+         * @brief get the const ith point
+         */
         const Point<T>& point(unsigned i) const
         {
             return _vertices[i];

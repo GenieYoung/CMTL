@@ -15,11 +15,9 @@ template<typename T>
 class PolygonSoup
 {
     public:
-        /* number type */
         typedef T NT;
 
     public:
-        /* default constructor */
         PolygonSoup() = default;
 
         /**
@@ -41,44 +39,54 @@ class PolygonSoup
             }
         }
 
-        /* copy constructor */
         PolygonSoup(const PolygonSoup& other) = default;
 
-        /* deconstructor */
         ~PolygonSoup() = default;
 
     public:
-        /* return the number of points */
+        /**
+         * @brief return the number of points
+         */
         size_t n_points() const
         {
             return _vertices.size();
         }
 
-        /* get the ith point */
+        /**
+         * @brief get the ith point
+         */
         Point<T>& point(unsigned i)
         {
             return _vertices[i];
         }
 
-        /* get the const ith point */
+        /**
+         * @brief get the const ith point
+         */
         const Point<T>& point(unsigned i) const
         {
             return _vertices[i];
         }
 
-        /* return the number of polygons */
+        /**
+         * @brief return the number of polygons
+         */
         size_t n_polygons() const
         {
             return _polygons.size();
         }
 
-        /* get the ith polygon */
+        /**
+         * @brief get the ith polygon
+         */
         std::vector<unsigned>& polygon(unsigned i)
         {
             return _polygons[i];
         }
 
-        /* get the const ith polygon */
+        /**
+         * @brief get the const ith polygon
+         */
         const std::vector<unsigned>& polygon(unsigned i) const
         {
             return _polygons[i];

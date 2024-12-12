@@ -5,6 +5,10 @@
 #include "../geo2d/geo2d_triangle.h"
 
 namespace CMTL{
+
+/**
+ * @brief geometry process algorithm
+ */
 namespace geometry_process{
 
 /**

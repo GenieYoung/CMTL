@@ -9,18 +9,16 @@ namespace geo3d{
 
 /**
  * @brief 3 dimension closed simple polygon
- * @tparam T value type of point coordinate 
+ * @tparam T number type of point coordinate 
  * @note end point not same as first point.
 */
 template<typename T>
 class Polygon
 {
     public:
-        /* number type */
         typedef T NT;
 
     public:
-        /* default constructor */
         Polygon() = default;
 
         /**
@@ -38,63 +36,60 @@ class Polygon
             }
         }
 
-        /* construct from a point list */
+        /**
+         * @brief construct from a point list
+         */
         Polygon(const std::vector<Point<T>>& vertices)
         {
             _vertices.assign(vertices.begin(), vertices.end());
         }
 
-        /* copy constructor */
         Polygon(const Polygon& poly)
         {
             _vertices.assign(poly._vertices.begin(), poly._vertices.end());
         }
 
-        /* deconstructor */
         ~Polygon() = default;
 
     public:
-        /* return the number of points */
+        /**
+         * @brief return the number of points
+         */
         size_t size() const
         {
             return _vertices.size();
         }
 
-        /* get the writable ith point */
+        /**
+         * @brief get the writable ith point
+         */
         Point<T>& operator[](unsigned int i)
-        {
-            return _vertices[i];
-        }
-
-        /* get the const ith point */
-        const Point<T>& operator[](unsigned int i) const
-        {
-            return _vertices[i];
-        }
-
-        /* get the writable ith point with range check */
-        Point<T>& at(unsigned int i)
         {
             assert(i < _vertices.size());
             return _vertices[i];
         }
 
-        /* get the const ith point with range check */
-        const Point<T>& at(unsigned int i) const
+        /**
+         * @brief get the const ith point
+         */
+        const Point<T>& operator[](unsigned int i) const
         {
             assert(i < _vertices.size());
             return _vertices[i];
         }
 
     public:
-        /* get the square area of the polygon */
+        /**
+         * @brief get the square area of the polygon
+         */
         T area2() const;
 
-        /* get the normal without normalized */
+        /**
+         * @brief get the normal without normalized
+         */
         Point<T> normal() const;
 
     public:
-        /* formatted print. */
         friend std::ostream& operator<<(std::ostream& os, const Polygon& poly)
         {
             os << "{ ";
@@ -116,7 +111,7 @@ class Polygon
 template<typename T>
 T Polygon<T>::area2() const
 {
-    /* https://math.stackexchange.com/questions/3207981/how-do-you-calculate-the-area-of-a-2d-polygon-in-3d */
+    // https://math.stackexchange.com/questions/3207981/how-do-you-calculate-the-area-of-a-2d-polygon-in-3d
     if(_vertices.size() <= 2 )
         return 0;
     Point<T> p;
@@ -132,7 +127,7 @@ Point<T> Polygon<T>::normal() const
 {
     assert(_vertices.size() >= 3);
     #if 1
-        /* Newells algorithm */
+        // Newells algorithm
         T x = 0, y = 0, z = 0;
         for(unsigned i = 0, j = 1; i < _vertices.size(); ++i, ++j, j%=_vertices.size())
         {

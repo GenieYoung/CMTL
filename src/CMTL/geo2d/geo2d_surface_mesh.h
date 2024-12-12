@@ -15,6 +15,7 @@ namespace geo2d{
 template<typename T>
 struct SurfaceMeshTraits : public halfedge::DefaultTraits
 {
+    /* vertex position */
     typedef geo2d::Point<T> Point;
     /* attributes attach to a vertex */
     typedef Attributes VertexAttribute;
@@ -103,14 +104,14 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
         typedef halfedge::ConstFaceHalfedgeCWIter       ConstFaceHalfedgeCWIter;
 
     public:
-        /* constructor */
         SurfaceMesh() = default;
 
-        /* deconstructor */
         ~SurfaceMesh() = default;
 
     public:
-        /* check whether the mesh is a triangle mesh */
+        /**
+         * @brief check whether the mesh is a triangle mesh
+         */
         bool is_triangle_mesh() const
         {
             return this->has_constant_face_degree(3);

@@ -6,6 +6,10 @@
 #include <fstream>
 
 namespace CMTL{
+
+/**
+ * @brief input/output stream
+ */
 namespace io{
 
 /**

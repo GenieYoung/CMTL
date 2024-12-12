@@ -11,18 +11,21 @@ namespace geo3d {
 
 /**
  * @brief 3 dimension infinite plane
- * @tparam T value type of point coordinate 
+ * @tparam T number type of point coordinate 
  * @note suggest use exact number type to avoid numerical error
 */
 template<typename T>
 class Plane
 {
     public:
-        /* number type */
         typedef T NT;
 
     public:
-        /* construct from a point on plane and plane normal */
+        /**
+         * @brief construct plane from a point on plane and plane normal
+         * @param p point on plane
+         * @param n plane normal
+         */
         Plane(const Point<T>& p, const Point<T>& n) : _origin(p), _normal(n)
         {
             std::pair<unsigned, T> max_abs = _normal.max_abs();
@@ -44,12 +47,13 @@ class Plane
             _project_normal[max_abs_id] = T(1);
         }
 
-        /* construct from three points on plane */
+        /**
+         * @brief construct plane from three points on plane
+         */
         Plane(const Point<T>& p0, const Point<T>& p1, const Point<T>& p2) : Plane(p0, (p1 - p0) % (p2 - p0))
         {
         }
 
-        /* deconstructor */
         ~Plane() = default;
 
     public:
@@ -62,7 +66,9 @@ class Plane
             return geo2d::Point<T>(p[_project_cood[0]], p[_project_cood[1]]);
         }
 
-        /* project a 2d point on the local coordinate system to origin coordinate system */
+        /**
+         * @brief project a 2d point on the local coordinate system to origin coordinate system
+         */
         Point<T> project_3d(const geo2d::Point<T>& p) const
         {
             Point<T> p_;

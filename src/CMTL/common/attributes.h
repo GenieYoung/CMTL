@@ -7,40 +7,31 @@
 #include <string>
 #include <map>
 
+/**
+ * @brief Computational Mathematics Tool Library
+ */
 namespace CMTL{
 
 /**
- * @brief struct used to store attributes
+ * @brief structure used to store values with different types and names
  */
 class Attributes
 {
 	public:
-		/**
-		 * @brief constructor
-		 */
 		Attributes()
 		{
 		};
 
-		/**
-		 * @brief copy constructor
-		 */
 		Attributes(const Attributes& other)
 		{
 			*this = other;
 		}
 
-		/**
-		 * @brief deconstructor
-		 */
 		~Attributes()
 		{
 			this->clear();
 		}
 
-		/**
-		 * @brief assign operator
-		 */
 		Attributes& operator=(const Attributes& other)
 		{
 			this->clear();
@@ -52,12 +43,10 @@ class Attributes
 		}
 
 		/**
-		 * @brief check whether the attribute with specific name and type exist
-		 * @tparam T attribute type
-		 * @param name attribute name
+		 * @brief check whether the value with specific name exist
+		 * @param name value name
 		 * @return true if exist, otherwise false
 		 */
-		template<typename T>
 		bool contain(const std::string& name) const
 		{
 			auto it = _values.find(name);
@@ -67,34 +56,44 @@ class Attributes
 		}
 
 		/**
-		 * @brief get the attribute with specific name and type
-		 * @tparam T attribute type
-		 * @param name attribute name
-		 * @result true if successfully get, otherwise false
+		 * @brief get the value with specific name and type
+		 * @tparam T value type
+		 * @param name value name
+		 * @result value with specific name and type
 		 */
 		template<typename T>
 		const T& get(const std::string& name) const
 		{
-			if (!this->contain<T>(name))
-				std::abort();
 			auto it = _values.find(name);
+			assert(it != _values.end() && "attribute with specific name not found");
 			const Attribute<T>* attr = dynamic_cast<const Attribute<T>*>(it->second);
-			assert(attr != nullptr); 
+			assert(attr != nullptr && "attribute with specific type not found"); 
 			return attr->get();
 		}
 
+		/**
+		 * @brief set the value with specific name and type, if not found, construct it
+		 * @tparam T value type
+		 * @param name value name
+		 * @result the writable value that need to be set
+		 */
 		template<typename T>
 		T& set(const std::string& name)
 		{
-			if (!this->contain<T>(name))
-				_values[name] = new Attribute<T>;
+			auto it = _values.find(name);
+			if(it == _values.end())
+			{
+				Attribute<T>* attr = new Attribute<T>;
+				_values[name] = attr;
+				return attr->set();
+			}
 			Attribute<T>* attr = dynamic_cast<Attribute<T>*>(_values[name]);
-			assert(attr != nullptr);
+			assert(attr != nullptr && "attribute with specific type not found");
 			return attr->set();
 		}
 
 		/**
-		 * @brief remove attribute with specific name
+		 * @brief remove value with specific name
 		 */
 		void remove(const std::string& name)
 		{
@@ -107,6 +106,9 @@ class Attributes
 			}
 		}
 
+		/**
+		 * @brief clear all the values
+		 */
 		void clear()
 		{
 			while (!_values.empty())
@@ -119,6 +121,7 @@ class Attributes
 		}
 
 	private:
+		/* pure virtual class used for representing different types */
 		class Value
 		{
 			public:
@@ -131,6 +134,7 @@ class Attributes
 				virtual Value* clone() const = 0;
 		};
 
+		/* class used for representing different types */
 		template<typename T>
 		class Attribute : public Value
 		{

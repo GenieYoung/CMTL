@@ -5,6 +5,9 @@
 
 namespace CMTL{
 
+/**
+ * @brief enum used for representing orientation
+ */
 enum class ORIENTATION 
 {
     ABOVE = 1, POSITIVE = 1, INSIDE = 1,
@@ -33,7 +36,7 @@ namespace geometry_process{
  * @brief 2d orientation test, non-robust if point type is not exact.
  * @return return positive if the point pa, pb, and pc occur in counterclockwise order;
  *         negative if they occur in clockwise order; and on if they are collinear.
- * @note the point must has operator[] method to get coordinate
+ * @note the point must have value_type to represent number type and have operator[] method to get coordinate
  */
 template<typename Point>
 ORIENTATION orient_2d(const Point& pa, const Point& pb, const Point& pc)

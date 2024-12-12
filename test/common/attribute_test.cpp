@@ -10,5 +10,7 @@ int main()
     attr.set<int>("number") = 2;
     attr.set<std::string>("string") = "world";
     std::cout << attr.get<int>("number") << " " << attr.get<std::string>("string") << std::endl;
+
+    //attr.set<std::string>("number") = "2";
     return 0;
 }
