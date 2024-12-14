@@ -2,33 +2,9 @@
 #define __geometry_process_predicate__
 
 #include <array>
+#include "../common/orientation.h"
 
 namespace CMTL{
-
-/**
- * @brief enum used for representing orientation
- */
-enum class ORIENTATION 
-{
-    ABOVE = 1, POSITIVE = 1, INSIDE = 1,
-    BELOW = -1, NEGATIVE = -1, OUTSIDE = -1, 
-    ON = 0, COLLINEAR = 0, COPLANAR = 0
-};
-
-inline std::ostream& operator<<(std::ostream& os, ORIENTATION ori)
-{
-    switch (ori)
-    {
-        case ORIENTATION::POSITIVE:
-            os << "Positive"; break;
-        case ORIENTATION::NEGATIVE:
-            os << "Negative"; break;
-        case ORIENTATION::ON:
-            os << "On"; break;
-        default: break;
-    }
-    return os;
-}
 
 namespace geometry_process{
 
@@ -36,7 +12,7 @@ namespace geometry_process{
  * @brief 2d orientation test, non-robust if point type is not exact.
  * @return return positive if the point pa, pb, and pc occur in counterclockwise order;
  *         negative if they occur in clockwise order; and on if they are collinear.
- * @note the point must have value_type to represent number type and have operator[] method to get coordinate
+ * @note the point must have operator[] method to get coordinate
  */
 template<typename Point>
 ORIENTATION orient_2d(const Point& pa, const Point& pb, const Point& pc)
@@ -54,7 +30,7 @@ ORIENTATION orient_2d(const Point& pa, const Point& pb, const Point& pc)
  * @return return positive if the point pd lies above the plane passing through pa, pb, and pc,
  *         "above" is defined so that pa, pb, and pc appear in counterclockwise order when viewed from above the plane,
  *         return on if the points are coplanar, otherwise return negative.
- * @note the point must has operator[] method to get coordinate
+ * @note the point must have value_type to represent number type and have operator[] method to get coordinate
  */
 template<typename Point>
 ORIENTATION orient_3d(const Point& pa, const Point& pb, const Point& pc, const Point& pd)
