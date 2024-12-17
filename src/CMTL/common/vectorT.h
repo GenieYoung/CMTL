@@ -111,7 +111,7 @@ class VectorT
          */
         T& operator[](unsigned i)
         {
-            assert(i < DIM);
+            assert(i < DIM && "index out of range");
             return _values[i];
         }
 
@@ -120,7 +120,7 @@ class VectorT
          */
         const T& operator[](unsigned i) const
         {
-            assert(i < DIM);
+            assert(i < DIM && "index out of range");
             return _values[i];
         }
 
@@ -174,6 +174,27 @@ class VectorT
         }
 
         /** 
+         * @brief scalar product 
+         */
+        template<typename TT, typename Derived2>
+        T operator*(const VectorT<TT, DIM, Derived2>& other) const
+        {
+            T result(0);
+            for(unsigned i = 0; i < DIM; ++i)
+                result += (_values[i] * util_cast<TT, T>(other[i]));
+            return result;
+        }
+
+        /** 
+         * @brief scalar product 
+         */
+        template<typename TT, typename Derived2>
+        T dot(const VectorT<TT, DIM, Derived2>& other) const
+        {
+            return *this * other;
+        }
+
+        /** 
          * @brief self-scale by multiply
          */
         Derived& operator*=(const T& scale)
@@ -208,27 +229,6 @@ class VectorT
         Derived operator/(const T& scale) const
         {
             return VectorT(*this) /= scale;
-        }
-
-        /** 
-         * @brief scalar product 
-         */
-        template<typename TT, typename Derived2>
-        T operator*(const VectorT<TT, DIM, Derived2>& other) const
-        {
-            T result(0);
-            for(unsigned i = 0; i < DIM; ++i)
-                result += (_values[i] * util_cast<TT, T>(other[i]));
-            return result;
-        }
-
-        /** 
-         * @brief scalar product 
-         */
-        template<typename TT, typename Derived2>
-        T dot(const VectorT<TT, DIM, Derived2>& other) const
-        {
-            return *this * other;
         }
 
         bool operator==(const VectorT& other) const
@@ -370,12 +370,15 @@ class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>>
 };
 
 /* specialized versions */
+typedef VecTBase<int, 1>    Vec1i;
 typedef VecTBase<float, 1>  Vec1f;
 typedef VecTBase<double, 1> Vec1d;
 
+typedef VecTBase<int, 2>    Vec2i;
 typedef VecTBase<float, 2>  Vec2f;
 typedef VecTBase<double, 2> Vec2d;
 
+typedef VecTBase<int, 3>    Vec3i;
 typedef VecTBase<float, 3>  Vec3f;
 typedef VecTBase<double, 3> Vec3d;
 
