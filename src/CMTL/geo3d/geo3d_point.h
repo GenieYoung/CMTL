@@ -92,7 +92,7 @@ class Point : public VectorT<T, 3, Point<T>>
          */
         Point operator%(const Point& p) const
         {
-            return Point(y()*p.z()-z()*p.y(), z()*p.x()-x()*p.z(), x()*p.y()-y()*p.z());
+            return Point(y()*p.z()-z()*p.y(), z()*p.x()-x()*p.z(), x()*p.y()-y()*p.x());
         }
 
         /** 
