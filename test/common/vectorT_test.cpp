@@ -38,6 +38,10 @@ TEST(VectorTest, ConstructTest)
     EXPECT_DOUBLE_EQ(v2d_2[0], 1/3.0);
     EXPECT_EQ(v2d_2[1], 0.5);
 
+    Vec2d v2d_3({0, mpq_class(1,2)});
+    EXPECT_EQ(v2d_3[0], 0);
+    EXPECT_EQ(v2d_3[1], 0.5);
+
     Vec3d v3d_0(2, 3, 4);
     v3d_0 = Vec2d(1, 2);
     EXPECT_EQ(v3d_0[0], 1);

@@ -26,11 +26,12 @@ ORIENTATION orient_2d(const Point& pa, const Point& pb, const Point& pc)
 }
 
 /**
- * @brief 3d orientation test, non-robust if point type is not exact
+ * @brief 3d orientation test
  * @return return positive if the point pd lies above the plane passing through pa, pb, and pc,
  *         "above" is defined so that pa, pb, and pc appear in counterclockwise order when viewed from above the plane,
  *         return on if the points are coplanar, otherwise return negative.
- * @note the point must have value_type to represent number type and have operator[] method to get coordinate
+ * @note the point must have value_type to represent number type and have operator[] method to get coordinate,
+ *       non-robust if point type is not exact
  */
 template<typename Point>
 ORIENTATION orient_3d(const Point& pa, const Point& pb, const Point& pc, const Point& pd)
