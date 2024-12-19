@@ -86,12 +86,12 @@ class Plane
         ORIENTATION orient(const geo3d::Point<T>& p) const
         {
             T ori = (p - _origin) * _normal;
-            if(ori == 0)
-                return ORIENTATION::ON;
-            else if(ori > 0)
+            if(is_greater(ori, T(0)))
                 return ORIENTATION::ABOVE;
-            else
+            else if(is_less(ori, T(0)))
                 return ORIENTATION::BELOW;
+            else
+                return ORIENTATION::ON;
         }
 
     private:

@@ -3,6 +3,7 @@
 
 #include "gmpxx.h"
 #include <cmath>
+#include <type_traits>
 
 /**
  * @brief Computational Mathematics Tool Library
@@ -89,6 +90,165 @@ template<typename T>
 inline T square_root(const T& v)
 {
     return T(std::sqrt(to_double(v)));
+}
+
+template<typename T, typename = void>
+class numeric_comparator
+{
+    public:
+        static T tolerance()
+        {
+            return T(0);
+        }
+
+        static bool is_equal(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return v1 == v2;
+        }
+
+        static bool is_not_equal(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return !(is_equal(v1, v2, tol));
+        }
+
+        static bool is_less(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return v1 < v2;
+        }
+
+        static bool is_less_equal(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return v1 <= v2;
+        }
+
+        static bool is_greater(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return v1 > v2;
+        }
+
+        static bool is_greater_equal(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return v1 >= v2;
+        }
+};
+
+template<typename T>
+class numeric_comparator<T, typename std::enable_if<std::is_floating_point<T>::value>::type>
+{
+    public:
+        static T& tolerance()
+        {
+            return _tol;
+        }
+
+        static bool is_equal(const T& v1, const T& v2, const T& tol = _tol)
+        {
+            return absolute(v1 - v2) <= _tol;
+        }
+
+        static bool is_not_equal(const T& v1, const T& v2, const T& tol = _tol)
+        {
+            return !(is_equal(v1, v2, tol));
+        }
+
+        static bool is_less(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return v1 < v2 - tol;
+        }
+
+        static bool is_less_equal(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return v1 <= v2 + tol;
+        }
+
+        static bool is_greater(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return v1 > v2 + tol;
+        }
+
+        static bool is_greater_equal(const T& v1, const T& v2, const T& tol = T(0))
+        {
+            return v1 >= v2 - tol;
+        }
+
+
+    private:
+        static T _tol;
+};
+
+constexpr float default_float_tolerance = 1e-5;
+constexpr double default_double_tolerance = 1e-13;
+
+template<>
+float numeric_comparator<float>::_tol = default_float_tolerance;
+
+template<>
+double numeric_comparator<double>::_tol = default_double_tolerance;
+
+template<typename T>
+T numeric_comparator<T, typename std::enable_if<
+            std::is_floating_point<T>::value>::type>::_tol 
+                    = std::numeric_limits<T>::epsilon();
+
+/**
+ * @brief check whether two number are equal
+ * @param tolerance tolerance that prevents the floating point error
+ * @note if the number type is from gmp, it should be in canonical form!
+ */
+template<typename T>
+bool is_equal(const T& v1, const T& v2, const T& tolerance = numeric_comparator<T>::tolerance())
+{
+    return numeric_comparator<T>::is_equal(v1, v2, tolerance);
+}
+
+/**
+ * @brief check whether two number are not equal
+ * @param tolerance tolerance that prevents the floating point error
+ */
+template<typename T>
+bool is_not_equal(const T& v1, const T& v2, const T& tolerance = numeric_comparator<T>::tolerance())
+{
+    return numeric_comparator<T>::is_not_equal(v1, v2, tolerance);
+}
+
+/**
+ * @brief check whether v1 is less than v2
+ * @param tolerance tolerance that prevents the floating point error
+ */
+template<typename T>
+bool is_less(const T& v1, const T& v2, const T& tolerance = numeric_comparator<T>::tolerance())
+{
+    return numeric_comparator<T>::is_less(v1, v2, tolerance);
+}
+
+/**
+ * @brief check whether v1 is less than v2 or same as v2
+ * @param tolerance tolerance that prevents the floating point error
+ */
+template<typename T>
+bool is_less_equal(const T& v1, const T& v2, const T& tolerance = numeric_comparator<T>::tolerance())
+{
+    return numeric_comparator<T>::is_less_equal(v1, v2, tolerance);
+}
+
+/**
+ * @brief check whether v1 is greater than v2
+ * @param tolerance tolerance that prevents the floating point error
+ */
+template<typename T>
+bool is_greater(const T& v1, const T& v2, const T& tolerance = numeric_comparator<T>::tolerance())
+{
+    return numeric_comparator<T>::is_greater(v1, v2, tolerance);
+}
+
+/**
+ * @brief check whether v1 is greater than v2 or same as v2
+ * @param tolerance tolerance that prevents the floating point error
+ */
+template<typename T>
+bool is_greater_equal(const T& v1, const T& v2, const T& tolerance = numeric_comparator<T>::tolerance())
+{
+    return numeric_comparator<T>::is_greater_equal(v1, v2, tolerance);
 }
 
 }   // namespace CMTL

@@ -3,6 +3,7 @@
 
 #include <array>
 #include "../common/orientation.h"
+#include "../common/number_utils.h"
 
 namespace CMTL{
 
@@ -18,9 +19,9 @@ template<typename Point>
 ORIENTATION orient_2d(const Point& pa, const Point& pb, const Point& pc)
 {
     auto flag = (pa[0] - pc[0]) * (pb[1] - pc[1]) - (pa[1] - pc[1]) * (pb[0] - pc[0]);
-    if(flag > 0)    
+    if(is_greater(flag, decltype(flag)(0)))    
         return ORIENTATION::POSITIVE;
-    else if(flag < 0)   
+    else if(is_less(flag, decltype(flag)(0)))   
         return ORIENTATION::NEGATIVE;
     return ORIENTATION::ON;
 }
@@ -42,9 +43,9 @@ ORIENTATION orient_3d(const Point& pa, const Point& pb, const Point& pc, const P
     typename Point::value_type flag = adx * (aby * acz - abz * acy) +
                                       ady * (abz * acx - abx * acz) +
                                       adz * (abx * acy - aby * acx);
-    if(flag > 0)
+    if(is_greater(flag, typename Point::value_type(0)))
         return ORIENTATION::POSITIVE;
-    else if(flag < 0)
+    else if(is_less(flag, typename Point::value_type(0)))
         return ORIENTATION::NEGATIVE;
     return ORIENTATION::ON;
 }
