@@ -17,6 +17,11 @@ TEST(NumberUtilsTest, ComparatorTest)
     // ASSERT_TRUE(CMTL::is_equal(mpq_class(1, 2), mpq_class(2, 4))); // 2/4 is not in canonical form, it is dangerous
     ASSERT_TRUE(CMTL::is_not_equal(mpq_class(0), mpq_class(1, 1e100)));
 
+    ASSERT_TRUE(CMTL::is_zero(float_tol));
+    ASSERT_TRUE(CMTL::is_zero(double_tol));
+    ASSERT_FALSE(CMTL::is_zero(float_tol*1.1f));
+    ASSERT_FALSE(CMTL::is_zero(double_tol*1.1));
+
     ASSERT_TRUE(CMTL::is_less(float(0.0), float_tol*2));
     ASSERT_FALSE(CMTL::is_less(float(0.0), float_tol));
     ASSERT_TRUE(CMTL::is_less_equal(float(0.0), float_tol));

@@ -151,6 +151,11 @@ class numeric_comparator<T, typename std::enable_if<std::is_floating_point<T>::v
             return !(is_equal(v1, v2, tol));
         }
 
+        static bool is_zero(const T& v, const T& tol = _tol)
+        {
+            return is_equal(v, T(0), _tol);
+        }
+
         static bool is_less(const T& v1, const T& v2, const T& tol = T(0))
         {
             return v1 < v2 - tol;
@@ -209,6 +214,17 @@ template<typename T>
 bool is_not_equal(const T& v1, const T& v2, const T& tolerance = numeric_comparator<T>::tolerance())
 {
     return numeric_comparator<T>::is_not_equal(v1, v2, tolerance);
+}
+
+/**
+ * @brief check whether number is same as zero
+ * @param tolerance tolerance that prevents the floating point error
+ * @note if the number type is from gmp, it should be in canonical form!
+ */
+template<typename T>
+bool is_zero(const T& v, const T& tolerance = numeric_comparator<T>::tolerance())
+{
+    return numeric_comparator<T>::is_zero(v, tolerance);
 }
 
 /**
