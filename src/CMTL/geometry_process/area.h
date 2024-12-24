@@ -72,20 +72,23 @@ void area_2d(const Polygon& poly, NumberType& result)
  * @note the point must has operator[] method to get coordinate
  */
 template<typename ForwardIterator, typename NumberType>
-void area_2d(ForwardIterator first, ForwardIterator last, NumberType& result)
+void area_2d(ForwardIterator begin, ForwardIterator end, NumberType& result)
 {
     /* use the Shoelace formula */
     result = NumberType(0);
-    if(first == last)
+    if(begin == end)
         return;
+    ForwardIterator first = begin;
     ForwardIterator second = first; ++second;
-    if(second == first)
+    if(second == end)
         return;
-    while(first != last)
+    while(first != end)
     {
         result += (first->operator[](0) * second->operator[](1) - second->operator[](0) * first->operator[](1));
         ++first;
-        second == last ? (second = first) : ++second;
+        ++second;
+        if(second == end)
+            second = begin;
     }
     result /= NumberType(2);
 }
