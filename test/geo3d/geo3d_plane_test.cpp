@@ -1,4 +1,6 @@
 #include "CMTL/geo3d/geo3d_plane.h"
+
+#include <cstdlib>
 #include <gtest/gtest.h>
 
 typedef CMTL::geo2d::Point<mpq_class> Point2R;
@@ -15,6 +17,7 @@ TEST(PlaneTest, ConstructTest)
 
 TEST(PlaneTest, OrientationTest)
 {
+    std::srand(42);
     for(unsigned i = 0; i < 100; ++i)
     {
         PointR origin(rand()%10000/100.0 - 100, rand()%10000/100.0 - 100, rand()%10000/100.0 - 100);
@@ -31,6 +34,7 @@ TEST(PlaneTest, OrientationTest)
 
 TEST(PlaneTest, ProjectTest)
 {
+    std::srand(42);
     PointR origin(1, 1, 1);
     PointR normal(1.1, 1.2, 1.3);
     PlaneR plane(origin, normal);
