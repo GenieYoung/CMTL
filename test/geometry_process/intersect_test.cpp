@@ -157,3 +157,35 @@ TEST(IntersectTest, BoxRay2DIntersectTest)
     EXPECT_EQ(tr0, 2);
     EXPECT_EQ(tr1, 3);
 }
+
+// #include <cstdlib>
+// #include <chrono>
+// #include <vector>
+// int main()
+// {
+//     std::srand(42);
+
+//     mpq_class t0, t1;
+//     Box2R box1 = Box2R(Point2R(0,0), Point2R(1,1));
+
+//     int num = 10000000;
+//     std::vector<Line2R> segs(num);
+//     for(int i = 0; i < num; ++i)
+//     {
+//         Point2R p0(rand()%10000/2500.0 - 2, rand()%10000/2500.0 - 2);
+//         Point2R p1(rand()%10000/2500.0 - 2, rand()%10000/2500.0 - 2);
+//         segs[i] = Line2R(p0, p1);
+//     }
+
+//     for(unsigned j = 0; j < 10; ++j)
+//     {
+//         auto start = std::chrono::high_resolution_clock::now();
+//         for(int i = 0; i < num; ++i)
+//         {
+//             intersect(box1, segs[i], t0, t1);
+//         }
+//         auto end = std::chrono::high_resolution_clock::now();
+//         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+//         std::cout << "time consuming : " << duration.count() << " us" << std::endl;
+//     }
+// }
