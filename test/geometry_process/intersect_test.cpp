@@ -53,6 +53,9 @@ TEST(IntersectTest, BoxSegment2DIntersectTest)
     EXPECT_TRUE(intersect(box1, seg8, tr0, tr1)) << tr0 << " " << tr1;
     EXPECT_EQ(tr0, 0);
     EXPECT_EQ(tr1, 1);
+
+    Segment2R seg9 = Segment2R(Point2R(0.5, -2), Point2R(0.5,-1));
+    EXPECT_FALSE(intersect(box1, seg9, tr0, tr1)) << tr0 << " " << tr1;
 }
 
 TEST(IntersectTest, BoxLine2DIntersectTest)
@@ -98,6 +101,11 @@ TEST(IntersectTest, BoxLine2DIntersectTest)
     EXPECT_TRUE(intersect(box1, line8, tr0, tr1)) << tr0 << " " << tr1;
     EXPECT_EQ(tr0, -0.5);
     EXPECT_EQ(tr1, 0.5);
+
+    Line2R line9 = Line2R(Point2R(0.5, -2), Point2R(0,1));
+    EXPECT_TRUE(intersect(box1, line9, tr0, tr1)) << tr0 << " " << tr1;
+    EXPECT_EQ(tr0, 2);
+    EXPECT_EQ(tr1, 3);
 }
 
 TEST(IntersectTest, BoxRay2DIntersectTest)
@@ -143,4 +151,9 @@ TEST(IntersectTest, BoxRay2DIntersectTest)
     EXPECT_TRUE(intersect(box1, ray8, tr0, tr1)) << tr0 << " " << tr1;
     EXPECT_EQ(tr0, 0);
     EXPECT_EQ(tr1, 0.5);
+
+    Ray2R ray9 = Ray2R(Point2R(0.5, -2), Point2R(0,1));
+    EXPECT_TRUE(intersect(box1, ray9, tr0, tr1)) << tr0 << " " << tr1;
+    EXPECT_EQ(tr0, 2);
+    EXPECT_EQ(tr1, 3);
 }
