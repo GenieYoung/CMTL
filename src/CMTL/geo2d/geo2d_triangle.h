@@ -15,7 +15,10 @@ template<typename T>
 class Triangle
 {
     public:
-        typedef T NT;
+        /**
+         * @brief float type
+         */
+        typedef T FT;
 
     public:
         Triangle() = default;

@@ -22,7 +22,10 @@ template<typename T>
 class Point : public VectorT<T, 3, Point<T>>
 {
     public:
-        typedef T NT;
+        /**
+         * @brief float type
+         */
+        typedef T FT;
 
     public:
         using VectorT<T, 3, Point>::VectorT;

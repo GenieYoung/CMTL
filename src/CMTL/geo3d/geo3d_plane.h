@@ -17,7 +17,10 @@ template<typename T>
 class Plane
 {
     public:
-        typedef T NT;
+        /**
+         * @brief float type
+         */
+        typedef T FT;
 
     public:
         /**

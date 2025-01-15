@@ -15,7 +15,10 @@ template<typename T>
 class PolygonSoup
 {
     public:
-        typedef T NT;
+        /**
+         * @brief float type
+         */
+        typedef T FT;
 
     public:
         PolygonSoup() = default;

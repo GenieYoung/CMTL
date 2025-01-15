@@ -36,7 +36,7 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
 {
     public:
         /* alias */
-        typedef T                                       NT;
+        typedef T                                       FT;
         typedef SurfaceMeshTraits<T>                    Traits;
         
         typedef halfedge::HalfedgeItem                  HalfedgeItem;

@@ -1,4 +1,4 @@
-#include "CMTL/common/number_utils.h"
+#include "CMTL/common/numeric_utils.h"
 #include <gtest/gtest.h>
 
 TEST(NumberUtilsTest, ComparatorTest)

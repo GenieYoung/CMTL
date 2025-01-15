@@ -260,7 +260,7 @@ namespace internal{
 
 template<typename T>
 bool extrude_surface(const geo3d::SurfaceMesh<T>& sm, 
-                     const typename geo3d::SurfaceMesh<T>::NT& shift, 
+                     const typename geo3d::SurfaceMesh<T>::FT& shift, 
                      geo3d::SurfaceMesh<T>& result)
 {
     internal::surface_extrude_modifier<T> modifier(sm, shift);

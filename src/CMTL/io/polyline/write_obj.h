@@ -1,7 +1,7 @@
 #ifndef __io_polyline_write_obj__
 #define __io_polyline_write_obj__
 
-#include "../../common/number_utils.h"
+#include "../../common/numeric_utils.h"
 #include <vector>
 #include <fstream>
 

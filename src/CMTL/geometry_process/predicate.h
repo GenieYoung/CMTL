@@ -3,7 +3,7 @@
 
 #include <array>
 #include "../common/orientation.h"
-#include "../common/number_utils.h"
+#include "../common/numeric_utils.h"
 
 namespace CMTL{
 

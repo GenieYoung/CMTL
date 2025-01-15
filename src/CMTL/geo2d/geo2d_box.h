@@ -14,7 +14,10 @@ template<typename T>
 class Box
 {
     public:
-        typedef T NT;
+        /**
+         * @brief float type
+         */
+        typedef T FT;
 
     public:
         Box() = default;

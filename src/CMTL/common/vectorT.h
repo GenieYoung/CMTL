@@ -1,7 +1,7 @@
 #ifndef __common_vectorT_h__
 #define __common_vectorT_h__
 
-#include "number_utils.h"
+#include "numeric_utils.h"
 
 #include <iostream>
 #include <assert.h>
@@ -350,8 +350,10 @@ template<typename T, unsigned DIM>
 class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>>
 {
     public:
-        typedef T NT;
-        typedef typename VectorT<T, DIM, VecTBase<T, DIM>>::value_type value_type;
+        /**
+         * @brief float type
+         */
+        typedef T FT;
 
     public:
         using VectorT<T, DIM, VecTBase<T, DIM>>::VectorT;

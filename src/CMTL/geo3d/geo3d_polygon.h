@@ -16,7 +16,10 @@ template<typename T>
 class Polygon
 {
     public:
-        typedef T NT;
+        /**
+         * @brief float type
+         */
+        typedef T FT;
 
     public:
         Polygon() = default;

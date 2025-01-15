@@ -14,7 +14,10 @@ template<typename T>
 class Segment
 {
     public:
-        typedef T NT;
+        /**
+         * @brief float type
+         */
+        typedef T FT;
 
     public:
         Segment() = default;
@@ -93,7 +96,10 @@ template<typename T>
 class Line
 {
     public:
-        typedef T NT;
+        /**
+         * @brief float type
+         */
+        typedef T FT;
 
     public:
         Line() = default;
