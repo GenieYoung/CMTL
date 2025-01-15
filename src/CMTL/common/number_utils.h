@@ -156,22 +156,22 @@ class numeric_comparator<T, typename std::enable_if<std::is_floating_point<T>::v
             return is_equal(v, T(0), _tol);
         }
 
-        static bool is_less(const T& v1, const T& v2, const T& tol = T(0))
+        static bool is_less(const T& v1, const T& v2, const T& tol = _tol)
         {
             return v1 < v2 - tol;
         }
 
-        static bool is_less_equal(const T& v1, const T& v2, const T& tol = T(0))
+        static bool is_less_equal(const T& v1, const T& v2, const T& tol = _tol)
         {
             return v1 <= v2 + tol;
         }
 
-        static bool is_greater(const T& v1, const T& v2, const T& tol = T(0))
+        static bool is_greater(const T& v1, const T& v2, const T& tol = _tol)
         {
             return v1 > v2 + tol;
         }
 
-        static bool is_greater_equal(const T& v1, const T& v2, const T& tol = T(0))
+        static bool is_greater_equal(const T& v1, const T& v2, const T& tol = _tol)
         {
             return v1 >= v2 - tol;
         }
