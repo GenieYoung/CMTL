@@ -25,13 +25,30 @@ class Box
          * @param rt right top point
          */
         Box(const Point<T>& lb, const Point<T>& rt)
-            : _left_bottom(lb), _right_top(rt)
+            : _left(lb.x()), _right(rt.x()), _bottom(lb.y()), _top(rt.y())
         {
             // check
-            if(_left_bottom.x() > _right_top.x())
-                std::swap(_left_bottom.x(), _right_top.x());
-            if(_left_bottom.y() > _right_top.y())
-                std::swap(_left_bottom.y(), _right_top.y());
+            if(_left > _right)
+                std::swap(_left, _right);
+            if(_bottom > _top)
+                std::swap(_bottom, _top);
+        }
+
+        /**
+         * @brief construct from four boundary coordinates
+         * @param left left x coordinate
+         * @param right right x coordinate
+         * @param bottom bottom y coordinate
+         * @param top top y coordinate
+         */
+        Box(const T& left, const T& right, const T& bottom, const T& top)
+            : _left(left), _right(right), _bottom(bottom), _top(top)
+        {
+            // check
+            if(_left > _right)
+                std::swap(_left, _right);
+            if(_bottom > _top)
+                std::swap(_bottom, _top);
         }
 
         ~Box() = default;
@@ -42,7 +59,7 @@ class Box
          */
         T& left()
         {
-            return _left_bottom.x();
+            return _left;
         }
 
         /**
@@ -50,7 +67,7 @@ class Box
          */
         const T& left() const
         {
-            return _left_bottom.x();
+            return _left;
         }
 
         /**
@@ -58,7 +75,7 @@ class Box
          */
         T& right()
         {
-            return _right_top.x();
+            return _right;
         }
 
         /**
@@ -66,7 +83,7 @@ class Box
          */
         const T& right() const
         {
-            return _right_top.x();
+            return _right;
         }
 
         /**
@@ -74,7 +91,7 @@ class Box
          */
         T& bottom()
         {
-            return _left_bottom.y();
+            return _bottom;
         }
 
         /**
@@ -82,7 +99,7 @@ class Box
          */
         const T& bottom() const
         {
-            return _left_bottom.y();
+            return _bottom;
         }
 
         /**
@@ -90,7 +107,7 @@ class Box
          */
         T& top()
         {
-            return _right_top.y();
+            return _top;
         }
 
         /**
@@ -98,39 +115,23 @@ class Box
          */
         const T& top() const
         {
-            return _right_top.y();
+            return _top;
         }
 
         /**
          * @brief get the writable left bottom point
          */
-        Point<T>& left_bottom()
+        Point<T> left_bottom()
         {
-            return _left_bottom;
-        }
-
-        /**
-         * @brief get the const left bottom point
-         */
-        const Point<T>& left_bottom() const
-        {
-            return _left_bottom;
+            return Point<T>(left(), bottom());
         }
 
         /**
          * @brief get the writable right top point
          */
-        Point<T>& right_top()
+        Point<T> right_top()
         {
-            return _right_top;
-        }
-
-        /**
-         * @brief get the const right top point
-         */
-        const Point<T>& right_top() const
-        {
-            return _right_top;
+            return Point<T>(right(), top());
         }
 
         /**
@@ -174,9 +175,7 @@ class Box
         }
 
     private:
-        Point<T> _left_bottom;
-
-        Point<T> _right_top;
+        T _left, _right, _bottom, _top;
 };
 
 }   // namespace geo2d
