@@ -174,6 +174,16 @@ class VectorT
         }
 
         /** 
+         * @brief self-negate 
+         */
+        Derived& operator-()
+        {
+            for(unsigned i = 0; i < DIM; ++i)
+                _values[i] = -_values[i];
+            return static_cast<Derived &>(*this);
+        }
+
+        /** 
          * @brief scalar product 
          */
         template<typename TT, typename Derived2>
@@ -269,45 +279,41 @@ class VectorT
         }
 
         /** 
-         * @brief return the first maximal component and corresponding index
-         * @return a pair which first value represents the position and second value represent the maximum
+         * @brief return the index of first maximal component
          */
-        std::pair<unsigned, T> max() const
+        unsigned max() const
         {
             auto max_iter = std::max_element(_values.cbegin(), _values.cend());
-            return std::make_pair(max_iter - _values.begin(), *max_iter);
+            return max_iter - _values.begin();
         }
 
         /** 
-         * @brief return the first minimal component and corresponding index
-         * @return a pair which first value represents the position and second value represent the minimum
+         * @brief return the index of first minimal component
          */
-        std::pair<unsigned, T> min() const
+        unsigned min() const
         {
             auto min_iter = std::min_element(_values.cbegin(), _values.cend());
-            return std::make_pair(min_iter - _values.begin(), *min_iter);
+            return min_iter - _values.begin();
         }
         
         /** 
-         * @brief return the first maximal absolute component and corresponding index
-         * @return a pair which first value represents the position and second value represent the absolute maximum
+         * @brief return the index of first maximal absolute component
          */
-        std::pair<unsigned, T> max_abs() const
+        unsigned max_abs() const
         {
             auto max_iter = std::max_element(_values.cbegin(), _values.cend(), 
                             [](const T& a, const T& b) { return absolute(a) < absolute(b); });
-            return std::make_pair(max_iter - _values.begin(), absolute(*max_iter));
+            return max_iter - _values.begin();
         }
 
         /** 
-         * @brief return the first minimal absolute component and corresponding index 
-         * @return a pair which first value represents the position and second value represent the absolute minimum
+         * @brief return the index of first minimal absolute component
          */
-        std::pair<unsigned, T> min_abs() const
+        unsigned min_abs() const
         {
             auto min_iter = std::min_element(_values.cbegin(), _values.cend(), 
                             [](const T& a, const T& b) { return absolute(a) < absolute(b); });
-            return std::make_pair(min_iter - _values.begin(), absolute(*min_iter));
+            return min_iter - _values.begin();
         }
 
         /** 

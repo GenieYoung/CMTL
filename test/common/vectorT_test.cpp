@@ -79,10 +79,10 @@ TEST(VectorTest, OperationTest)
     EXPECT_EQ(v5d_0, (VecXT<double, 5>(-0.1, 0, 0.1, 0.2, 0.3)));
 
     VecXT<double, 10> v10d_0(0.2, 0.1, -0.4, 0.3, 0.4, 0.3, 0, 0.1, -0.4, 0);
-    EXPECT_EQ(v10d_0.max(), (std::pair<unsigned, double>(4, 0.4)));
-    EXPECT_EQ(v10d_0.min(), (std::pair<unsigned, double>(2, -0.4)));
-    EXPECT_EQ(v10d_0.max_abs(), (std::pair<unsigned, double>(2, 0.4)));
-    EXPECT_EQ(v10d_0.min_abs(), (std::pair<unsigned, double>(6, 0.0)));
+    EXPECT_EQ(v10d_0.max(), 4);
+    EXPECT_EQ(v10d_0.min(), 2);
+    EXPECT_EQ(v10d_0.max_abs(), 2);
+    EXPECT_EQ(v10d_0.min_abs(), 6);
 
     EXPECT_EQ(v2d_0.norm_square(), 2.5);
 }

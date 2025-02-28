@@ -48,6 +48,30 @@ TEST(PlaneTest, ProjectTest)
     }
 }
 
+TEST(PlaneTest, ComparatorTest)
+{
+    PointR origin(1, 1, 1);
+    PointR normal(1.1, 1.2, 1.3);
+    PlaneR plane1(origin, normal);
+    PlaneR plane2(origin, -normal);
+    EXPECT_TRUE(plane1.is_equal(plane2));
+    EXPECT_FALSE(plane1.is_equal(plane2, true));
+    EXPECT_TRUE(PlaneR::less_cmp_with_orientation(plane2, plane1));
+
+    std::set<PlaneR> plane_set_not_consider_orientation;
+    plane_set_not_consider_orientation.insert(plane1);
+    plane_set_not_consider_orientation.insert(plane2);
+    EXPECT_TRUE(plane_set_not_consider_orientation.size() == 1);
+    EXPECT_TRUE(plane1.is_equal(*plane_set_not_consider_orientation.begin(), true));
+
+    std::set<PlaneR, decltype(&PlaneR::less_cmp_with_orientation)> plane_set_consider_orientation(PlaneR::less_cmp_with_orientation);
+    plane_set_consider_orientation.insert(plane1);
+    plane_set_consider_orientation.insert(plane2);
+    EXPECT_TRUE(plane_set_consider_orientation.size() == 2);
+    EXPECT_TRUE(plane2.is_equal(*plane_set_consider_orientation.begin(), true));
+    EXPECT_TRUE(plane1.is_equal(*(++plane_set_consider_orientation.begin()), true));
+}
+
 // void test1()
 // {
 //     CMTL::geo3d::Plane<double> plane(CMTL::geo3d::Point<double>(0, 0, 0), CMTL::geo3d::Point<double>(1, 0, 0));

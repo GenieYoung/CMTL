@@ -2,8 +2,8 @@
 #define __geo3d_plane_h__
 
 #include "../geo2d/geo2d_point.h"
-#include "geo3d_point.h"
 #include "../common/orientation.h"
+#include "geo3d_point.h"
 
 namespace CMTL  {
 namespace geo3d {
@@ -30,22 +30,23 @@ class Plane
          */
         Plane(const Point<T>& p, const Point<T>& n) : _origin(p), _normal(n)
         {
-            std::pair<unsigned, T> max_abs = _normal.max_abs();
-            unsigned max_abs_id = max_abs.first;
-            T max_abs_v = _normal[max_abs_id];
-            assert(max_abs_v != 0);
-            _params[0] = _normal[0] / max_abs_v;
-            _params[1] = _normal[1] / max_abs_v;
-            _params[2] = _normal[2] / max_abs_v;
-            _params[max_abs_id] = T(1); // avoid numerical error
+            // we make the maximum absolute value of normal to be 1
+            unsigned max_abs_id = _normal.max_abs();
+            const T& max_abs = _normal[max_abs_id];
+            assert(max_abs != 0 && "the normal of plane should not be zero vector.");
+            _params[0] = _normal[0] / max_abs;
+            _params[1] = _normal[1] / max_abs;
+            _params[2] = _normal[2] / max_abs;
             _params[3] = -(_params[0]*_origin[0] + _params[1]*_origin[1] + _params[2]*_origin[2]);
-            unsigned idx = 0;
-            for(unsigned i = 0; i < 3; ++i)
-            {
-                if(i != max_abs_id)
-                    _project_cood[idx++] = i;
-            }
-            _project_cood[idx] = max_abs_id;
+            _params[4] = (max_abs > 0 ? T(1) : T(-1));
+
+            // build the coordinate plane which has the most similar normal, used for projecting between 2d and 3d
+            if(max_abs_id == 0)
+                _project_cood = {1, 2, 0};
+            else if(max_abs_id == 1)
+                _project_cood = {0, 2, 1};
+            else
+                _project_cood = {0, 1, 2};
             _project_normal[max_abs_id] = T(1);
         }
 
@@ -59,6 +60,15 @@ class Plane
         ~Plane() = default;
 
     public:
+        /**
+         * @brief get the plane normal
+         */
+        const Point<T>& normal() const
+        {
+            return _normal;
+        }
+
+
         /**
          * @brief project a plane point to a local 2d coordinate system, 
          *        the 2d coordinate system is a plane parallel with xy/xz/yz coordinate plane, decide by _project_normal
@@ -97,20 +107,50 @@ class Plane
                 return ORIENTATION::ON;
         }
 
-    private:
+        /**
+         * @brief check whether two planes are equal
+         * @param consider_orientation if true, same plane with different orientation will be considered as different
+         */
+        bool is_equal(const Plane& other, bool consider_orientation = false) const
+        {
+            if(consider_orientation)
+                return _params == other._params;
+            else
+                return std::equal(_params.begin(), _params.end() - 1, other._params.begin());
+        }
+
+        /**
+         * @brief less comparator, used for sorting
+         * @note same plane with different orientation will be considered as same
+         */
+        bool operator<(const Plane& other) const
+        {
+            return std::lexicographical_compare(_params.begin(), _params.end() - 1, 
+                    other._params.begin(), other._params.end() - 1);
+        }
+
+        /**
+         * @brief less comparator, used for sorting, same plane with different orientation will be considered as different
+         */
+        static bool less_cmp_with_orientation(const Plane& p1, const Plane& p2)
+        {
+            return p1._params < p2._params;
+        }
+
+    public:
         /* a point on the plane */
         Point<T> _origin;
 
         /* plane normal */
         Point<T> _normal;
 
-        /* parameters of plane function */
-        T _params[4];
+        /* normalized parameters of plane function, the last parameter indicates whether the plane is reversed */
+        std::array<T, 5> _params;
 
-        /* vector used for tranform from 2d coordinate system and 3d coordinate system */
-        unsigned char _project_cood[3];
+        /* auxiliary vector used for tranform from 2d coordinate system and 3d coordinate system */
+        std::array<unsigned, 3> _project_cood;
 
-        /* the normal of local 2d coordinate system */
+        /* the normal of project coordinate plane, used for projecting between 2d and 3d */
         Point<T> _project_normal;
 };
 
