@@ -5,6 +5,10 @@ using namespace CMTL;
 
 TEST(VectorTest, ConstructTest)
 {
+    Vec1d v1d_0(mpq_class(1, 2));
+    EXPECT_EQ(v1d_0.dimension(), 1);
+    EXPECT_EQ(v1d_0[0], 0.5);
+
     Vec2d v2d_0;
     EXPECT_EQ(v2d_0.dimension(), 2);
     //EXPECT_DEATH({v2d_0[2];}, "index out of range");
@@ -42,11 +46,32 @@ TEST(VectorTest, ConstructTest)
     EXPECT_EQ(v2d_3[0], 0);
     EXPECT_EQ(v2d_3[1], 0.5);
 
-    Vec3d v3d_0(2, 3, 4);
-    v3d_0 = Vec2d(1, 2);
+    Vec2d v2d_4(Vec3d(1, 2, 3));
+    EXPECT_EQ(v2d_4[0], 1);
+    EXPECT_EQ(v2d_4[1], 2);
+
+    Vec3d v3d_0(1);
     EXPECT_EQ(v3d_0[0], 1);
-    EXPECT_EQ(v3d_0[1], 2);
-    EXPECT_EQ(v3d_0[2], 4);
+    EXPECT_EQ(v3d_0[1], 1);
+    EXPECT_EQ(v3d_0[2], 1);
+
+    Vec3d v3d_1(2, 3, 4);
+    v3d_1 = Vec2d(1, 2);
+    EXPECT_EQ(v3d_1[0], 1);
+    EXPECT_EQ(v3d_1[1], 2);
+    EXPECT_EQ(v3d_1[2], 4);
+
+    mpq_class array_0[3] = {1.1, 2.2, 3.3};
+    Vec3d v3d_2(array_0);
+    EXPECT_EQ(v3d_2[0], 1.1); 
+    EXPECT_EQ(v3d_2[1], 2.2);
+    EXPECT_EQ(v3d_2[2], 3.3);
+
+    Vec3d v3d_3(Vec1d(1));
+    EXPECT_EQ(v3d_3[0], 1);
+    EXPECT_EQ(v3d_3[1], 0);
+    EXPECT_EQ(v3d_3[2], 0);
+
 }
 
 TEST(VectorTest, OperationTest)

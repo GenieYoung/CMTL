@@ -38,13 +38,6 @@ class Point : public VectorT<T, 3, Point<T>>
         {
         }
 
-        /**
-         * @brief construct a 3d point with built-in arrays
-         */
-        Point(const T (&v)[3]) : VectorT<T, 3, Point>(v[0], v[1], v[2]) 
-        {
-        }
-
         ~Point() = default;
 
     public:
