@@ -27,6 +27,12 @@ TEST(Point3Test, ConstructTest)
     EXPECT_EQ(pi2.x(), -1);
     EXPECT_EQ(pi2.y(), 1);
     EXPECT_EQ(pi2.z(), 0);
+
+    int v1[3] = {1, 2, 3};
+    PointI pi3(v1);
+    EXPECT_EQ(pi3.x(), 1);
+    EXPECT_EQ(pi3.y(), 2);
+    EXPECT_EQ(pi3.z(), 3);
 }
 
 TEST(Point3Test, OperationTest)

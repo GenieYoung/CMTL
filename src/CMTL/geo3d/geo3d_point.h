@@ -38,6 +38,13 @@ class Point : public VectorT<T, 3, Point<T>>
         {
         }
 
+        /**
+         * @brief construct a 3d point with built-in arrays
+         */
+        Point(const T (&v)[3]) : VectorT<T, 3, Point>(v[0], v[1], v[2]) 
+        {
+        }
+
         ~Point() = default;
 
     public:
@@ -106,21 +113,6 @@ class Point : public VectorT<T, 3, Point<T>>
             return (*this) % p;
         }
 };
-
-/**
- * @brief convert a point into another number type
- * @tparam T_IN input point number type
- * @tparam T_OUT output point number type
- * @return point after number type conversion
- * @note we can simpliy use the assign&cast operator in vectorT
- */
-template<typename T_IN, typename T_OUT>
-Point<T_OUT> point_cast(const Point<T_IN>& p)
-{
-    return Point<T_OUT>(util_cast<T_IN, T_OUT>(p[0]),
-                        util_cast<T_IN, T_OUT>(p[1]),
-                        util_cast<T_IN, T_OUT>(p[2]));
-}
 
 }   // namespace geo3d
 }   // namespace CMTL
