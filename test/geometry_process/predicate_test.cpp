@@ -1,5 +1,3 @@
-#include "CMTL/geo2d/geo2d_point.h"
-#include "CMTL/geo3d/geo3d_point.h"
 #include "CMTL/geometry_process/predicate.h"
 
 #include <gtest/gtest.h>
@@ -47,8 +45,8 @@ TEST(PredicateTest, Orient2dTest)
 TEST(PredicateTest, Orient3dTest)
 {
     Point3D pd1(0, 1, 0), pd2(0, 0, 0), pd3(3, 0, 7);
-    EXPECT_TRUE(orient_3d(pd1, pd2, pd3, {1.5, 0.5, 3.5+1e-10})==ORIENTATION::ABOVE);
-    EXPECT_TRUE(orient_3d(pd1, pd2, pd3, {1.5, -0.5, 3.5-1e-10})==ORIENTATION::BELOW);
+    EXPECT_TRUE(orient_3d(pd1, pd2, pd3, {1.5, 0.5, 3.5+1e-10})==ORIENTATION::POSITIVE);
+    EXPECT_TRUE(orient_3d(pd1, pd2, pd3, {1.5, -0.5, 3.5-1e-10})==ORIENTATION::NEGATIVE);
     EXPECT_TRUE(orient_3d(pd1, pd2, pd3, {1.5, 0, 3.5})==ORIENTATION::ON);
     
     double d1[3] = {0, 1, 0};
@@ -75,6 +73,11 @@ TEST(PredicateTest, Orient3dTest)
     EXPECT_TRUE(orient_3d(r1, r2, r3, r4)==ORIENTATION::ABOVE);
     EXPECT_TRUE(orient_3d(r1, r2, r3, r5)==ORIENTATION::BELOW);
     EXPECT_TRUE(orient_3d(r1, r2, r3, r6)==ORIENTATION::ON);
+
+    geo3d::Plane<mpq_class> plane(Point3R(0, 0, 0), Point3R(1, 1, 1));
+    EXPECT_TRUE(orient_3d(plane, Point3R(1, 1, 1))==ORIENTATION::ABOVE);
+    EXPECT_TRUE(orient_3d(plane, Point3R(-1, -1, -1))==ORIENTATION::BELOW);
+    EXPECT_TRUE(orient_3d(plane, Point3R(0, 0, 0))==ORIENTATION::ON);
 }
 
 TEST(PredicateTest, LocalDelaunayTest)
@@ -96,40 +99,13 @@ TEST(PredicateTest, LocalDelaunayTest)
 
     Point2R pr1(1, 0), pr2(0, 1), pr3(0, 0), pr4(1, 1);
     EXPECT_TRUE(is_locally_delaunay(pr1, pr2, pr3, pr4));
+    EXPECT_FALSE(is_locally_delaunay(pr1, pr2, pr3, pr4, true));
     EXPECT_TRUE(is_locally_delaunay(pr1, pr2, pr3, pr4+Point2D(mpq_class(1,1e100), mpq_class(1,1e100))));
     EXPECT_FALSE(is_locally_delaunay(pr1, pr2, pr3, pr4-Point2D(mpq_class(1,1e100), mpq_class(1,1e100))));
 }
 
-// void orient2d_test()
-// {
-//     typedef CMTL::geo2d::Point<double> PointF;
-//     PointF p1(0,0), p2(1,0), p3(0.5, -0.00001);
-//     std::cout << p1 << " " << p2 << " " << p3 << " "
-//               << CMTL::geometry_process::orient_2d(p1, p2, p3) << std::endl;
-// }
-
-// void orient3d_test()
-// {
-//     typedef CMTL::geo3d::Point<double> PointF;
-//     PointF p1(0,0,0), p2(1,0,1), p3(0,1,0), p4(0.5, 0.5, 0.500001);
-//     std::cout << p1 << " " << p2 << " " << p3 << " " << p4 << " "
-//               << CMTL::geometry_process::orient_3d(p1, p2, p3, p4) << std::endl;
-// }
-
-// void locally_delaunay_test()
-// {
-//     typedef CMTL::geo2d::Point<double> PointF;
-//     PointF p1(-2.88,-5.32), p2(-2.72,-5.67), p3(-2.70, -5.37), p4(-2.67, -6.03);
-//     //PointF p1(0,0), p2(10,0), p3(5, 5), p4(5, -4);
-//     std::cout << p1 << " " << p2 << " " << p3 << " " << p4 << " "
-//               << (CMTL::geometry_process::is_locally_delaunay(p1, p2, p3, p4) ? "delaunay" : "not delaunay") << std::endl;
-// }
-
 // int main()
 // {
-//     orient2d_test();
-//     orient3d_test();
-//     locally_delaunay_test();
 // }
 
 

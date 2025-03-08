@@ -2,7 +2,6 @@
 #define __geo3d_plane_h__
 
 #include "../geo2d/geo2d_point.h"
-#include "../common/orientation.h"
 #include "geo3d_point.h"
 
 namespace CMTL  {
@@ -61,13 +60,20 @@ class Plane
 
     public:
         /**
+         * @brief get a point on plane
+         */
+        const Point<T>& origin() const
+        {
+            return _origin;
+        }
+
+        /**
          * @brief get the plane normal
          */
         const Point<T>& normal() const
         {
             return _normal;
         }
-
 
         /**
          * @brief project a plane point to a local 2d coordinate system, 
@@ -89,22 +95,6 @@ class Plane
             p_[_project_cood[2]] = 0;
             T t = (_origin - p_) * this->_normal / (this->_normal * _project_normal);
             return p_ + _project_normal * t;
-        }
-
-        /**
-         * @brief check a point orientation with the plane
-         * @return return ORIENTATION::ABOVE if point above plane, ORIENTATION::BELOW if point on the opposite, 
-         *         otherwise return ORIENTATION::ON
-         */
-        ORIENTATION orient(const geo3d::Point<T>& p) const
-        {
-            T ori = (p - _origin) * _normal;
-            if(is_greater(ori, T(0)))
-                return ORIENTATION::ABOVE;
-            else if(is_less(ori, T(0)))
-                return ORIENTATION::BELOW;
-            else
-                return ORIENTATION::ON;
         }
 
         /**
