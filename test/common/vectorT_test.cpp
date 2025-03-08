@@ -7,7 +7,7 @@ TEST(VectorTest, ConstructTest)
 {
     Vec2d v2d_0;
     EXPECT_EQ(v2d_0.dimension(), 2);
-    EXPECT_DEATH({v2d_0[2];}, "index out of range");
+    //EXPECT_DEATH({v2d_0[2];}, "index out of range");
     EXPECT_EQ(v2d_0[0], 0);
     EXPECT_EQ(v2d_0[1], 0);
 

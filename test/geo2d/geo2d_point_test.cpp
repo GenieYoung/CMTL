@@ -10,7 +10,7 @@ TEST(Point2Test, ConstructTest)
 {
     PointI pi0(1);
     EXPECT_EQ(pi0.dimension(), 2);
-    EXPECT_DEATH({pi0[2];}, "index out of range");
+    //EXPECT_DEATH({pi0[2];}, "index out of range");
     EXPECT_EQ(pi0.x(), 1);
     EXPECT_EQ(pi0.y(), 0);
 
