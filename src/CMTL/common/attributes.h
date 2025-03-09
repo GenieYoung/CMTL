@@ -2,10 +2,9 @@
 #define __common_attributes_h__
 
 #include <cassert>
-#include <cstdlib>
-#include <typeinfo>
 #include <string>
 #include <map>
+#include <any>
 
 /**
  * @brief Computational Mathematics Tool Library
@@ -34,11 +33,7 @@ class Attributes
 
 		Attributes& operator=(const Attributes& other)
 		{
-			this->clear();
-			for (auto it = other._values.begin(); it != other._values.end(); ++it)
-			{
-				_values[it->first] = it->second->clone();
-			}
+			_values = other._values;
 			return *this;
 		}
 
@@ -50,7 +45,7 @@ class Attributes
 		bool contain(const std::string& name) const
 		{
 			auto it = _values.find(name);
-			if (it != _values.end())
+			if (it != _values.end() && it->second.has_value())
 				return true;
 			return false;
 		}
@@ -66,9 +61,9 @@ class Attributes
 		{
 			auto it = _values.find(name);
 			assert(it != _values.end() && "attribute with specific name not found");
-			const Attribute<T>* attr = dynamic_cast<const Attribute<T>*>(it->second);
-			assert(attr != nullptr && "attribute with specific type not found"); 
-			return attr->get();
+			assert(it->second.has_value() && "attribute has no value");
+			assert(it->second.type() == typeid(T) && "attribute with specific type not found");
+			return *std::any_cast<T>(&it->second);
 		}
 
 		/**
@@ -82,14 +77,12 @@ class Attributes
 		{
 			auto it = _values.find(name);
 			if(it == _values.end())
-			{
-				Attribute<T>* attr = new Attribute<T>;
-				_values[name] = attr;
-				return attr->set();
-			}
-			Attribute<T>* attr = dynamic_cast<Attribute<T>*>(_values[name]);
-			assert(attr != nullptr && "attribute with specific type not found");
-			return attr->set();
+				return _values[name].emplace<T>();	
+			if(!it->second.has_value())
+				return it->second.emplace<T>();
+			if(it->second.type() == typeid(T))
+				return *std::any_cast<T>(&it->second);
+			assert(false && "attribute with specific type not found");
 		}
 
 		/**
@@ -99,11 +92,7 @@ class Attributes
 		{
 			auto it = _values.find(name);
 			if (it != _values.end())
-			{
-				delete it->second;
-				it->second = nullptr;
 				_values.erase(it);
-			}
 		}
 
 		/**
@@ -111,62 +100,11 @@ class Attributes
 		 */
 		void clear()
 		{
-			while (!_values.empty())
-			{
-				auto it = _values.begin();
-				delete it->second;
-				it->second = nullptr;
-				_values.erase(it);
-			}
+			_values.clear();
 		}
-
-	private:
-		/* pure virtual class used for representing different types */
-		class Value
-		{
-			public:
-				virtual ~Value() 
-				{
-				};
-
-				virtual std::string type() const = 0;
-
-				virtual Value* clone() const = 0;
-		};
-
-		/* class used for representing different types */
-		template<typename T>
-		class Attribute : public Value
-		{
-			public:
-				const T& get() const 
-				{ 
-					return _value; 
-				}
-
-				T& set() 
-				{
-					return _value; 
-				}
-
-				virtual std::string type() const
-				{
-					return typeid(T).name();
-				}
-
-				virtual Value* clone() const
-				{
-					Attribute<T>* copy = new Attribute<T>;
-					copy->_value = _value;
-					return copy;
-				}
-
-			private:
-				T _value;
-		};
 		
 	private:
-		std::map<std::string, Value*> _values;
+		std::map<std::string, std::any> _values;
 };
 
 }   // namespace CMTL
