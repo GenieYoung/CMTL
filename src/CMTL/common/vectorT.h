@@ -69,7 +69,17 @@ class VectorT
          * @brief construct using built-in arrays
          */
         template<typename TT>
-        explicit VectorT(const TT (&vs)[DIM])
+        constexpr VectorT(const TT (&vs)[DIM])
+        {
+            for(unsigned i = 0; i < DIM; ++i)
+                _values[i] = util_cast<TT, T>(vs[i]);
+        }
+
+        /**
+         * @brief construct using std array
+         */
+        template<typename TT>
+        constexpr VectorT(const std::array<TT, DIM>& vs)
         {
             for(unsigned i = 0; i < DIM; ++i)
                 _values[i] = util_cast<TT, T>(vs[i]);
