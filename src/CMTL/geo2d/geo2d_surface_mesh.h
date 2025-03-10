@@ -10,13 +10,9 @@ namespace geo2d{
 
 /**
  * @brief surface mesh traits, user specified traits should inherit this class and override these members.
- * @tparam T point coordinate type
  */
-template<typename T>
 struct SurfaceMeshTraits : public halfedge::DefaultTraits
 {
-    /* vertex position */
-    typedef geo2d::Point<T> Point;
     /* attributes attach to a vertex */
     typedef Attributes VertexAttribute;
     /* attributes attach to a halfedge */
@@ -31,13 +27,12 @@ struct SurfaceMeshTraits : public halfedge::DefaultTraits
  * @brief a halfedge data structure used to represent a polyhedral surface
  * @tparam T point coordinate type
  */
-template<typename T>
-class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
+template<typename T, class Traits = SurfaceMeshTraits>
+class SurfaceMesh : public halfedge::Graph<geo2d::Point<T>, Traits>
 {
     public:
         /* alias */
         typedef T                                       FT;
-        typedef SurfaceMeshTraits<T>                    Traits;
         
         typedef halfedge::HalfedgeItem                  HalfedgeItem;
         typedef halfedge::EdgeItem                      EdgeItem;
@@ -53,7 +48,7 @@ class SurfaceMesh : public halfedge::Graph<SurfaceMeshTraits<T>>
         typedef halfedge::GraphEdgeHandle               MeshEdgeHandle;
         typedef halfedge::GraphFaceHandle               MeshFaceHandle;
 
-        typedef typename Traits::Point                  Point;
+        typedef geo2d::Point<T>                         Point;
         typedef typename Traits::VertexAttribute        VertexAttribute;
         typedef typename Traits::HalfedgeAttribute      HalfedgeAttribute;
         typedef typename Traits::EdgeAttribute          EdgeAttribute;
