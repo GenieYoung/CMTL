@@ -2331,7 +2331,6 @@ bool GraphHalfedgeHandle::is_boundary() const
  */
 struct DefaultTraits
 {
-    typedef int Point;
     typedef int VertexAttribute;
     typedef int HalfedgeAttribute;
     typedef int EdgeAttribute;
@@ -2342,11 +2341,10 @@ struct DefaultTraits
  * @brief A graph describe the topological relationship and mesh items of the halfedge data struct
  * @tparam Traits element attributes
  */
-template<class Traits = DefaultTraits>
+template<class Point = int, class Traits = DefaultTraits>
 class Graph : public GraphTopology
 {
     public:
-        typedef typename Traits::Point                               Point;
         typedef typename Traits::VertexAttribute                     VertexAttribute;
         typedef typename Traits::HalfedgeAttribute                   HalfedgeAttribute;
         typedef typename Traits::EdgeAttribute                       EdgeAttribute;
