@@ -158,34 +158,67 @@ TEST(IntersectTest, BoxRay2DIntersectTest)
     EXPECT_EQ(tr1, 3);
 }
 
-// #include <cstdlib>
-// #include <chrono>
-// #include <vector>
-// int main()
-// {
-//     std::srand(42);
+TEST(IntersectTest, SegmentSegmentIntersectTest)
+{
+    Segment2R seg1(Point2R(0,0), Point2R(1,1));
+    Segment2R seg2(Point2R(0,1), Point2R(1,0));
+    EXPECT_TRUE(intersect(seg1, seg2));
+    EXPECT_TRUE(intersect(seg1, seg1));
+    EXPECT_TRUE(intersect(seg2, seg2));
+    EXPECT_TRUE(intersect(seg1, seg1, true));
+    EXPECT_TRUE(intersect(seg2, seg2, true));
 
-//     mpq_class t0, t1;
-//     Box2R box1 = Box2R(Point2R(0,0), Point2R(1,1));
+    Segment2R seg3(Point2R(0,0), Point2R(-1,1));
+    EXPECT_TRUE(intersect(seg1, seg3));
+    EXPECT_FALSE(intersect(seg1, seg3, true));
 
-//     int num = 10000000;
-//     std::vector<Line2R> segs(num);
-//     for(int i = 0; i < num; ++i)
-//     {
-//         Point2R p0(rand()%10000/2500.0 - 2, rand()%10000/2500.0 - 2);
-//         Point2R p1(rand()%10000/2500.0 - 2, rand()%10000/2500.0 - 2);
-//         segs[i] = Line2R(p0, p1);
-//     }
+    Segment2R seg4(Point2R(0,0), Point2R(1,-1));
+    EXPECT_TRUE(intersect(seg4, seg1));
+    EXPECT_FALSE(intersect(seg4, seg1, true));
 
-//     for(unsigned j = 0; j < 10; ++j)
-//     {
-//         auto start = std::chrono::high_resolution_clock::now();
-//         for(int i = 0; i < num; ++i)
-//         {
-//             intersect(box1, segs[i], t0, t1);
-//         }
-//         auto end = std::chrono::high_resolution_clock::now();
-//         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-//         std::cout << "time consuming : " << duration.count() << " us" << std::endl;
-//     }
-// }
+    Segment2R seg5(Point2R(1,1), Point2R(0,2));
+    EXPECT_TRUE(intersect(seg1, seg5));
+    EXPECT_FALSE(intersect(seg1, seg5, true));
+
+    Segment2R seg6(Point2R(1,1), Point2R(2,0));
+    EXPECT_TRUE(intersect(seg6, seg1));
+    EXPECT_FALSE(intersect(seg6, seg1, true));
+
+    Segment2R seg7(Point2R(0.5,0.5), Point2R(0,2));
+    EXPECT_TRUE(intersect(seg1, seg7));
+    EXPECT_FALSE(intersect(seg1, seg7, true));
+
+    Segment2R seg8(Point2R(0.5,0.5), Point2R(2,0));
+    EXPECT_TRUE(intersect(seg8, seg1));
+    EXPECT_FALSE(intersect(seg8, seg1, true));
+
+    Segment2R seg9(Point2R(0,0), Point2R(-1,-1));
+    EXPECT_TRUE(intersect(seg1, seg9));
+    EXPECT_TRUE(intersect(seg9, seg1));
+    EXPECT_FALSE(intersect(seg1, seg9, true));
+
+    Segment2R seg10(Point2R(0,0), Point2R(0.5,0.5));
+    EXPECT_TRUE(intersect(seg1, seg10));
+    EXPECT_TRUE(intersect(seg10, seg1));
+    EXPECT_TRUE(intersect(seg1, seg10, true));
+    EXPECT_TRUE(intersect(seg10, seg1, true));
+
+    Segment2R seg11(Point2R(-1,-1), Point2R(-2,-2));
+    EXPECT_FALSE(intersect(seg11, seg1));
+
+    Segment2R seg12(Point2R(0.3,0.3), Point2R(0.8,0.8));
+    EXPECT_TRUE(intersect(seg1, seg12));
+
+    Segment2R seg13(Point2R(0.3,0.3), Point2R(1.8,1.8));
+    EXPECT_TRUE(intersect(seg1, seg13));
+
+    Segment2R seg14(Point2R(1,1), Point2R(1.8,1.8));
+    EXPECT_TRUE(intersect(seg1, seg14));
+    EXPECT_FALSE(intersect(seg1, seg14, true));
+
+    Segment2R seg15(Point2R(1.1,1.1), Point2R(1.8,1.8));
+    EXPECT_FALSE(intersect(seg1, seg15));
+
+    Segment2R seg16(Point2R(-1,-1), Point2R(2,2));
+    EXPECT_TRUE(intersect(seg1, seg16));
+}

@@ -75,12 +75,36 @@ inline std::string to_string(const T& v)
 
 /**
  * @brief calculate the absolute value of a number
+ * @note if the number type is from gmp, absolute(expression) may crash, call absolute(T(expression)) instead.
  */
 template<typename T>
 inline T absolute(const T& v)
 {
-    if(v > 0)   return v;
-    else    return -v;
+    if(v >= 0)   
+        return v;
+    return -v;
+}
+
+/**
+ * @brief calculate the minimal value of two numbers
+ */
+template<typename T>
+inline T min(const T& v1, const T& v2)
+{
+    if(v1 < v2)
+        return v1;
+    return v2;
+}
+
+/**
+ * @brief calculate the minimal value of two numbers
+ */
+template<typename T>
+inline T max(const T& v1, const T& v2)
+{
+    if(v1 > v2)
+        return v1;
+    return v2;
 }
 
 /**
