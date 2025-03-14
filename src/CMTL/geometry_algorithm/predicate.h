@@ -47,16 +47,16 @@ ORIENTATION orient_2d(const T (&pa)[2], const T (&pb)[2], const T (&pc)[2]) {
 
 /**
  * @brief 3d orientation test
- * @return return positive if the point pd lies above the plane passing through pa, pb, and pc,
- *         "above" is defined so that pa, pb, and pc appear in counterclockwise order when viewed from above the plane,
+ * @return return positive if the point pd lies below the plane passing through pa, pb, and pc,
+ *         "below" is defined so that pa, pb, and pc appear in clockwise order when viewed from below,
  *         return on if the points are coplanar, otherwise return negative.
  */
 template<typename T>
 ORIENTATION orient_3d(const geo3d::Point<T>& pa, const geo3d::Point<T>& pb, const geo3d::Point<T>& pc, const geo3d::Point<T>& pd)
 {
-    T adx = pd[0] - pa[0], ady = pd[1] - pa[1], adz = pd[2] - pa[2],
-      abx = pb[0] - pa[0], aby = pb[1] - pa[1], abz = pb[2] - pa[2],
-      acx = pc[0] - pa[0], acy = pc[1] - pa[1], acz = pc[2] - pa[2];
+    T adx = pa[0] - pd[0], ady = pa[1] - pd[1], adz = pa[2] - pd[2],
+      abx = pa[0] - pb[0], aby = pa[1] - pb[1], abz = pa[2] - pb[2],
+      acx = pa[0] - pc[0], acy = pa[1] - pc[1], acz = pa[2] - pc[2];
     T flag = adx * (aby * acz - abz * acy) +
              ady * (abz * acx - abx * acz) +
              adz * (abx * acy - aby * acx);
@@ -65,16 +65,16 @@ ORIENTATION orient_3d(const geo3d::Point<T>& pa, const geo3d::Point<T>& pb, cons
 
 /**
  * @brief 3d orientation test, used for built-in arrays
- * @return return positive if the point pd lies above the plane passing through pa, pb, and pc,
- *         "above" is defined so that pa, pb, and pc appear in counterclockwise order when viewed from above the plane,
+ * @return return positive if the point pd lies below the plane passing through pa, pb, and pc,
+ *         "below" is defined so that pa, pb, and pc appear in clockwise order when viewed from below,
  *         return on if the points are coplanar, otherwise return negative.
  */
 template<typename T>
 ORIENTATION orient_3d(const T (&pa)[3], const T (&pb)[3], const T (&pc)[3], const T (&pd)[3])
 {
-    T adx = pd[0] - pa[0], ady = pd[1] - pa[1], adz = pd[2] - pa[2],
-      abx = pb[0] - pa[0], aby = pb[1] - pa[1], abz = pb[2] - pa[2],
-      acx = pc[0] - pa[0], acy = pc[1] - pa[1], acz = pc[2] - pa[2];
+    T adx = pa[0] - pd[0], ady = pa[1] - pd[1], adz = pa[2] - pd[2],
+      abx = pa[0] - pb[0], aby = pa[1] - pb[1], abz = pa[2] - pb[2],
+      acx = pa[0] - pc[0], acy = pa[1] - pc[1], acz = pa[2] - pc[2];
     T flag = adx * (aby * acz - abz * acy) +
              ady * (abz * acx - abx * acz) +
              adz * (abx * acy - aby * acx);
@@ -83,22 +83,54 @@ ORIENTATION orient_3d(const T (&pa)[3], const T (&pb)[3], const T (&pc)[3], cons
 
 /**
  * @brief check a point orientation with the plane
- * @return return above if point above plane, return below if point on the opposite, otherwise return on
+ * @return return negative if point locates in the half-space the normal direction point to,
+ *         return positive if point on the opposite, otherwise return on
  */
 template<typename T>
 ORIENTATION orient_3d(const geo3d::Plane<T>& plane, const geo3d::Point<T>& p)
 {
-    return orient_1d((p - plane.origin()) * plane.normal());
+    return orient_1d((plane.origin() - p) * plane.normal());
 }
 
 /**
  * @brief check a point orientation with the plane, used for built-in arrays
- * @return return above if point above plane, return below if point on the opposite, otherwise return on
+ * @return return negative if point locates in the half-space the normal direction point to,
+ *         return positive if point on the opposite, otherwise return on
  */
 template<typename T>
 ORIENTATION orient_3d(const geo3d::Plane<T>& plane, const T (&p)[3])
 {
-    return orient_1d((p - plane.origin()) * plane.normal());
+    return orient_1d((plane.origin() - p) * plane.normal());
+}
+
+/**
+ * @brief in circle test, check whether point pd lies in the circle passing through pa, pb, and pc
+ * @return inside if pd lies inside the circle, outside if pd lies outside the circle, and on if pd lies on the circle.
+ * @note the points pa, pb, pc must be in counterclockwise order, otherwise the sign will be reversed.
+ */
+template<typename T>
+ORIENTATION in_circle(const geo2d::Point<T>& pa, const geo2d::Point<T>& pb, const geo2d::Point<T>& pc, const geo2d::Point<T>& pd)
+{
+    T pa_[3] = {pa[0], pa[1], pa[0]*pa[0] + pa[1]*pa[1]};
+    T pb_[3] = {pb[0], pb[1], pb[0]*pb[0] + pb[1]*pb[1]};
+    T pc_[3] = {pc[0], pc[1], pc[0]*pc[0] + pc[1]*pc[1]};
+    T pd_[3] = {pd[0], pd[1], pd[0]*pd[0] + pd[1]*pd[1]};
+    return orient_3d(pa_, pb_, pc_, pd_);
+}
+
+/**
+ * @brief in circle test, check whether point pd lies in the circle passing through pa, pb, and pc, used for built-in arrays
+ * @return positive if pd lies inside the circle, negative if pd lies outside the circle, and on if pd lies on the circle.
+ * @note the points pa, pb, pc must be in counterclockwise order, otherwise the sign will be reversed.
+ */
+template<typename T>
+ORIENTATION in_circle(const T (&pa)[2], const T (&pb)[2], const T (&pc)[2], const T (&pd)[2])
+{
+    T pa_[3] = {pa[0], pa[1], pa[0]*pa[0] + pa[1]*pa[1]};
+    T pb_[3] = {pb[0], pb[1], pb[0]*pb[0] + pb[1]*pb[1]};
+    T pc_[3] = {pc[0], pc[1], pc[0]*pc[0] + pc[1]*pc[1]};
+    T pd_[3] = {pd[0], pd[1], pd[0]*pd[0] + pd[1]*pd[1]};
+    return orient_3d(pa_, pb_, pc_, pd_);
 }
 
 /**
@@ -106,16 +138,13 @@ ORIENTATION orient_3d(const geo3d::Plane<T>& plane, const T (&p)[3])
  * @tparam Point 2d point
  * @param is_strongly if true, delaunay means its closed circumdisk is empty
  * @return true if locally delaunay, otherwise false
+ * @note the points pa, pb, pc must be in counterclockwise order
  */
 template<typename T>
 bool is_locally_delaunay(const geo2d::Point<T>& pa, const geo2d::Point<T>& pb, const geo2d::Point<T>& pc, const geo2d::Point<T>& pd, bool is_strongly = false)
 {
-    T pa_[3] = {pa[0], pa[1], pa[0]*pa[0] + pa[1]*pa[1]};
-    T pb_[3] = {pb[0], pb[1], pb[0]*pb[0] + pb[1]*pb[1]};
-    T pc_[3] = {pc[0], pc[1], pc[0]*pc[0] + pc[1]*pc[1]};
-    T pd_[3] = {pd[0], pd[1], pd[0]*pd[0] + pd[1]*pd[1]};
-    ORIENTATION flag = orient_3d(pa_, pb_, pc_, pd_);
-    return flag == ORIENTATION::POSITIVE || (!is_strongly && flag == ORIENTATION::ON);
+    ORIENTATION flag = in_circle(pa, pb, pc, pd);
+    return flag == ORIENTATION::OUTSIDE || (!is_strongly && flag == ORIENTATION::ON);
 }
 
 /**
@@ -123,16 +152,13 @@ bool is_locally_delaunay(const geo2d::Point<T>& pa, const geo2d::Point<T>& pb, c
  * @tparam Point 2d point
  * @param is_strongly if true, delaunay means its closed circumdisk is empty
  * @return true if locally delaunay, otherwise false
+ * @note the points pa, pb, pc must be in counterclockwise order
  */
 template<typename T>
 bool is_locally_delaunay(const T (&pa)[2], const T (&pb)[2], const T (&pc)[2], const T (&pd)[2], bool is_strongly = false)
 {
-    T pa_[3] = {pa[0], pa[1], pa[0]*pa[0] + pa[1]*pa[1]};
-    T pb_[3] = {pb[0], pb[1], pb[0]*pb[0] + pb[1]*pb[1]};
-    T pc_[3] = {pc[0], pc[1], pc[0]*pc[0] + pc[1]*pc[1]};
-    T pd_[3] = {pd[0], pd[1], pd[0]*pd[0] + pd[1]*pd[1]};
-    ORIENTATION flag = orient_3d(pa_, pb_, pc_, pd_);
-    return flag == ORIENTATION::POSITIVE || (!is_strongly && flag == ORIENTATION::ON);
+    ORIENTATION flag = in_circle(pa, pb, pc, pd);
+    return flag == ORIENTATION::OUTSIDE || (!is_strongly && flag == ORIENTATION::ON);
 }
 
 }   // namespace geometry_algorithm

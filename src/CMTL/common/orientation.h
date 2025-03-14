@@ -10,8 +10,8 @@ namespace CMTL{
  */
 enum class ORIENTATION 
 {
-    ABOVE = 1, POSITIVE = 1, INSIDE = 1,
-    BELOW = -1, NEGATIVE = -1, OUTSIDE = -1, 
+    POSITIVE = 1, INSIDE = 1,
+    NEGATIVE = -1, OUTSIDE = -1, 
     ON = 0, COLLINEAR = 0, COPLANAR = 0
 };
 
