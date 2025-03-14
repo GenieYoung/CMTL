@@ -1,9 +1,9 @@
 #include "CMTL/geo2d/geo2d_point.h"
-#include "CMTL/geometry_process/normal.h"
+#include "CMTL/geometry_algorithm/normal.h"
 
 typedef CMTL::geo3d::Point<double> PointF;
 
-using namespace CMTL::geometry_process;
+using namespace CMTL::geometry_algorithm;
 
 void test1()
 {

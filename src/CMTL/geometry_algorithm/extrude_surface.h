@@ -1,5 +1,5 @@
-#ifndef __geometry_process_extrude_surface__
-#define __geometry_process_extrude_surface__
+#ifndef __geometry_algorithm_extrude_surface__
+#define __geometry_algorithm_extrude_surface__
 
 #include "../geo3d/geo3d_surface_mesh.h"
 #include "../geo3d/geo3d_polygon_soup.h"
@@ -9,7 +9,7 @@
 #include <set>
 
 namespace CMTL{
-namespace geometry_process{
+namespace geometry_algorithm{
 
 namespace internal{
 
@@ -267,7 +267,7 @@ bool extrude_surface(const geo3d::SurfaceMesh<T>& sm,
     return modifier.execute(result);
 }
 
-}   // namespace geometry_process
+}   // namespace geometry_algorithm
 }   // namespace CMTL
 
-#endif  // __geometry_process_extrude_surface__
+#endif  // __geometry_algorithm_extrude_surface__

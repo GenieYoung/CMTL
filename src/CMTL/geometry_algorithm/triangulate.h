@@ -1,5 +1,5 @@
-#ifndef __geometry_process_triangulate__
-#define __geometry_process_triangulate__
+#ifndef __geometry_algorithm_triangulate__
+#define __geometry_algorithm_triangulate__
 
 #include "../geo2d/geo2d_polygon.h"
 #include "../geo3d/geo3d_polygon.h"
@@ -9,7 +9,7 @@
 #include <array>
 
 namespace CMTL{
-namespace geometry_process{
+namespace geometry_algorithm{
 
 namespace internal  {
 
@@ -291,7 +291,7 @@ bool triangulate_3d(const Polygon& polygon, std::vector<std::array<unsigned, 3>>
     return modifier.execute(triangles);
 }
 
-}   // namespace geometry_process
+}   // namespace geometry_algorithm
 }   // namespace CMTL
 
-#endif  // __geometry_process_triangulate__
+#endif  // __geometry_algorithm_triangulate__

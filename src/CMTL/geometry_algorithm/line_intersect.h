@@ -1,11 +1,11 @@
-#ifndef __geometry_process_line_intersect__
-#define __geometry_process_line_intersect__
+#ifndef __geometry_algorithm_line_intersect__
+#define __geometry_algorithm_line_intersect__
 
 #include "../geo2d/geo2d_segment.h"
 #include "predicate.h"
 
 namespace CMTL{
-namespace geometry_process{
+namespace geometry_algorithm{
 
 /**
  * @brief fast check whether two segments intersect
@@ -70,7 +70,7 @@ bool intersect(const geo2d::Segment<T>& seg1, const geo2d::Segment<T>& seg2, boo
     return false;
 }
 
-}   // namespace geometry_process
+}   // namespace geometry_algorithm
 }   // namespace CMTL
 
-#endif  // __geometry_process_line_intersect__
+#endif  // __geometry_algorithm_line_intersect__

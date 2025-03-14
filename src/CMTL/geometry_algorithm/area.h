@@ -1,5 +1,5 @@
-#ifndef __geometry_process_area__
-#define __geometry_process_area__
+#ifndef __geometry_algorithm_area__
+#define __geometry_algorithm_area__
 
 #include "../geo2d/geo2d_polygon.h"
 #include "../geo2d/geo2d_triangle.h"
@@ -9,7 +9,7 @@ namespace CMTL{
 /**
  * @brief geometry process algorithm
  */
-namespace geometry_process{
+namespace geometry_algorithm{
 
 /**
  * @brief calculate the area of a triangle.
@@ -93,7 +93,7 @@ void area_2d(ForwardIterator begin, ForwardIterator end, NumberType& result)
     result /= NumberType(2);
 }
 
-}   // namespace geometry_process
+}   // namespace geometry_algorithm
 }   // namespace CMTL
 
-#endif  // __geometry_process_area__
+#endif  // __geometry_algorithm_area__

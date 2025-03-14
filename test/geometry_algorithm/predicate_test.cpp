@@ -1,4 +1,4 @@
-#include "CMTL/geometry_process/predicate.h"
+#include "CMTL/geometry_algorithm/predicate.h"
 
 #include <gtest/gtest.h>
 
@@ -8,7 +8,7 @@ typedef CMTL::geo3d::Point<double> Point3D;
 typedef CMTL::geo3d::Point<mpq_class> Point3R;
 
 using namespace CMTL;
-using namespace CMTL::geometry_process;
+using namespace CMTL::geometry_algorithm;
 
 TEST(PredicateTest, Orient2dTest)
 {

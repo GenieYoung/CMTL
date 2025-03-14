@@ -1,12 +1,12 @@
-#ifndef __geometry_process_predicate__
-#define __geometry_process_predicate__
+#ifndef __geometry_algorithm_predicate__
+#define __geometry_algorithm_predicate__
 
 #include "../common/orientation.h"
 #include "../geo3d/geo3d_plane.h"
 
 namespace CMTL{
 
-namespace geometry_process{
+namespace geometry_algorithm{
 
 /**
  * @brief 1d orientation test
@@ -135,7 +135,7 @@ bool is_locally_delaunay(const T (&pa)[2], const T (&pb)[2], const T (&pc)[2], c
     return flag == ORIENTATION::POSITIVE || (!is_strongly && flag == ORIENTATION::ON);
 }
 
-}   // namespace geometry_process
+}   // namespace geometry_algorithm
 }   // namespace CMTL
 
-#endif  // __geometry_process_predicate__
+#endif  // __geometry_algorithm_predicate__

@@ -1,12 +1,12 @@
-#ifndef __geometry_process_lawson_flip__
-#define __geometry_process_lawson_flip__
+#ifndef __geometry_algorithm_lawson_flip__
+#define __geometry_algorithm_lawson_flip__
 
 #include "../geo2d/geo2d_surface_mesh.h"
 #include "predicate.h"
 #include <queue>
 
 namespace CMTL{
-namespace geometry_process{
+namespace geometry_algorithm{
 
 /**
  * @brief remove locally non-delaunay edges in surface mesh
@@ -72,7 +72,7 @@ void lawson_flip(geo2d::SurfaceMesh<T>& sm, const std::vector<typename geo2d::Su
 #endif
 }
 
-}   // namespace geometry_process
+}   // namespace geometry_algorithm
 }   // namespace CMTL
 
-#endif  // __geometry_process_lawson_flip__
+#endif  // __geometry_algorithm_lawson_flip__

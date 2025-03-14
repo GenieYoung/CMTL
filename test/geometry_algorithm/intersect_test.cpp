@@ -1,4 +1,4 @@
-#include "CMTL/geometry_process/intersect.h"
+#include "CMTL/geometry_algorithm/intersect.h"
 
 #include <gtest/gtest.h>
 
@@ -8,7 +8,7 @@ typedef CMTL::geo2d::Segment<mpq_class> Segment2R;
 typedef CMTL::geo2d::Line<mpq_class> Line2R;
 typedef CMTL::geo2d::Ray<mpq_class> Ray2R;
 
-using CMTL::geometry_process::intersect;
+using CMTL::geometry_algorithm::intersect;
 
 TEST(IntersectTest, BoxSegment2DIntersectTest)
 {

@@ -1,4 +1,4 @@
-#include "CMTL/geometry_process/lawson_flip.h"
+#include "CMTL/geometry_algorithm/lawson_flip.h"
 #include "CMTL/io/surface_mesh/read_obj.h"
 #include "CMTL/io/surface_mesh/write_obj.h"
 
@@ -8,7 +8,7 @@ void test0()
     SurfaceMesh sm;
     CMTL::io::read_obj(sm, "../mesh_data/leaf.obj");
     CMTL::io::write_obj(sm, "lawson_flip_test0_before.obj");
-    CMTL::geometry_process::lawson_flip(sm);
+    CMTL::geometry_algorithm::lawson_flip(sm);
     CMTL::io::write_obj(sm, "lawson_flip_test0_after.obj");
 }
 
@@ -22,7 +22,7 @@ void test1()
     for(auto eit = sm.edges_begin(); eit != sm.edges_end(); ++eit)
         if(eit->idx() % 10 == 0)
             constrained_edge.push_back(*eit);
-    CMTL::geometry_process::lawson_flip(sm, constrained_edge);
+    CMTL::geometry_algorithm::lawson_flip(sm, constrained_edge);
     CMTL::io::write_obj(sm, "lawson_flip_test1_after.obj");
 }
 

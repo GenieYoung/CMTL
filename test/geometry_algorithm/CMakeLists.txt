@@ -1,4 +1,4 @@
-project(geometry_process_test)
+project(geometry_algorithm_test)
 
 file(GLOB_RECURSE TEST_LIST "*.cpp")
 

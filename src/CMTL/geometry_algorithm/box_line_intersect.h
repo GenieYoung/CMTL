@@ -1,11 +1,11 @@
-#ifndef __geometry_process_box_line_intersect__
-#define __geometry_process_box_line_intersect__
+#ifndef __geometry_algorithm_box_line_intersect__
+#define __geometry_algorithm_box_line_intersect__
 
 #include "../geo2d/geo2d_segment.h"
 #include "../geo2d/geo2d_box.h"
 
 namespace CMTL{
-namespace geometry_process{
+namespace geometry_algorithm{
 
 template<typename T>
 bool intersect(const geo2d::Box<T>& box, 
@@ -233,7 +233,7 @@ bool intersect(const geo2d::Ray<T>& ray,
     return intersect(box, ray, t0, t1);
 }
 
-}   // namespace geometry_process
+}   // namespace geometry_algorithm
 }   // namespace CMTL
 
-#endif  // __geometry_process_box_line_intersect__
+#endif  // __geometry_algorithm_box_line_intersect__

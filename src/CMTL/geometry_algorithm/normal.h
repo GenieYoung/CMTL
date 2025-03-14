@@ -1,10 +1,10 @@
-#ifndef __geometry_process_normal__
-#define __geometry_process_normal__
+#ifndef __geometry_algorithm_normal__
+#define __geometry_algorithm_normal__
 
 #include "../geo3d/geo3d_point.h"
 
 namespace CMTL{
-namespace geometry_process{
+namespace geometry_algorithm{
 
 /**
  * @brief compute a normal vector of a 3d simple polygon
@@ -63,7 +63,7 @@ Point normalize_3d(const Point& p)
 //     return p / square_root(p.length_square());
 // }
 
-}   // namespace geometry_process
+}   // namespace geometry_algorithm
 }   // namespace CMTL
 
-#endif  // __geometry_process_normal__
+#endif  // __geometry_algorithm_normal__

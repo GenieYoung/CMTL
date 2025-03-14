@@ -1,6 +1,6 @@
 #include <set>
 #include "CMTL/geo2d/geo2d_polygon.h"
-#include "CMTL/geometry_process/triangulate.h"
+#include "CMTL/geometry_algorithm/triangulate.h"
 #include "CMTL/io/polygon/write_obj.h"
 #include "CMTL/io/polygon_soup/write_obj.h"
 
@@ -14,7 +14,7 @@ void test1()
     CMTL::geo2d::Polygon<double> polygon(points);
     CMTL::io::write_obj(polygon, "test1_input.obj");
     std::vector<std::array<unsigned int, 3>> clip_triangles;
-    CMTL::geometry_process::triangulate_2d(polygon, clip_triangles);
+    CMTL::geometry_algorithm::triangulate_2d(polygon, clip_triangles);
     CMTL::io::write_obj(CMTL::geo2d::PolygonSoup<double>(points, clip_triangles), "test1_output.obj");
     std::cout << "test1 : " << std::endl;
     for(unsigned i = 0; i < clip_triangles.size(); ++i)
@@ -32,7 +32,7 @@ void test2()
     points.push_back(CMTL::geo2d::Point<double>{0,1});
     CMTL::geo2d::Polygon<double> polygon(points);
     std::vector<std::array<unsigned int, 3>> clip_triangles;
-    CMTL::geometry_process::triangulate_2d(polygon, clip_triangles);
+    CMTL::geometry_algorithm::triangulate_2d(polygon, clip_triangles);
     std::cout << "test2 : " << std::endl;
     for(unsigned i = 0; i < clip_triangles.size(); ++i)
     {
@@ -48,7 +48,7 @@ void test3()
     points.push_back(CMTL::geo2d::Point<double>{0.3,0.3});
     points.push_back(CMTL::geo2d::Point<double>{0,1});
     std::vector<std::array<unsigned int, 3>> clip_triangles;
-    CMTL::geometry_process::triangulate_2d(points, clip_triangles);
+    CMTL::geometry_algorithm::triangulate_2d(points, clip_triangles);
     std::cout << "test3 : " << std::endl;
     for(unsigned i = 0; i < clip_triangles.size(); ++i)
     {
@@ -66,7 +66,7 @@ void test4()
     points.push_back(CMTL::geo3d::Point<double>{0,1,0});
     CMTL::geo3d::Polygon<double> polygon(points);
     std::vector<std::array<unsigned int, 3>> clip_triangles;
-    CMTL::geometry_process::triangulate_3d(polygon, clip_triangles);
+    CMTL::geometry_algorithm::triangulate_3d(polygon, clip_triangles);
     std::cout << "test4 : " << std::endl;
     for(unsigned i = 0; i < clip_triangles.size(); ++i)
     {
@@ -83,7 +83,7 @@ void test5()
     points.push_back(CMTL::geo3d::Point<double>{1,1,1});
     points.push_back(CMTL::geo3d::Point<double>{0,1,0});
     std::vector<std::array<unsigned int, 3>> clip_triangles;
-    CMTL::geometry_process::triangulate_3d<double>(points, clip_triangles);
+    CMTL::geometry_algorithm::triangulate_3d<double>(points, clip_triangles);
     std::cout << "test5 : " << std::endl;
     for(unsigned i = 0; i < clip_triangles.size(); ++i)
     {
