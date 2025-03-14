@@ -13,10 +13,14 @@ namespace CMTL{
 
 /**
  * @brief structure used to store values with different types and names
+ * @tparam K key type
  */
+template<typename K = std::string>
 class Attributes
 {
 	public:
+		typedef K key_type;
+
 		Attributes()
 		{
 		};
@@ -42,7 +46,7 @@ class Attributes
 		 * @param name value name
 		 * @return true if exist, otherwise false
 		 */
-		bool contain(const std::string& name) const
+		bool contain(const K& name) const
 		{
 			auto it = _values.find(name);
 			if (it != _values.end() && it->second.has_value())
@@ -57,7 +61,7 @@ class Attributes
 		 * @result value with specific name and type
 		 */
 		template<typename T>
-		const T& get(const std::string& name) const
+		const T& get(const K& name) const
 		{
 			auto it = _values.find(name);
 			assert(it != _values.end() && "attribute with specific name not found");
@@ -73,13 +77,13 @@ class Attributes
 		 * @result the writable value that need to be set
 		 */
 		template<typename T>
-		T& set(const std::string& name)
+		T& set(const K& name)
 		{
 			auto it = _values.find(name);
 			if(it == _values.end())
-				return _values[name].emplace<T>();	
+				return _values[name].template emplace<T>();	
 			if(!it->second.has_value())
-				return it->second.emplace<T>();
+				return it->second.template emplace<T>();
 			if(it->second.type() == typeid(T))
 				return *std::any_cast<T>(&it->second);
 			assert(false && "attribute with specific type not found");
@@ -88,7 +92,7 @@ class Attributes
 		/**
 		 * @brief remove value with specific name
 		 */
-		void remove(const std::string& name)
+		void remove(const K& name)
 		{
 			auto it = _values.find(name);
 			if (it != _values.end())
@@ -104,7 +108,7 @@ class Attributes
 		}
 		
 	private:
-		std::map<std::string, std::any> _values;
+		std::map<K, std::any> _values;
 };
 
 }   // namespace CMTL

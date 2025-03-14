@@ -14,13 +14,13 @@ namespace geo2d{
 struct SurfaceMeshTraits : public halfedge::DefaultTraits
 {
     /* attributes attach to a vertex */
-    typedef Attributes VertexAttribute;
+    typedef Attributes<> VertexAttribute;
     /* attributes attach to a halfedge */
-    typedef Attributes HalfedgeAttribute;
+    typedef Attributes<> HalfedgeAttribute;
     /* attributes attach to an edge */
-    typedef Attributes EdgeAttribute;
+    typedef Attributes<> EdgeAttribute;
     /* attributes attach to a face */
-    typedef Attributes FaceAttribute;
+    typedef Attributes<> FaceAttribute;
 };
 
 /**
