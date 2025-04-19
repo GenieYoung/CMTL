@@ -14,8 +14,8 @@ namespace io{
  * @param exact if exact is true, we print point into rational format
  * @param file target .obj file position
  */
-template<typename T>
-void write_obj(const geo2d::SurfaceMesh<T>& sm, const std::string& file)
+template<typename T, class Traits = geo2d::SurfaceMeshTraits>
+void write_obj(const geo2d::SurfaceMesh<T, Traits>& sm, const std::string& file)
 {
     std::ofstream fout;
     fout.open(file.c_str(), std::ofstream::trunc);
@@ -45,8 +45,8 @@ void write_obj(const geo2d::SurfaceMesh<T>& sm, const std::string& file)
  * @param exact if exact is true, we print point into rational format
  * @param file target .obj file position
  */
-template<typename T>
-void write_obj(const geo3d::SurfaceMesh<T>& sm, const std::string& file)
+template<typename T, class Traits = geo3d::SurfaceMeshTraits>
+void write_obj(const geo3d::SurfaceMesh<T, Traits>& sm, const std::string& file)
 {
     std::ofstream fout;
     fout.open(file.c_str(), std::ofstream::trunc);
