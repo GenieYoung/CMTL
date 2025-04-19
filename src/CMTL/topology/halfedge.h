@@ -2264,64 +2264,64 @@ class GraphTopology
 };
 
 /* GraphVertexHandle make smart */
-GraphHalfedgeHandle GraphVertexHandle::halfedge() const
+inline GraphHalfedgeHandle GraphVertexHandle::halfedge() const
 {
     return GraphHalfedgeHandle(this->graph()->halfedge_handle(*this).idx(), this->graph());
 }
 
-bool GraphVertexHandle::is_boundary() const
+inline bool GraphVertexHandle::is_boundary() const
 {
     return this->graph()->is_boundary(*this);
 }
 
 /* GraphEdgeHandle make smart */
-GraphHalfedgeHandle GraphEdgeHandle::halfedge(unsigned i) const
+inline GraphHalfedgeHandle GraphEdgeHandle::halfedge(unsigned i) const
 {
     return GraphHalfedgeHandle(this->graph()->halfedge_handle(*this, i).idx(), this->graph());
 }
 
-bool GraphEdgeHandle::is_boundary() const
+inline bool GraphEdgeHandle::is_boundary() const
 {
     return this->graph()->is_boundary(*this);
 }
 
 /* GraphHalfedgeHandle make smart */
-GraphHalfedgeHandle GraphHalfedgeHandle::next() const
+inline GraphHalfedgeHandle GraphHalfedgeHandle::next() const
 {
     return GraphHalfedgeHandle(this->graph()->next_halfedge_handle(*this).idx(), this->graph());
 }
 
-GraphHalfedgeHandle GraphHalfedgeHandle::prev() const
+inline GraphHalfedgeHandle GraphHalfedgeHandle::prev() const
 {
     return GraphHalfedgeHandle(this->graph()->prev_halfedge_handle(*this).idx(), this->graph());
 }
 
-GraphHalfedgeHandle GraphHalfedgeHandle::opposite() const
+inline GraphHalfedgeHandle GraphHalfedgeHandle::opposite() const
 {
     return GraphHalfedgeHandle(this->graph()->opposite_halfedge_handle(*this).idx(), this->graph());
 }
 
-GraphVertexHandle GraphHalfedgeHandle::from_vertex() const
+inline GraphVertexHandle GraphHalfedgeHandle::from_vertex() const
 {
     return GraphVertexHandle(this->graph()->from_vertex_handle(*this).idx(), this->graph());
 }
 
-GraphVertexHandle GraphHalfedgeHandle::to_vertex() const
+inline GraphVertexHandle GraphHalfedgeHandle::to_vertex() const
 {
     return GraphVertexHandle(this->graph()->to_vertex_handle(*this).idx(), this->graph());
 }
 
-GraphEdgeHandle GraphHalfedgeHandle::edge() const
+inline GraphEdgeHandle GraphHalfedgeHandle::edge() const
 {
     return GraphEdgeHandle(this->graph()->edge_handle(*this).idx(), this->graph());
 }
 
-GraphFaceHandle GraphHalfedgeHandle::face() const
+inline GraphFaceHandle GraphHalfedgeHandle::face() const
 {
     return GraphFaceHandle(this->graph()->face_handle(*this).idx(), this->graph());
 }
 
-bool GraphHalfedgeHandle::is_boundary() const
+inline bool GraphHalfedgeHandle::is_boundary() const
 {
     return this->graph()->is_boundary(*this);
 }

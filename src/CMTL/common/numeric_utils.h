@@ -209,10 +209,10 @@ constexpr float default_float_tolerance = 1e-5;
 constexpr double default_double_tolerance = 1e-13;
 
 template<>
-float numeric_comparator<float>::_tol = default_float_tolerance;
+inline float numeric_comparator<float>::_tol = default_float_tolerance;
 
 template<>
-double numeric_comparator<double>::_tol = default_double_tolerance;
+inline double numeric_comparator<double>::_tol = default_double_tolerance;
 
 template<typename T>
 T numeric_comparator<T, typename std::enable_if<
