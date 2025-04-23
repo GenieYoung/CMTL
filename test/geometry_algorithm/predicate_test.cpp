@@ -4,6 +4,7 @@
 
 typedef CMTL::geo2d::Point<double> Point2D;
 typedef CMTL::geo2d::Point<mpq_class> Point2R;
+typedef CMTL::geo2d::Triangle<mpq_class> Tri2R;
 typedef CMTL::geo3d::Point<double> Point3D;
 typedef CMTL::geo3d::Point<mpq_class> Point3R;
 
@@ -49,6 +50,21 @@ TEST(PredicateTest, LocalDelaunayTest)
     EXPECT_FALSE(is_locally_delaunay(p1, p2, p3, Point2R(1, 1), true));
     EXPECT_TRUE(is_locally_delaunay(p1, p2, p3, Point2R(2, 2)));
     EXPECT_FALSE(is_locally_delaunay(p1, p2, p3, Point2R(0.6, 0.6)));
+}
+
+TEST(PredicateTest, InTriangleTest)
+{
+    Tri2R tri(Point2R(0,0), Point2R(2,0), Point2R(1,1));
+    EXPECT_TRUE(in_triangle(tri, Point2R(1, 0.5)) == ORIENTATION::INSIDE);
+    EXPECT_TRUE(in_triangle(tri, Point2R(0, 0)) == ORIENTATION::ON);
+    EXPECT_TRUE(in_triangle(tri, Point2R(2, 0)) == ORIENTATION::ON);
+    EXPECT_TRUE(in_triangle(tri, Point2R(1, 1)) == ORIENTATION::ON);
+    EXPECT_TRUE(in_triangle(tri, Point2R(1, 0)) == ORIENTATION::ON);
+    EXPECT_TRUE(in_triangle(tri, Point2R(0.5, 0.5)) == ORIENTATION::ON);
+    EXPECT_TRUE(in_triangle(tri, Point2R(1.5, 0.5)) == ORIENTATION::ON);
+    EXPECT_TRUE(in_triangle(tri, Point2R(1, -0.1)) == ORIENTATION::OUTSIDE);
+    EXPECT_TRUE(in_triangle(tri, Point2R(-0.1, -0.1)) == ORIENTATION::OUTSIDE);
+    EXPECT_TRUE(in_triangle(tri, Point2R(1, 1.1)) == ORIENTATION::OUTSIDE);
 }
 
 // int main()

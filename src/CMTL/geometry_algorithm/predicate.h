@@ -173,7 +173,7 @@ ORIENTATION in_triangle(const geo2d::Point<T>& t0, const geo2d::Point<T>& t1, co
     ORIENTATION o1 = orient_2d(t0, t1, p);
     ORIENTATION o2 = orient_2d(t1, t2, p);
     ORIENTATION o3 = orient_2d(t2, t0, p);
-    if(o1 == ORIENTATION::INSIDE && o2 == ORINETATION::INSIDE && o3 == ORIENTATION:INSIDE)
+    if(o1 == ORIENTATION::INSIDE && o2 == ORIENTATION::INSIDE && o3 == ORIENTATION::INSIDE)
         return ORIENTATION::INSIDE;
     if(o1 == ORIENTATION::OUTSIDE || o2 == ORIENTATION::OUTSIDE || o3 == ORIENTATION::OUTSIDE)
         return ORIENTATION::OUTSIDE;
