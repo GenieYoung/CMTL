@@ -3,6 +3,7 @@
 
 #include "../common/orientation.h"
 #include "../geo3d/geo3d_plane.h"
+#include "../geo2d/geo2d_triangle.h"
 
 namespace CMTL{
 
@@ -159,6 +160,35 @@ bool is_locally_delaunay(const T (&pa)[2], const T (&pb)[2], const T (&pc)[2], c
 {
     ORIENTATION flag = in_circle(pa, pb, pc, pd);
     return flag == ORIENTATION::OUTSIDE || (!is_strongly && flag == ORIENTATION::ON);
+}
+
+/**
+ * @brief in triangle test, check whether point p lies in the triangle t012
+ * @return positive if pd lies inside the triangle, negative if pd lies outside the triangle, and on if pd lies on the boundary.
+ * @note the triangle's vertices t0 t1 t2 must be in counterclockwise order, otherwise the sign will be reversed.
+ */
+template<typename T>
+ORIENTATION in_triangle(const geo2d::Point<T>& t0, const geo2d::Point<T>& t1, const geo2d::Point<T>& t2, const geo2d::Point<T>& p)
+{
+    ORIENTATION o1 = orient_2d(t0, t1, p);
+    ORIENTATION o2 = orient_2d(t1, t2, p);
+    ORIENTATION o3 = orient_2d(t2, t0, p);
+    if(o1 == ORIENTATION::INSIDE && o2 == ORINETATION::INSIDE && o3 == ORIENTATION:INSIDE)
+        return ORIENTATION::INSIDE;
+    if(o1 == ORIENTATION::OUTSIDE || o2 == ORIENTATION::OUTSIDE || o3 == ORIENTATION::OUTSIDE)
+        return ORIENTATION::OUTSIDE;
+    return ORIENTATION::ON;
+}
+
+/**
+ * @brief in triangle test, check whether point p lies in the triangle
+ * @return positive if pd lies inside the triangle, negative if pd lies outside the triangle, and on if pd lies on the boundary.
+ * @note the triangle's vertices must be in counterclockwise order, otherwise the sign will be reversed.
+ */
+template<typename T>
+ORIENTATION in_triangle(const geo2d::Triangle<T>& tri, const geo2d::Point<T>& p)
+{
+    return in_triangle(tri[0], tri[1], tri[2], p);
 }
 
 }   // namespace geometry_algorithm
