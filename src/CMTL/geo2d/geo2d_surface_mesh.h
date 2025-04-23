@@ -115,6 +115,22 @@ class SurfaceMesh : public halfedge::Graph<geo2d::Point<T>, Traits>
     
     public:
         /**
+         * @brief calculate face's barycenter
+         */
+        Point barycenter(FaceHandle fh) const
+        {
+            Point p;
+            unsigned degree = 0;
+            for(auto fv = this->fv_begin(fh); fv != this->fv_end(fh); ++fv)
+            {
+                p += this->point(*fv);
+                degree += 1;
+            }
+            return p / degree;
+        }
+
+
+        /**
          * @brief split an edge on point p, split the adjacent faces when split_face is true
          * @note split_face only works if all the adjacent faces have degree 3
          */

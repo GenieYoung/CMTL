@@ -114,6 +114,21 @@ class SurfaceMesh : public halfedge::Graph<geo3d::Point<T>, Traits>
         }
 
         /**
+         * @brief calculate face's barycenter
+         */
+        Point barycenter(FaceHandle fh) const
+        {
+            Point p;
+            unsigned degree = 0;
+            for(auto fv = this->fv_begin(fh); fv != this->fv_end(fh); ++fv)
+            {
+                p += this->point(*fv);
+                degree += 1;
+            }
+            return p / degree;
+        }
+
+        /**
          * @brief calculate a face normal without normalized
          */
         Point normal(FaceHandle fh) const
