@@ -171,12 +171,38 @@ template<typename T>
 ORIENTATION in_triangle(const geo2d::Point<T>& t0, const geo2d::Point<T>& t1, const geo2d::Point<T>& t2, const geo2d::Point<T>& p)
 {
     ORIENTATION o1 = orient_2d(t0, t1, p);
+    if(o1 == ORIENTATION::OUTSIDE)
+        return ORIENTATION::OUTSIDE;
     ORIENTATION o2 = orient_2d(t1, t2, p);
+    if(o2 == ORIENTATION::OUTSIDE)
+        return ORIENTATION::OUTSIDE;
     ORIENTATION o3 = orient_2d(t2, t0, p);
+    if(o3 == ORIENTATION::OUTSIDE)
+        return ORIENTATION::OUTSIDE;
     if(o1 == ORIENTATION::INSIDE && o2 == ORIENTATION::INSIDE && o3 == ORIENTATION::INSIDE)
         return ORIENTATION::INSIDE;
-    if(o1 == ORIENTATION::OUTSIDE || o2 == ORIENTATION::OUTSIDE || o3 == ORIENTATION::OUTSIDE)
+    return ORIENTATION::ON;
+}
+
+/**
+ * @brief in triangle test, check whether point p lies in the triangle t012, used in built-in arrays
+ * @return positive if pd lies inside the triangle, negative if pd lies outside the triangle, and on if pd lies on the boundary.
+ * @note the triangle's vertices t0 t1 t2 must be in counterclockwise order, otherwise the sign will be reversed.
+ */
+template<typename T>
+ORIENTATION in_triangle(const T (&t0)[2], const T (&t1)[2], const T (&t2)[2], const geo2d::Point<T>& p)
+{
+    ORIENTATION o1 = orient_2d(t0, t1, p);
+    if(o1 == ORIENTATION::OUTSIDE)
         return ORIENTATION::OUTSIDE;
+    ORIENTATION o2 = orient_2d(t1, t2, p);
+    if(o2 == ORIENTATION::OUTSIDE)
+        return ORIENTATION::OUTSIDE;
+    ORIENTATION o3 = orient_2d(t2, t0, p);
+    if(o3 == ORIENTATION::OUTSIDE)
+        return ORIENTATION::OUTSIDE;
+    if(o1 == ORIENTATION::INSIDE && o2 == ORIENTATION::INSIDE && o3 == ORIENTATION::INSIDE)
+        return ORIENTATION::INSIDE;
     return ORIENTATION::ON;
 }
 
