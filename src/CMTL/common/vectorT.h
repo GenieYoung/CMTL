@@ -32,7 +32,7 @@ class VectorT
         /** 
          * @brief return dimension of this vector 
          */
-        static const unsigned dimension()
+        static constexpr unsigned dimension()
         {
             return DIM;
         }
@@ -40,7 +40,7 @@ class VectorT
         /** 
          * @brief alias of dimension 
          */
-        static const unsigned size()
+        static constexpr unsigned size()
         {
             return dimension();
         }
