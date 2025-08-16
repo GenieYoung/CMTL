@@ -1,5 +1,4 @@
-#include "CMTL/io/surface_mesh/read_obj.h"
-#include "CMTL/io/surface_mesh/write_obj.h"
+#include "CMTL/io/io.h"
 
 
 void test1()

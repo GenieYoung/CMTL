@@ -1,8 +1,8 @@
 #ifndef __geometry_algorithm_box_line_intersect__
 #define __geometry_algorithm_box_line_intersect__
 
-#include "../geo2d/geo2d_segment.h"
-#include "../geo2d/geo2d_box.h"
+#include "../../geo2d/geo2d_segment.h"
+#include "../../geo2d/geo2d_box.h"
 
 namespace CMTL{
 namespace geometry_algorithm{

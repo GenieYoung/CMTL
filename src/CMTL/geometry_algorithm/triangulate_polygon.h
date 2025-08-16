@@ -1,5 +1,5 @@
-#ifndef __geometry_algorithm_triangulate__
-#define __geometry_algorithm_triangulate__
+#ifndef __geometry_algorithm_triangulate_polygon__
+#define __geometry_algorithm_triangulate_polygon__
 
 #include "../geo2d/geo2d_polygon.h"
 #include "../geo3d/geo3d_polygon.h"
@@ -138,7 +138,7 @@ namespace internal  {
  *       the point struct should have [] opeartor to get the coordinate.
 */
 template<typename Polygon>
-bool triangulate_2d(const Polygon& polygon, std::vector<std::array<unsigned, 3>>& triangles)
+bool triangulate_polygon_2d(const Polygon& polygon, std::vector<std::array<unsigned, 3>>& triangles)
 {
     internal::triangulate_polygon_modifier_2d<Polygon> modifier(polygon);
     return modifier.execute(triangles);
@@ -270,7 +270,7 @@ namespace internal  {
  * @note the polygon should be intersect-free. 
 */
 template<typename T>
-bool triangulate_3d(const geo3d::Polygon<T>& polygon, std::vector<std::array<unsigned, 3>>& triangles)
+bool triangulate_polygon_3d(const geo3d::Polygon<T>& polygon, std::vector<std::array<unsigned, 3>>& triangles)
 {
     internal::triangulate_polygon_modifier_3d<T> modifier(polygon);
     return modifier.execute(triangles);
@@ -284,7 +284,7 @@ bool triangulate_3d(const geo3d::Polygon<T>& polygon, std::vector<std::array<uns
  * @note the polygon should have the iterator method and be intersect-free.
 */
 template<typename NumberType, typename Polygon>
-bool triangulate_3d(const Polygon& polygon, std::vector<std::array<unsigned, 3>>& triangles)
+bool triangulate_polygon_3d(const Polygon& polygon, std::vector<std::array<unsigned, 3>>& triangles)
 {
     geo3d::Polygon<NumberType> geo_poly(polygon.begin(), polygon.end());
     internal::triangulate_polygon_modifier_3d<NumberType> modifier(geo_poly);

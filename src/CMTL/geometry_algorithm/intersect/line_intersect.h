@@ -1,8 +1,8 @@
 #ifndef __geometry_algorithm_line_intersect__
 #define __geometry_algorithm_line_intersect__
 
-#include "../geo2d/geo2d_segment.h"
-#include "predicate.h"
+#include "../../geo2d/geo2d_segment.h"
+#include "../predicate.h"
 
 namespace CMTL{
 namespace geometry_algorithm{
