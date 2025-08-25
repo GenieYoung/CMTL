@@ -1897,9 +1897,56 @@ class GraphTopology
          * @brief split an edge, split the adjacent faces when split_face is true
          * @note split_face only works if all the adjacent faces have degree 3
          */
-        VertexHandle split(EdgeHandle eh, bool split_face = true)
+        VertexHandle split(EdgeHandle eh, bool split_face = false)
         {
-            return VertexHandle();
+            HalfedgeHandle he0 = halfedge_handle(eh, 0);
+            HalfedgeHandle he1 = halfedge_handle(eh, 1);
+            HalfedgeHandle he0_next = next_halfedge_handle(he0);
+            HalfedgeHandle he1_prev = prev_halfedge_handle(he1);
+
+            FaceHandle f0 = face_handle(he0);
+            FaceHandle f1 = face_handle(he1);
+
+            VertexHandle v0 = to_vertex_handle(he1);
+            VertexHandle v1 = to_vertex_handle(he0);
+
+            VertexHandle new_v = new_vertex();
+            EdgeHandle new_e = edge_handle(new_edge(new_v, v1));
+
+            HalfedgeHandle new_he0 = halfedge_handle(new_e, 0);
+            HalfedgeHandle new_he1 = halfedge_handle(new_e, 1);
+
+            halfedge_item(he0)._vertex_handle = new_v;
+            halfedge_item(he0)._next_halfedge_handle = new_he0;
+
+            halfedge_item(he1)._prev_halfedge_handle = new_he1;
+            
+            halfedge_item(new_he0)._face_handle = f0;
+            halfedge_item(new_he0)._vertex_handle = v1;
+            halfedge_item(new_he0)._prev_halfedge_handle = he0;
+            halfedge_item(new_he0)._next_halfedge_handle = he0_next;
+
+            halfedge_item(new_he1)._face_handle = f1;
+            halfedge_item(new_he1)._vertex_handle = new_v;
+            halfedge_item(new_he1)._prev_halfedge_handle = he1_prev;
+            halfedge_item(new_he1)._next_halfedge_handle = he1;
+
+            halfedge_item(he0_next)._prev_halfedge_handle = new_he0;
+            
+            halfedge_item(he1_prev)._next_halfedge_handle = new_he1;
+
+            vertex_item(new_v)._halfedge_handle = new_he1;
+            
+            return new_v;
+        }
+
+        /**
+         * @brief split an edge, split the adjacent faces when split_face is true
+         * @note split_face only works if all the adjacent faces have degree 3
+         */
+        VertexHandle split(HalfedgeHandle heh, bool split_face = false)
+        {
+            return split(edge_handle(heh), split_face);
         }
         
         /** @brief check whether collapse heh is topologically correct */

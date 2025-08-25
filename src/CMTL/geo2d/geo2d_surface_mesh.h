@@ -99,6 +99,9 @@ class SurfaceMesh : public halfedge::Graph<geo2d::Point<T>, Traits>
         typedef halfedge::ConstFaceHalfedgeCCWIter      ConstFaceHalfedgeCCWIter;
         typedef halfedge::ConstFaceHalfedgeCWIter       ConstFaceHalfedgeCWIter;
 
+    private:
+        typedef halfedge::Graph<geo2d::Point<T>, Traits> Base;
+
     public:
         SurfaceMesh() = default;
 
@@ -136,7 +139,16 @@ class SurfaceMesh : public halfedge::Graph<geo2d::Point<T>, Traits>
          */
         void split(EdgeHandle eh, const Point& p, bool split_face = true)
         {
-            
+            this->point(Base::split(eh, split_face)) = p;
+        }
+
+        /**
+         * @brief split an edge on point p, split the adjacent faces when split_face is true
+         * @note split_face only works if all the adjacent faces have degree 3
+         */
+        void split(HalfedgeHandle heh, const Point& p, bool split_face = true)
+        {
+            this->point(Base::split(heh, split_face)) = p;
         }
 };
     
