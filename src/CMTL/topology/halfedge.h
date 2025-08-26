@@ -1170,11 +1170,17 @@ class GraphTopology
             assert(i < n_vertices());
             return VertexHandle(i);
         }
+        
+        /** @brief get the destination of the halfedge */
+        VertexHandle vertex_handle(HalfedgeHandle heh) const
+        {
+            return halfedge_item(heh)._vertex_handle;
+        }
 
         /** @brief get the destination of the halfedge */
         VertexHandle to_vertex_handle(HalfedgeHandle heh) const
         {
-            return halfedge_item(heh)._vertex_handle;
+            return vertex_handle(heh);
         }
 
         /** @brief get the destination of the halfedge */
@@ -1846,7 +1852,7 @@ class GraphTopology
         void flip(EdgeHandle eh)
         {
             assert(is_flip_ok(eh));
-            
+
             HalfedgeHandle a0 = halfedge_handle(eh, 0);
             HalfedgeHandle a1 = next_halfedge_handle(a0);
             HalfedgeHandle a2 = prev_halfedge_handle(a0);
@@ -1893,12 +1899,20 @@ class GraphTopology
                 vertex_item(v1)._halfedge_handle = a1;
         }
 
+        /** @brief flip an edge */
+        void flip(HalfedgeHandle heh)
+        {
+            flip(edge_handle(heh));
+        }
+
         /**
          * @brief split an edge, split the adjacent faces when split_face is true
-         * @note split_face only works if all the adjacent faces have degree 3
          */
-        VertexHandle split(EdgeHandle eh, bool split_face = false)
+        VertexHandle split_edge(EdgeHandle eh, bool split_face = false)
         {
+            if(!eh.is_valid())
+                return VertexHandle();
+
             HalfedgeHandle he0 = halfedge_handle(eh, 0);
             HalfedgeHandle he1 = halfedge_handle(eh, 1);
             HalfedgeHandle he0_next = next_halfedge_handle(he0);
@@ -1922,12 +1936,10 @@ class GraphTopology
             halfedge_item(he1)._prev_halfedge_handle = new_he1;
             
             halfedge_item(new_he0)._face_handle = f0;
-            halfedge_item(new_he0)._vertex_handle = v1;
             halfedge_item(new_he0)._prev_halfedge_handle = he0;
             halfedge_item(new_he0)._next_halfedge_handle = he0_next;
 
             halfedge_item(new_he1)._face_handle = f1;
-            halfedge_item(new_he1)._vertex_handle = new_v;
             halfedge_item(new_he1)._prev_halfedge_handle = he1_prev;
             halfedge_item(new_he1)._next_halfedge_handle = he1;
 
@@ -1935,18 +1947,144 @@ class GraphTopology
             
             halfedge_item(he1_prev)._next_halfedge_handle = new_he1;
 
-            vertex_item(new_v)._halfedge_handle = new_he1;
+            vertex_item(new_v)._halfedge_handle = he1;
+
+            if(halfedge_handle(v1) == he1)
+                vertex_item(v1)._halfedge_handle = new_he1;
+
+            if(split_face)
+            {
+                if(f0.is_valid())
+                {
+                    std::vector<VertexHandle> connect_vertices;
+                    for(auto he = next_halfedge_handle(new_he0); he != prev_halfedge_handle(he0); he = next_halfedge_handle(he))
+                    {
+                        if(to_vertex_handle(he) == v0 || to_vertex_handle(he) == v1)
+                            continue;
+                        connect_vertices.push_back(to_vertex_handle(he));
+                    }
+                    FaceHandle new_f = f0;
+                    for(unsigned i = 0; i < connect_vertices.size(); ++i)
+                    {
+                        EdgeHandle e = this->split_face(new_f, new_v, connect_vertices[i]);
+                        if(!e.is_valid())
+                            break;
+                        if(to_vertex_handle(halfedge_handle(e, 0)) == new_v)
+                            new_f = face_handle(halfedge_handle(e, 1));
+                        else
+                            new_f = face_handle(halfedge_handle(e, 0));
+                    }
+                }
+                if(f1.is_valid())
+                {
+                    std::vector<VertexHandle> connect_vertices;
+                    for(auto he = next_halfedge_handle(he1); he != prev_halfedge_handle(new_he1); he = next_halfedge_handle(he))
+                    {
+                        if(to_vertex_handle(he) == v0 || to_vertex_handle(he) == v1)
+                            continue;
+                        connect_vertices.push_back(to_vertex_handle(he));
+                    }
+                    FaceHandle new_f = f1;
+                    for(unsigned i = 0; i < connect_vertices.size(); ++i)
+                    {
+                        EdgeHandle e = this->split_face(new_f, new_v, connect_vertices[i]);
+                        if(!e.is_valid())
+                            break;
+                        if(to_vertex_handle(halfedge_handle(e, 0)) == new_v)
+                            new_f = face_handle(halfedge_handle(e, 1));
+                        else
+                            new_f = face_handle(halfedge_handle(e, 0));
+                    }
+                }
+            }
             
             return new_v;
         }
 
         /**
          * @brief split an edge, split the adjacent faces when split_face is true
-         * @note split_face only works if all the adjacent faces have degree 3
          */
-        VertexHandle split(HalfedgeHandle heh, bool split_face = false)
+        VertexHandle split_edge(HalfedgeHandle heh, bool split_face = false)
         {
-            return split(edge_handle(heh), split_face);
+            return split_edge(edge_handle(heh), split_face);
+        }
+
+        /**
+         * @brief split a face into two faces by connecting two vertices
+         * @return return the new edge. 
+         *         if this operation is invalid, return a invalid handle
+         */
+        EdgeHandle split_face(FaceHandle fh, VertexHandle v0, VertexHandle v1)
+        {
+            if(!fh.is_valid() || !v0.is_valid() || !v1.is_valid())
+                return EdgeHandle();
+
+            HalfedgeHandle a0, b0;
+
+            // whether point v0 belong the face
+            for(auto voh = voh_begin(v0); voh != voh_end(v0); ++voh)
+            {
+                if(face_handle(*voh) == fh)
+                {
+                    a0 = *voh;
+                    break;
+                }
+            }
+            if(!a0.is_valid())
+                return EdgeHandle();
+
+            // whether point v1 belong the face
+            for(auto voh = voh_begin(v1); voh != voh_end(v1); ++voh)
+            {
+                if(face_handle(*voh) == fh)
+                {
+                    b0 = *voh;
+                    break;
+                }
+            }
+            if(!b0.is_valid())
+                return EdgeHandle();
+
+            // whether the edge v0_v1 already exist
+            if(to_vertex_handle(a0) == v1 || to_vertex_handle(b0) == v0)
+                return EdgeHandle();
+
+            HalfedgeHandle new_he0 = new_edge(v0, v1);
+            HalfedgeHandle new_he1 = opposite_halfedge_handle(new_he0);
+
+            FaceHandle new_f = new_face();
+
+            HalfedgeHandle a0_prev = prev_halfedge_handle(a0);
+            HalfedgeHandle b0_prev = prev_halfedge_handle(b0);
+            
+            // first face (origin face) setting
+            face_item(fh)._halfedge_handle = new_he0;
+
+            halfedge_item(new_he0)._face_handle = fh;
+            halfedge_item(new_he0)._prev_halfedge_handle = a0_prev;
+            halfedge_item(new_he0)._next_halfedge_handle = b0;
+            
+            halfedge_item(a0_prev)._next_halfedge_handle = new_he0;
+
+            halfedge_item(b0)._prev_halfedge_handle = new_he0;
+
+            // second face (new face) setting
+            face_item(new_f)._halfedge_handle = new_he1;
+
+            halfedge_item(new_he1)._face_handle = new_f;
+            halfedge_item(new_he1)._prev_halfedge_handle = b0_prev;
+            halfedge_item(new_he1)._next_halfedge_handle = a0;
+
+            halfedge_item(b0_prev)._next_halfedge_handle = new_he1;
+
+            halfedge_item(a0)._prev_halfedge_handle = new_he1;
+
+            for(auto e = a0; e != new_he1; e = next_halfedge_handle(e))
+            {
+                halfedge_item(e)._face_handle = new_f;
+            }
+
+            return edge_handle(new_he0);
         }
         
         /** @brief check whether collapse heh is topologically correct */

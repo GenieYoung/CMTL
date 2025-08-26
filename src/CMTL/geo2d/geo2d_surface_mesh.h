@@ -139,7 +139,7 @@ class SurfaceMesh : public halfedge::Graph<geo2d::Point<T>, Traits>
          */
         void split(EdgeHandle eh, const Point& p, bool split_face = true)
         {
-            this->point(Base::split(eh, split_face)) = p;
+            this->point(Base::split_edge(eh, split_face)) = p;
         }
 
         /**
@@ -148,7 +148,7 @@ class SurfaceMesh : public halfedge::Graph<geo2d::Point<T>, Traits>
          */
         void split(HalfedgeHandle heh, const Point& p, bool split_face = true)
         {
-            this->point(Base::split(heh, split_face)) = p;
+            this->point(Base::split_edge(heh, split_face)) = p;
         }
 };
     
