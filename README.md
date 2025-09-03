@@ -8,7 +8,7 @@ for example:
 lawson_flip_test.cpp
 ```
 
-#include "CMTL/geometry_process/lawson_flip.h"
+#include "CMTL/geometry_algorithm/lawson_flip.h"
 #include "CMTL/io/surface_mesh/read_obj.h"
 #include "CMTL/io/surface_mesh/write_obj.h"
 
