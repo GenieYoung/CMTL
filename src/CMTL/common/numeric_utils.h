@@ -1,7 +1,11 @@
 #ifndef __common_utils_h__
 #define __common_utils_h__
 
+#ifdef USE_GMP
 #include "gmpxx.h"
+#endif
+
+#include <string>
 #include <cmath>
 #include <type_traits>
 
@@ -41,6 +45,7 @@ inline T_OUT util_cast(const T_IN& v)
     return util_cast_impl<T_IN, T_OUT>::cast(v);
 }
 
+#ifdef USE_GMP
 /* template specialization function, used for converting number type to double */
 template<>
 inline double util_cast<mpq_class, double>(const mpq_class& v)
@@ -54,6 +59,7 @@ inline std::string util_cast<mpq_class, std::string>(const mpq_class& v)
 {
     return v.get_str();
 }
+#endif  // USE_GMP
 
 /**
  * @brief convert number to double type

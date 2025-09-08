@@ -1,7 +1,6 @@
 #include "CMTL/geometry_algorithm/extrude_surface.h"
 #include "CMTL/io/surface_mesh/read_obj.h"
 #include "CMTL/io/surface_mesh/write_obj.h"
-#include "gmpxx.h"
 
 typedef CMTL::geo3d::SurfaceMesh<double> SurfaceMesh;
 typedef SurfaceMesh::Point Point;
