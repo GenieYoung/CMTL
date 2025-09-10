@@ -1,4 +1,4 @@
-#include "CMTL/geo2d/geo2d_surface_mesh.h"
+#include "CMTL/geo2d/surface_mesh.h"
 #include "CMTL/io/surface_mesh/read_obj.h"
 #include "CMTL/io/surface_mesh/write_obj.h"
 #include <gtest/gtest.h>

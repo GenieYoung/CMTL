@@ -1,5 +1,5 @@
 #include <set>
-#include "CMTL/geo3d/geo3d_polygon.h"
+#include "CMTL/geo3d/polygon.h"
 
 void test1()
 {

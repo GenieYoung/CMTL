@@ -1,4 +1,4 @@
-#include "CMTL/geo2d/geo2d_point.h"
+#include "CMTL/geo2d/point.h"
 #include <vector>
 #include <gtest/gtest.h>
 

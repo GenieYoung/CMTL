@@ -1,4 +1,4 @@
-#include "CMTL/geo3d/geo3d_plane.h"
+#include "CMTL/geo3d/plane.h"
 
 #include <cstdlib>
 #include <gtest/gtest.h>

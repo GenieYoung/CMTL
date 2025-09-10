@@ -8,7 +8,7 @@ for example:
 lawson_flip_test.cpp
 ```
 
-#include "CMTL/geometry_algorithm/lawson_flip.h"
+#include "CMTL/algorithm/lawson_flip.h"
 #include "CMTL/io/surface_mesh/read_obj.h"
 #include "CMTL/io/surface_mesh/write_obj.h"
 
@@ -19,7 +19,7 @@ int main()
     SurfaceMesh sm;
     CMTL::io::read_obj(sm, "leaf.obj");
     CMTL::io::write_obj(sm, "before_lawson_flip.obj");
-    CMTL::geometry_algorithm::lawson_flip(sm);
+    CMTL::algorithm::lawson_flip(sm);
     CMTL::io::write_obj(sm, "after_lawson_flip.obj");
 }
 

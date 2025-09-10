@@ -1,8 +1,8 @@
 #ifndef __io_polygon_soup_write_obj__
 #define __io_polygon_soup_write_obj__
 
-#include "../../geo2d/geo2d_polygon_soup.h"
-#include "../../geo3d/geo3d_polygon_soup.h"
+#include "../../geo2d/polygon_soup.h"
+#include "../../geo3d/polygon_soup.h"
 #include <fstream>
 
 namespace CMTL{

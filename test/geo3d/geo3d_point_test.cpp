@@ -1,4 +1,4 @@
-#include "CMTL/geo3d/geo3d_point.h"
+#include "CMTL/geo3d/point.h"
 #include <gtest/gtest.h>
 
 typedef CMTL::geo3d::Point<int> PointI;

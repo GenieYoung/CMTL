@@ -1,5 +1,5 @@
-#ifndef __geometry_algorithm_io__
-#define __geometry_algorithm_io__
+#ifndef __algorithm_io__
+#define __algorithm_io__
 
 #include "polygon/write_obj.h"
 #include "polygon_soup/write_obj.h"
@@ -9,10 +9,10 @@
 #include "surface_mesh/read_obj.h"
 
 namespace CMTL{
-namespace geometry_algorithm{
+namespace algorithm{
 
 
-}   // namespace geometry_algorithm
+}   // namespace algorithm
 }   // namespace CMTL
 
-#endif  // __geometry_algorithm_intersect__
+#endif  // __algorithm_intersect__

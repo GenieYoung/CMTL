@@ -1,8 +1,8 @@
 #ifndef __io_surface_mesh_read_obj__
 #define __io_surface_mesh_read_obj__
 
-#include "../../geo2d/geo2d_surface_mesh.h"
-#include "../../geo3d/geo3d_surface_mesh.h"
+#include "../../geo2d/surface_mesh.h"
+#include "../../geo3d/surface_mesh.h"
 #include <fstream>
 
 namespace CMTL{

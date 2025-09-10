@@ -1,4 +1,4 @@
-#include "CMTL/geo3d/geo3d_surface_mesh.h"
+#include "CMTL/geo3d/surface_mesh.h"
 
 typedef CMTL::geo3d::SurfaceMesh<double> Surface_mesh;
 typedef Surface_mesh::Point Point;
