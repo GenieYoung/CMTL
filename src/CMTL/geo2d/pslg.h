@@ -1,57 +1,52 @@
 #ifndef __geo2d_pslg_h__
 #define __geo2d_pslg_h__
 
-#include <vector>
-
 #include "point.h"
 
-namespace CMTL{
-namespace geo2d{
+#include <vector>
+
+namespace CMTL {
+namespace geo2d {
 
 /**
  * @brief planar straight line graph used for triangulation
- * @tparam T number type of point coordinate 
- */  
-template<typename T>
-class PSLG
-{
-    public:
-        friend class algorithm::Triangulation<T>;
+ * @tparam T number type of point coordinate
+ */
+template <typename T>
+class PSLG {
+ public:
+  friend class algorithm::Triangulation<T>;
 
-    public:
-        PSLG() = default;
-        
-        ~PSLG() = default;
+ public:
+  PSLG() = default;
 
-    public:
-        struct Vertex
-        {
-            Point<T> pos;
-        };
+  ~PSLG() = default;
 
-        struct Segment
-        {
-            int v0, v1;
-        };
+ public:
+  struct Vertex {
+    Point<T> pos;
+  };
 
-        struct Region
-        {
-            Point<T> pos;
-        };
+  struct Segment {
+    int v0, v1;
+  };
 
-        struct Hole
-        {
-            Point<T> pos;
-        };
+  struct Region {
+    Point<T> pos;
+  };
 
-    private:
-        std::vector<Vertex>     _points;
-        std::vector<Segment>    _segments;
-        std::vector<Region>     _regions;
-        std::vector<Hole>       _holes;
+  struct Hole {
+    Point<T> pos;
+  };
+
+ private:
+  std::vector<Vertex> _points;
+  std::vector<Segment> _segments;
+  std::vector<Region> _regions;
+  std::vector<Hole> _holes;
 };
 
-}   // namespace geo2d
-}   // namespace CMTL
+}  // namespace geo2d
+}  // namespace CMTL
 
-#endif // __geo2d_pslg_h__
+#endif  // __geo2d_pslg_h__
