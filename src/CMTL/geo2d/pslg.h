@@ -15,35 +15,8 @@ namespace geo2d {
 template <typename T>
 class PSLG {
  public:
-  friend class algorithm::Triangulation<T>;
-
- public:
   PSLG() = default;
-
-  ~PSLG() = default;
-
- public:
-  struct Vertex {
-    Point<T> pos;
-  };
-
-  struct Segment {
-    int v0, v1;
-  };
-
-  struct Region {
-    Point<T> pos;
-  };
-
-  struct Hole {
-    Point<T> pos;
-  };
-
- private:
-  std::vector<Vertex> _points;
-  std::vector<Segment> _segments;
-  std::vector<Region> _regions;
-  std::vector<Hole> _holes;
+  std::vector<geo2d::Point<T>> _points;
 };
 
 }  // namespace geo2d
