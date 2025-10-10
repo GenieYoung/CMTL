@@ -15,6 +15,15 @@ class TriangulationStorage {
   static constexpr int INPUTVERTEX = 0;
   static constexpr int INFVERTEX = 1;
 
+  //                 v2
+  //                 /\
+  //             E2 /  \ E1
+  //               /    \
+  //              /______\
+  //            v0   E0   v1
+  static constexpr unsigned char _vo[3] = {0, 1, 2};
+  static constexpr unsigned char _vd[3] = {1, 2, 0};
+  static constexpr unsigned char _va[3] = {2, 0, 1};
   static constexpr unsigned char _edge_next_tbl[3] = {1, 2, 0};
   static constexpr unsigned char _edge_prev_tbl[3] = {2, 0, 1};
 
@@ -26,11 +35,17 @@ class TriangulationStorage {
     Triangle* tri;
     unsigned char ori;
 
+    TriEdge(Triangle* t = nullptr, unsigned char o = 0);
+
     void set(Vertex* v0, Vertex* v1, Vertex* v2);
     void link(const TriEdge& other);
 
+    Vertex* org() const;
+    Vertex* dest() const;
+    Vertex* apex() const;
     TriEdge next() const;
     TriEdge prev() const;
+    TriEdge sym() const;
   };
 
   struct Vertex {
@@ -45,6 +60,10 @@ class TriangulationStorage {
     TriEdge nei[3];
 
     Triangle();
+
+    int flag;
+    bool is_dummy() const;
+    void set_dummy();
   };
 
   typedef Triangle Segment;
@@ -61,7 +80,6 @@ class TriangulationStorage {
   arraypool<Triangle*> _triangles;
 
   Vertex* _infvrt;
-  std::vector<Triangle*> _dummytris;
 };
 
 template <typename T>
@@ -72,7 +90,7 @@ TriangulationStorage<T>::TriangulationStorage() {
 
 template <typename T>
 TriangulationStorage<T>::~TriangulationStorage() {
-  delete _infvrt;
+  if (_infvrt) delete _infvrt;
   for (unsigned i = 0; i < _vertices.size(); ++i) {
     if (_vertices[i]) delete _vertices[i];
   }
@@ -84,6 +102,10 @@ TriangulationStorage<T>::~TriangulationStorage() {
 }
 
 // TriEdge
+
+template <typename T>
+TriangulationStorage<T>::TriEdge::TriEdge(Triangle* t, unsigned char o)
+    : tri(t), ori(o) {}
 
 template <typename T>
 void TriangulationStorage<T>::TriEdge::set(Vertex* v0, Vertex* v1, Vertex* v2) {
@@ -100,6 +122,24 @@ void TriangulationStorage<T>::TriEdge::link(const TriEdge& other) {
 }
 
 template <typename T>
+typename TriangulationStorage<T>::Vertex*
+TriangulationStorage<T>::TriEdge::org() const {
+  return tri->vrt[_vo[ori]];
+}
+
+template <typename T>
+typename TriangulationStorage<T>::Vertex*
+TriangulationStorage<T>::TriEdge::dest() const {
+  return tri->vrt[_vd[ori]];
+}
+
+template <typename T>
+typename TriangulationStorage<T>::Vertex*
+TriangulationStorage<T>::TriEdge::apex() const {
+  return tri->vrt[_va[ori]];
+}
+
+template <typename T>
 typename TriangulationStorage<T>::TriEdge
 TriangulationStorage<T>::TriEdge::next() const {
   return TriEdge{tri, _edge_next_tbl[ori]};
@@ -111,6 +151,12 @@ TriangulationStorage<T>::TriEdge::prev() const {
   return TriEdge{tri, _edge_prev_tbl[ori]};
 }
 
+template <typename T>
+typename TriangulationStorage<T>::TriEdge
+TriangulationStorage<T>::TriEdge::sym() const {
+  return tri->nei[ori];
+}
+
 // Triangle
 
 template <typename T>
@@ -118,6 +164,16 @@ TriangulationStorage<T>::Triangle::Triangle() {
   vrt[0] = vrt[1] = vrt[2] = nullptr;
   nei[0].tri = nei[1].tri = nei[2].tri = nullptr;
   nei[0].ori = nei[1].ori = nei[2].ori = 0;
+}
+
+template <typename T>
+bool TriangulationStorage<T>::Triangle::is_dummy() const {
+  return flag & 1;
+}
+
+template <typename T>
+void TriangulationStorage<T>::Triangle::set_dummy() {
+  flag |= 1;
 }
 
 }  // namespace Internal
