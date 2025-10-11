@@ -47,7 +47,6 @@ class Triangulation : public Internal::TriangulationStorage<T> {
 
  private:
   T xmin, xmax, ymin, ymax;
-  TriEdge recenttri;
 };
 
 template <typename T>
@@ -93,6 +92,10 @@ typename Triangulation<T>::InsertVertexResult Triangulation<T>::insert_vertex(
     locateresult = preciselocate(newvertex, searchtri);
   }
 
+  if (locateresult == ONVERTEX) {
+    return DUPLICATEVERTEX;
+  }
+
   return DUPLICATEVERTEX;
 }
 
@@ -111,12 +114,12 @@ typename Triangulation<T>::LocateResult Triangulation<T>::locate(
 
   if (is_same(searchtri.org(), v)) return ONVERTEX;
 
-  if (recenttri.tri != nullptr) {
-    if (is_same(recenttri.org(), v)) {
-      searchtri = recenttri;
+  if (this->recenttri.tri != nullptr) {
+    if (is_same(this->recenttri.org(), v)) {
+      searchtri = this->recenttri;
       return ONVERTEX;
     }
-    if (square_length(recenttri.org(), v) < square_length(searchtri.org(), v)) {
+    if (square_length(this->recenttri.org(), v) < square_length(searchtri.org(), v)) {
       searchtri = this->recenttri;
     }
   }

@@ -11,6 +11,9 @@ class TriangulationStorage {
   TriangulationStorage();
   virtual ~TriangulationStorage();
 
+ public:
+  void clean();
+
  protected:
   static constexpr int INPUTVERTEX = 0;
   static constexpr int INFVERTEX = 1;
@@ -80,6 +83,7 @@ class TriangulationStorage {
   arraypool<Triangle*> _triangles;
 
   Vertex* _infvrt;
+  TriEdge recenttri;
 };
 
 template <typename T>
@@ -90,15 +94,18 @@ TriangulationStorage<T>::TriangulationStorage() {
 
 template <typename T>
 TriangulationStorage<T>::~TriangulationStorage() {
+  clean();
+}
+
+template <typename T>
+void TriangulationStorage<T>::clean() {
   if (_infvrt) delete _infvrt;
   for (unsigned i = 0; i < _vertices.size(); ++i) {
     if (_vertices[i]) delete _vertices[i];
   }
-  _vertices.clear();
   for (unsigned i = 0; i < _triangles.size(); ++i) {
     if (_triangles[i]) delete _triangles[i];
   }
-  _triangles.clear();
 }
 
 // TriEdge
