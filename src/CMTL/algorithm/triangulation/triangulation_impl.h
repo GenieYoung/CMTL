@@ -24,7 +24,7 @@ class Triangulation : public Internal::TriangulationStorage<T> {
   using typename Internal::TriangulationStorage<T>::Triangle;
 
  public:
-  enum InsertVertexResult { DUPLICATEVERTEX };
+  enum InsertVertexResult { SUCCESSFULVERTEX, DUPLICATEVERTEX };
   enum LocateResult { INTRIANGLE, ONEDGE, ONVERTEX, OUTSIDE };
   enum FlipType { FLIP13 };
 
@@ -62,6 +62,7 @@ Triangulation<T>::Triangulation(const geo2d::PSLG<T>& input)
   for (unsigned i = 0; i < input._points.size(); ++i) {
     Vertex* newvertex = new Vertex;
     newvertex->crd = input._points[i];
+    newvertex->idx = i;
     newvertex->type = this->INPUTVERTEX;
     this->_vertices.push_back(newvertex);
 
@@ -97,11 +98,11 @@ typename Triangulation<T>::InsertVertexResult Triangulation<T>::insert_vertex(
     return DUPLICATEVERTEX;
   }
 
-  if (locateresult == INTRIANGLE) {
+  if (locateresult == INTRIANGLE || locateresult == OUTSIDE) {
     flip13(newvertex, searchtri);
   }
 
-  return DUPLICATEVERTEX;
+  return SUCCESSFULVERTEX;
 }
 
 template <typename T>
@@ -210,17 +211,18 @@ void Triangulation<T>::flip13(Vertex* v, TriEdge& te) {
   TriEdge te1, te2;
   te1.tri = this->_triangles.emplace_back(new Triangle());
   te2.tri = this->_triangles.emplace_back(new Triangle());
-  te.tri->init();
-
-  te.set(va, vb, v);
-  te1.set(vb, vc, v);
-  te2.set(vc, va, v);
 
   if (te.tri->is_dummy()) {
     this->_dummy_tris++;
     te1.tri->set_dummy();
     te2.tri->set_dummy();
   }
+
+  te.tri->init();
+
+  te.set(va, vb, v);
+  te1.set(vb, vc, v);
+  te2.set(vc, va, v);
 
   te1.tri->mark = te2.tri->mark = te.tri->mark;
   te1.tri->area = te2.tri->area = te.tri->area;
@@ -243,8 +245,7 @@ int Triangulation<T>::incremental_delaunay() {
   Triangle* firstT = first_tri();
 
   TriEdge starttri;
-  for (unsigned i = 2; i < this->_vertices.size(); ++i) {
-    if (this->_vertices[i] == firstT->vrt[2]) continue;
+  for (unsigned i = 3; i < this->_vertices.size(); ++i) {
     starttri = this->_infvrt->adj;
     if (insert_vertex(this->_vertices[i], starttri) == DUPLICATEVERTEX) {
       std::cerr << "Duplicate vertex found: " << this->_vertices[i]->crd
@@ -260,6 +261,18 @@ int Triangulation<T>::incremental_delaunay() {
 template <typename T>
 typename Triangulation<T>::Triangle* Triangulation<T>::first_tri() {
   unsigned i = 2;
+  if (is_same(this->_vertices[0], this->_vertices[1])) {
+    for (; i < this->_vertices.size(); ++i) {
+      if (!is_same(this->_vertices[1], this->_vertices[i])) break;
+    }
+    if (i == this->_vertices.size()) {
+      std::cerr << "Error: All input vertices are identical.\n";
+      quit(TRIANGULATION_QUIT_ON_INPUT_ERROR);
+    }
+    std::swap(this->_vertices[1], this->_vertices[i]);
+  }
+
+  i = 2;
   ORIENTATION ori;
   for (; i < this->_vertices.size(); ++i) {
     ori = orient2d(this->_vertices[0], this->_vertices[1], this->_vertices[i]);
@@ -269,16 +282,12 @@ typename Triangulation<T>::Triangle* Triangulation<T>::first_tri() {
     std::cerr << "Error: Input vertices are collinear.\n";
     quit(TRIANGULATION_QUIT_ON_INPUT_ERROR);
   }
+  if (i > 2) std::swap(this->_vertices[2], this->_vertices[i]);
 
-  if (ori == ORIENTATION::POSITIVE) {
-    return first_tri(this->_vertices[0], this->_vertices[1],
-                     this->_vertices[i]);
-  } else {
-    return first_tri(this->_vertices[1], this->_vertices[0],
-                     this->_vertices[i]);
-  }
+  if (ori == ORIENTATION::NEGATIVE)
+    std::swap(this->_vertices[0], this->_vertices[1]);
 
-  return nullptr;
+  return first_tri(this->_vertices[0], this->_vertices[1], this->_vertices[2]);
 }
 
 template <typename T>
@@ -298,7 +307,7 @@ typename Triangulation<T>::Triangle* Triangulation<T>::first_tri(Vertex* v0,
   te[2].set(v2, v1, this->_infvrt);
   te[3].set(v0, v2, this->_infvrt);
 
-  for (unsigned i = 1; i < 3; ++i) {
+  for (unsigned i = 1; i < 4; ++i) {
     te[i].tri->set_dummy();
   }
   this->_dummy_tris += 3;

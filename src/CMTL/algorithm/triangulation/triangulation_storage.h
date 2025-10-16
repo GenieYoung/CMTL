@@ -2,6 +2,7 @@
 #define __algorithm_triangulation_storage_h__
 
 #include "../../geo2d/point.h"
+#include "triangulation_storage_fwd.h"
 
 namespace CMTL {
 namespace algorithm {
@@ -12,7 +13,12 @@ class TriangulationStorage {
  public:
   TriangulationStorage();
   virtual ~TriangulationStorage();
+
   typedef geo2d::Point<T> Point;
+
+  template <typename TT>
+  friend void io::write_obj(const TriangulationStorage<TT>& triangulation,
+                            const std::string& file);
 
  public:
   void clean();
@@ -58,7 +64,7 @@ class TriangulationStorage {
   struct Vertex {
     Point crd;
     TriEdge adj;
-    // int mark;
+    int idx;
     char type;
   };
 
@@ -100,6 +106,7 @@ template <typename T>
 TriangulationStorage<T>::TriangulationStorage() {
   _infvrt = new Vertex;
   _infvrt->type = INFVERTEX;
+  _infvrt->idx = -1;
 
   _unused_vrts = 0;
   _dummy_tris = 0;
