@@ -1,6 +1,8 @@
 #ifndef __algorithm_triangulation_storage_h__
 #define __algorithm_triangulation_storage_h__
 
+#include "../../geo2d/point.h"
+
 namespace CMTL {
 namespace algorithm {
 namespace Internal {
@@ -10,11 +12,13 @@ class TriangulationStorage {
  public:
   TriangulationStorage();
   virtual ~TriangulationStorage();
+  typedef geo2d::Point<T> Point;
 
  public:
   void clean();
 
  protected:
+  static constexpr int UNUSEDVERTEX = -1;
   static constexpr int INPUTVERTEX = 0;
   static constexpr int INFVERTEX = 1;
 
@@ -52,7 +56,7 @@ class TriangulationStorage {
   };
 
   struct Vertex {
-    T crd[2];
+    Point crd;
     TriEdge adj;
     // int mark;
     char type;
@@ -63,8 +67,11 @@ class TriangulationStorage {
     TriEdge nei[3];
 
     Triangle();
+    void init();
 
-    int flag;
+    int flags;
+    int mark;
+    T area;
     bool is_dummy() const;
     void set_dummy();
   };
@@ -83,13 +90,19 @@ class TriangulationStorage {
   arraypool<Triangle*> _triangles;
 
   Vertex* _infvrt;
-  TriEdge recenttri;
+  TriEdge _recenttri;
+
+  int _unused_vrts;
+  int _dummy_tris;
 };
 
 template <typename T>
 TriangulationStorage<T>::TriangulationStorage() {
   _infvrt = new Vertex;
   _infvrt->type = INFVERTEX;
+
+  _unused_vrts = 0;
+  _dummy_tris = 0;
 }
 
 template <typename T>
@@ -168,19 +181,26 @@ TriangulationStorage<T>::TriEdge::sym() const {
 
 template <typename T>
 TriangulationStorage<T>::Triangle::Triangle() {
+  init();
+}
+
+template <typename T>
+void TriangulationStorage<T>::Triangle::init() {
   vrt[0] = vrt[1] = vrt[2] = nullptr;
   nei[0].tri = nei[1].tri = nei[2].tri = nullptr;
   nei[0].ori = nei[1].ori = nei[2].ori = 0;
+  flags = mark = 0;
+  area = T(0);
 }
 
 template <typename T>
 bool TriangulationStorage<T>::Triangle::is_dummy() const {
-  return flag & 1;
+  return flags & 1;
 }
 
 template <typename T>
 void TriangulationStorage<T>::Triangle::set_dummy() {
-  flag |= 1;
+  flags |= 1;
 }
 
 }  // namespace Internal
