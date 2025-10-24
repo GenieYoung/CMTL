@@ -38,6 +38,7 @@ class Triangulation : public Internal::TriangulationStorage<T> {
   LocateResult locate(Vertex* v, TriEdge& searchtri);
   LocateResult preciselocate(Vertex* v, TriEdge& searchtri);
   void flip13(Vertex* v, TriEdge& te);
+  void flip24(Vertex* v, TriEdge& te);
 
  private:
   ORIENTATION orient2d(Vertex* v0, Vertex* v1, Vertex* v2) const;
@@ -95,10 +96,15 @@ typename Triangulation<T>::InsertVertexResult Triangulation<T>::insert_vertex(
   }
 
   if (locateresult == ONVERTEX) {
+    this->_recenttri = searchtri;
     return DUPLICATEVERTEX;
   }
 
-  if (locateresult == INTRIANGLE || locateresult == OUTSIDE) {
+  if(locateresult == ONEDGE) {
+    flip24(newvertex, searchtri);
+  }
+  else {
+    // INTRIANGLE OR OUTSIDE
     flip13(newvertex, searchtri);
   }
 
@@ -197,47 +203,111 @@ typename Triangulation<T>::LocateResult Triangulation<T>::preciselocate(
 
 template <typename T>
 void Triangulation<T>::flip13(Vertex* v, TriEdge& te) {
+  TriEdge tt[3];
+  tt[0] = te;
+
   Vertex* va = te.org();
   Vertex* vb = te.dest();
   Vertex* vc = te.apex();
 
-  TriEdge nte[3];
+  int mark = tt[0].tri->mark;
+  int area = tt[0].tri->area;
 
+  TriEdge nn[3];
   for (unsigned i = 0; i < 3; ++i) {
-    nte[i] = te.sym();
-    te.ori = this->_edge_next_tbl[te.ori];
+    nn[i] = tt[0].sym();
+    tt[0].ori = this->_edge_next_tbl[tt[0].ori];
   }
 
-  TriEdge te1, te2;
-  te1.tri = this->_triangles.emplace_back(new Triangle());
-  te2.tri = this->_triangles.emplace_back(new Triangle());
+  if(tt[0].tri->is_dummy()) this->_dummy_tris--;
 
-  if (te.tri->is_dummy()) {
-    this->_dummy_tris++;
-    te1.tri->set_dummy();
-    te2.tri->set_dummy();
+  tt[0].tri->init();
+  tt[1] = this->_triangles.emplace_back(new Triangle());
+  tt[2] = this->_triangles.emplace_back(new Triangle());
+
+  tt[0].set(va, vb, v);
+  tt[1].set(vb, vc, v);
+  tt[2].set(vc, va, v);
+
+  // we do such check in case that te is a dummy edge
+  for(int i = 0; i < 3; ++i) {
+    if (nn[i].tri->is_dummy() && (nn[i].apex() != this->_infvrt)) {
+      tt[i].tri->set_dummy(); 
+      this->_dummy_tris++;
+    }
   }
 
-  te.tri->init();
+  for(int i = 0; i < 3; ++i) {
+    tt[i].tri->mark = mark;
+    tt[i].tri->area = area;
+    tt[i].link(nn[i]);
+    tt[i].next().link(tt[(i+1)%3].prev());
+  }
 
-  te.set(va, vb, v);
-  te1.set(vb, vc, v);
-  te2.set(vc, va, v);
+  va->adj = tt[0];
+  vb->adj = tt[1];
+  vc->adj = tt[2];
+  v->adj = tt[2].prev();
+}
 
-  te1.tri->mark = te2.tri->mark = te.tri->mark;
-  te1.tri->area = te2.tri->area = te.tri->area;
+template <typename T>
+void Triangulation<T>::flip24(Vertex* v, TriEdge& te) {
+  TriEdge tt[4];
+  tt[0] = te;
+  tt[1] = te.sym();
 
-  nte[0].link(te);
-  nte[1].link(te1);
-  nte[2].link(te2);
-  te.next().link(te1.prev());
-  te1.next().link(te2.prev());
-  te2.next().link(te.prev());
+  Vertex* va = tt[0].org();
+  Vertex* vb = tt[0].dest();
+  Vertex* vc = tt[0].apex();
+  Vertex* vd = tt[1].apex();
 
-  va->adj = te;
-  vb->adj = te1;
-  vc->adj = te2;
-  v->adj = te2.prev();
+  int c_mark = tt[0].tri->mark;
+  int c_area = tt[0].tri->area;
+  int d_mark = tt[1].tri->mark;
+  int d_area = tt[1].tri->area;
+
+  TriEdge nn[4];
+  nn[0] = tt[0].prev().sym(); // [a, c]
+  nn[1] = tt[1].next().sym(); // [d, a]
+  nn[2] = tt[1].prev().sym(); // [b, d]
+  nn[3] = tt[0].next().sym(); // [c, b]
+
+  if(tt[0].tri->is_dummy()) this->_dummy_tris--;
+  if(tt[1].tri->is_dummy()) this->_dummy_tris--;
+
+  tt[0].tri->init();
+  tt[1].tri->init();
+  tt[2].tri = this->_triangles.emplace_back(new Triangle());
+  tt[3].tri = this->_triangles.emplace_back(new Triangle());
+
+  tt[0].set(vc, va, v);
+  tt[1].set(va, vd, v);
+  tt[2].set(vd, vb, v);
+  tt[3].set(vb, vc, v);
+
+  tt[0].tri->mark = tt[3].tri->mark = c_mark;
+  tt[0].tri->area = tt[3].tri->area = c_area;
+  tt[1].tri->mark = tt[2].tri->mark = d_mark;
+  tt[1].tri->area = tt[2].tri->area = d_area;
+
+  // we do such check in case that te is a dummy edge
+  for(int i = 0; i < 4; ++i) {
+    if (nn[i].tri->is_dummy() && (nn[i].apex() != this->_infvrt)) {
+      tt[i].tri->set_dummy(); 
+      this->_dummy_tris++;
+    }
+  }
+  
+  for(int i = 0; i < 4; ++i) {
+    tt[i].link(nn[i]);
+    tt[i].next().link(tt[(i+1)%4].prev());
+  }
+
+  va->adj = tt[1];
+  vb->adj = tt[3];
+  vc->adj = tt[0];
+  vd->adj = tt[2];
+  v->adj = tt[2].prev();
 }
 
 template <typename T>
