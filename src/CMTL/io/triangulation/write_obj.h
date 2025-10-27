@@ -16,7 +16,7 @@ void write_obj(
   fout.open(file.c_str(), std::ofstream::trunc);
 
   std::vector<unsigned> perm(triangulation._vertices.size());
-  for(unsigned i = 0; i < triangulation._vertices.size(); ++i) {
+  for (unsigned i = 0; i < triangulation._vertices.size(); ++i) {
     perm[triangulation._vertices[i]->idx] = i;
   }
 
@@ -29,7 +29,7 @@ void write_obj(
 
   for (unsigned i = 0; i < triangulation._triangles.size(); ++i) {
     const auto& tri = triangulation._triangles[i];
-    if(tri->is_dummy()) continue;
+    if (tri->is_dummy()) continue;
     fout << "f " << tri->vrt[0]->idx + 1 << " " << tri->vrt[1]->idx + 1 << " "
          << tri->vrt[2]->idx + 1 << std::endl;
   }

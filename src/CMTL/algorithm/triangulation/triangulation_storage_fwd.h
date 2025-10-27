@@ -6,12 +6,12 @@
 namespace CMTL {
 namespace algorithm {
 namespace Internal {
-    
+
 template <class T>
 class TriangulationStorage;
 
-}   // namespace Internal
-}   // namespace algorithm
+}  // namespace Internal
+}  // namespace algorithm
 
 namespace io {
 template <typename T>
@@ -20,6 +20,6 @@ void write_obj(
     const std::string& file);
 }
 
-}   // namespace CMTL
+}  // namespace CMTL
 
-#endif // __algorithm_triangulation_storage_fwd_h__
+#endif  // __algorithm_triangulation_storage_fwd_h__
