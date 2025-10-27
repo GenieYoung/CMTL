@@ -80,6 +80,7 @@ class TriangulationStorage {
     T area;
     bool is_dummy() const;
     void set_dummy();
+    void clear_dummy();
   };
 
   typedef Triangle Segment;
@@ -208,6 +209,11 @@ bool TriangulationStorage<T>::Triangle::is_dummy() const {
 template <typename T>
 void TriangulationStorage<T>::Triangle::set_dummy() {
   flags |= 1;
+}
+
+template <typename T>
+void TriangulationStorage<T>::Triangle::clear_dummy() {
+  flags &= ~1;
 }
 
 }  // namespace Internal

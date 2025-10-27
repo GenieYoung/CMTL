@@ -39,9 +39,12 @@ class Triangulation : public Internal::TriangulationStorage<T> {
   LocateResult preciselocate(Vertex* v, TriEdge& searchtri);
   void flip13(Vertex* v, TriEdge& te);
   void flip24(Vertex* v, TriEdge& te);
+  void flip22(TriEdge& te);
+  void lawson_flip(Vertex* v, TriEdge& start);
 
  private:
   ORIENTATION orient2d(Vertex* v0, Vertex* v1, Vertex* v2) const;
+  bool local_delaunay_check(Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd) const;
   T square_length(Vertex* v0, Vertex* v1) const;
   bool is_same(Vertex* v0, Vertex* v2) const;
 
@@ -100,15 +103,97 @@ typename Triangulation<T>::InsertVertexResult Triangulation<T>::insert_vertex(
     return DUPLICATEVERTEX;
   }
 
+  TriEdge lawsonstarttri = searchtri;
   if(locateresult == ONEDGE) {
-    flip24(newvertex, searchtri);
+    flip24(newvertex, lawsonstarttri);
+    lawsonstarttri = lawsonstarttri.next();
   }
   else {
     // INTRIANGLE OR OUTSIDE
-    flip13(newvertex, searchtri);
+    flip13(newvertex, lawsonstarttri);
   }
 
-  return SUCCESSFULVERTEX;
+  InsertVertexResult insertresult = SUCCESSFULVERTEX;
+
+  lawson_flip(newvertex, lawsonstarttri);
+
+  searchtri = lawsonstarttri.prev();
+
+  /* Vertex* left = curr.dest();
+  Vertex* right = curr.org();
+  Vertex* first = right;
+  Vertex* top;
+  bool do_flip;
+  while(true) {
+    do_flip = true;
+
+    if(do_flip) {
+      TriEdge currsym = curr.sym();
+      top = currsym.apex();
+
+      if(left == this->_infvrt) {
+        do_flip = (orient2d(newvertex, right, top) == ORIENTATION::POSITIVE);
+      } else if(right == this->_infvrt) {
+        do_flip = (orient2d(top, left, newvertex) == ORIENTATION::POSITIVE);
+      } else if(top == this->_infvrt) {
+        do_flip = false;
+      } else {
+        do_flip = !local_delaunay_check(left, newvertex, right, top);
+      }
+
+      if(do_flip) {
+        TriEdge nn[4];
+        nn[0] = curr.prev().sym(); // [newv, right]
+        nn[1] = currsym.next().sym(); // [right, top]
+        nn[2] = currsym.prev().sym(); // [top, left]
+        nn[3] = curr.next().sym(); // [left, newv]
+        curr.set(top, newvertex, right);
+        currsym.set(newvertex, top, left);
+        if(left == this->_infvrt) {
+          curr.tri->clear_dummy();
+          this->_dummy_tris--;
+        }
+        if(right == this->_infvrt) {
+          currsym.tri->clear_dummy();
+          this->_dummy_tris--;
+        }
+        curr.link(currsym);
+        curr.next().link(nn[0]);
+        curr.prev().link(nn[1]);
+        currsym.next().link(nn[2]);
+        currsym.prev().link(nn[3]);
+        newvertex->adj = curr.next();
+        right->adj = curr.prev();
+        top->adj = currsym.next();
+        left->adj = currsym.prev();
+
+        // todo : update attributes
+        T area = (curr.tri->area + currsym.tri->area) * T(0.5);
+        curr.tri->area = area;
+        currsym.tri->area = area;
+
+        curr = curr.prev();
+        left = top;
+      }
+    }
+
+    if(!do_flip) {
+      curr = curr.next();
+      TriEdge testtri = curr.sym();
+
+      if(left == first) {
+        searchtri = curr.next();
+        this->_recenttri = curr;
+        return insertresult;
+      }
+
+      curr = testtri.next();
+      right = left;
+      left = curr.dest();
+    }
+  } */
+  
+  return insertresult;
 }
 
 template <typename T>
@@ -247,7 +332,9 @@ void Triangulation<T>::flip13(Vertex* v, TriEdge& te) {
   va->adj = tt[0];
   vb->adj = tt[1];
   vc->adj = tt[2];
-  v->adj = tt[2].prev();
+  v->adj = tt[2].prev(); 
+
+  te.ori = 0;
 }
 
 template <typename T>
@@ -267,10 +354,10 @@ void Triangulation<T>::flip24(Vertex* v, TriEdge& te) {
   int d_area = tt[1].tri->area;
 
   TriEdge nn[4];
-  nn[0] = tt[0].prev().sym(); // [a, c]
-  nn[1] = tt[1].next().sym(); // [d, a]
-  nn[2] = tt[1].prev().sym(); // [b, d]
-  nn[3] = tt[0].next().sym(); // [c, b]
+  nn[0] = tt[0].next().sym(); // [c, b]
+  nn[1] = tt[0].prev().sym(); // [a, c]
+  nn[2] = tt[1].next().sym(); // [d, a]
+  nn[3] = tt[1].prev().sym(); // [b, d]
 
   if(tt[0].tri->is_dummy()) this->_dummy_tris--;
   if(tt[1].tri->is_dummy()) this->_dummy_tris--;
@@ -280,15 +367,15 @@ void Triangulation<T>::flip24(Vertex* v, TriEdge& te) {
   tt[2].tri = this->_triangles.emplace_back(new Triangle());
   tt[3].tri = this->_triangles.emplace_back(new Triangle());
 
-  tt[0].set(vc, va, v);
-  tt[1].set(va, vd, v);
-  tt[2].set(vd, vb, v);
-  tt[3].set(vb, vc, v);
+  tt[0].set(vb, vc, v);
+  tt[1].set(vc, va, v);
+  tt[2].set(va, vd, v);
+  tt[3].set(vd, vb, v);
 
-  tt[0].tri->mark = tt[3].tri->mark = c_mark;
-  tt[0].tri->area = tt[3].tri->area = c_area;
-  tt[1].tri->mark = tt[2].tri->mark = d_mark;
-  tt[1].tri->area = tt[2].tri->area = d_area;
+  tt[0].tri->mark = tt[1].tri->mark = c_mark;
+  tt[0].tri->area = tt[1].tri->area = c_area;
+  tt[2].tri->mark = tt[3].tri->mark = d_mark;
+  tt[2].tri->area = tt[3].tri->area = d_area;
 
   // we do such check in case that te is a dummy edge
   for(int i = 0; i < 4; ++i) {
@@ -303,11 +390,114 @@ void Triangulation<T>::flip24(Vertex* v, TriEdge& te) {
     tt[i].next().link(tt[(i+1)%4].prev());
   }
 
-  va->adj = tt[1];
-  vb->adj = tt[3];
-  vc->adj = tt[0];
-  vd->adj = tt[2];
-  v->adj = tt[2].prev();
+  va->adj = tt[2];
+  vb->adj = tt[0];
+  vc->adj = tt[1];
+  vd->adj = tt[3];
+  v->adj = tt[3].prev();
+
+  te.ori = 2;
+}
+
+template <typename T>
+void Triangulation<T>::flip22(TriEdge& te) {
+  TriEdge tt[2];
+  tt[0] = te;
+  tt[1] = te.sym();
+
+  Vertex* va = tt[0].org();
+  Vertex* vb = tt[0].dest();
+  Vertex* vc = tt[0].apex();
+  Vertex* vd = tt[1].apex();
+
+  int c_mark = tt[0].tri->mark;
+  int c_area = tt[0].tri->area;
+  int d_mark = tt[1].tri->mark;
+  int d_area = tt[1].tri->area;
+
+  TriEdge nn[4];
+  nn[0] = tt[0].next().sym(); // [c, b]
+  nn[1] = tt[0].prev().sym(); // [a, c]
+  nn[2] = tt[1].next().sym(); // [d, a]
+  nn[3] = tt[1].prev().sym(); // [d, b]
+
+  if(tt[0].tri->is_dummy()) this->_dummy_tris--;
+  if(tt[1].tri->is_dummy()) this->_dummy_tris--;
+
+  tt[0].tri->init();
+  tt[1].tri->init();
+  tt[0].set(vd, vc, va);
+  tt[1].set(vc, vd, vb);
+
+  if(vc == this->_infvrt || vd == this->_infvrt) {
+    tt[0].tri->set_dummy();
+    tt[1].tri->set_dummy();
+    this->_dummy_tris += 2;
+  } else if(vb == this->_infvrt) {
+    tt[1].tri->set_dummy();
+    this->_dummy_tris++;
+  } else if(va == this->_infvrt) {
+    tt[0].tri->set_dummy();
+    this->_dummy_tris++;
+  }
+
+  if(c_area < 0 || d_area < 0) {
+    tt[0].tri->area = tt[1].tri->area = T(-1);
+  }
+  tt[0].tri->mark = c_mark;
+  tt[1].tri->mark = d_mark; // todo
+
+  tt[0].link(tt[1]);
+  tt[0].next().link(nn[1]);
+  tt[0].prev().link(nn[2]);
+  tt[1].prev().link(nn[0]);
+  tt[1].next().link(nn[3]);
+
+  va->adj = tt[0].prev();
+  vb->adj = tt[1].prev();
+  vc->adj = tt[0].next();
+  vd->adj = tt[1].next();
+
+  te.ori = 0;
+}
+
+template <typename T>
+void Triangulation<T>::lawson_flip(Vertex* v, TriEdge& start) {
+  Vertex* first = start.org();
+
+  bool do_flip;
+  while(true) {
+    Vertex* left = start.dest();
+    Vertex* right = start.org();
+
+    do_flip = true;
+
+    if(do_flip) {
+      TriEdge startsym = start.sym();
+      Vertex* top = startsym.apex();
+
+      if(left == this->_infvrt) {
+        do_flip = (orient2d(v, right, top) == ORIENTATION::POSITIVE);
+      } else if(right == this->_infvrt) {
+        do_flip = (orient2d(top, left, v) == ORIENTATION::POSITIVE);
+      } else if(top == this->_infvrt) {
+        do_flip = false;
+      } else {
+        do_flip = !local_delaunay_check(left, v, right, top);
+      }
+
+      if(do_flip) {
+        flip22(start);
+        start = start.prev();
+      }
+    }
+
+    if(!do_flip) {
+      if(left == first)
+        return;
+      start = start.next().sym().next();
+    }
+  }
 }
 
 template <typename T>
@@ -400,8 +590,14 @@ typename Triangulation<T>::Triangle* Triangulation<T>::first_tri(Vertex* v0,
 template <typename T>
 ORIENTATION Triangulation<T>::orient2d(Vertex* v0, Vertex* v1,
                                        Vertex* v2) const {
-  assert(v0 != this->_infvrt || v1 != this->_infvrt || v2 != this->_infvrt);
+  assert(v0 != this->_infvrt && v1 != this->_infvrt && v2 != this->_infvrt);
   return orient_2d(v0->crd, v1->crd, v2->crd);
+}
+
+template <typename T>
+bool Triangulation<T>::local_delaunay_check(Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd) const {
+  assert(va != this->_infvrt && vb != this->_infvrt && vc != this->_infvrt && vd != this->_infvrt);
+  return is_locally_delaunay(va->crd, vb->crd, vc->crd, vd->crd);
 }
 
 template <typename T>
