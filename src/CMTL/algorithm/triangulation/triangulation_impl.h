@@ -22,14 +22,16 @@ class Triangulation : public Internal::TriangulationStorage<T> {
   using typename Internal::TriangulationStorage<T>::Vertex;
   using typename Internal::TriangulationStorage<T>::TriEdge;
   using typename Internal::TriangulationStorage<T>::Triangle;
+  using typename Internal::TriangulationStorage<T>::Segment;
 
  public:
   enum InsertVertexResult { SUCCESSFULVERTEX, DUPLICATEVERTEX };
   enum LocateResult { INTRIANGLE, ONEDGE, ONVERTEX, OUTSIDE };
   enum FlipType { FLIP13 };
 
- public:
+ private:
   InsertVertexResult insert_vertex(Vertex* newvertex, TriEdge& searchtri);
+  void insert_segment(Vertex* endpoint1, Vertex* endpoint2, int mark);
 
  private:
   int incremental_delaunay();
@@ -118,6 +120,7 @@ typename Triangulation<T>::InsertVertexResult Triangulation<T>::insert_vertex(
   lawson_flip(newvertex, lawsonstarttri);
 
   searchtri = lawsonstarttri.prev();
+  this->_recenttri = searchtri;
 
   /* Vertex* left = curr.dest();
   Vertex* right = curr.org();
@@ -503,13 +506,17 @@ template <typename T>
 int Triangulation<T>::incremental_delaunay() {
   Triangle* firstT = first_tri();
 
-  TriEdge starttri;
-  for (unsigned i = 3; i < this->_vertices.size(); ++i) {
-    starttri = this->_infvrt->adj;
-    if (insert_vertex(this->_vertices[i], starttri) == DUPLICATEVERTEX) {
-      std::cerr << "Duplicate vertex found: " << this->_vertices[i]->crd
+  for (unsigned i = 1; i < this->_vertices.size(); ++i) {
+    Vertex* curr = this->_vertices[i];
+    if (curr == firstT->vrt[1] || curr == firstT->vrt[2] ||
+        curr->type == this->UNUSEDVERTEX)
+      continue;
+    TriEdge searchtri = this->_infvrt->adj;
+    if (insert_vertex(curr, searchtri) == DUPLICATEVERTEX) {
+      std::cerr << "Duplicate vertex found: " << curr->idx << " : " << curr->crd
                 << std::endl;
-      this->_vertices[i]->type = this->UNUSEDVERTEX;
+      curr->type = this->UNUSEDVERTEX;
+      curr->pair = searchtri.org();
       this->_unused_vrts++;
     }
   }
@@ -519,34 +526,44 @@ int Triangulation<T>::incremental_delaunay() {
 
 template <typename T>
 typename Triangulation<T>::Triangle* Triangulation<T>::first_tri() {
-  unsigned i = 2;
-  if (is_same(this->_vertices[0], this->_vertices[1])) {
-    for (; i < this->_vertices.size(); ++i) {
-      if (!is_same(this->_vertices[1], this->_vertices[i])) break;
+  Vertex* v0 = this->_vertices[0];
+  Vertex *v1, *v2;
+
+  unsigned i = 1;
+  for (; i < this->_vertices.size(); ++i) {
+    if (!is_same(v0, this->_vertices[i])) {
+      v1 = this->_vertices[i];
+      break;
+    } else {
+      std::cerr << "Duplicate vertex found: " << this->_vertices[i]->idx
+                << " : " << this->_vertices[i]->crd << std::endl;
+      this->_vertices[i]->type = this->UNUSEDVERTEX;
+      this->_vertices[i]->pair = v0;
     }
-    if (i == this->_vertices.size()) {
-      std::cerr << "Error: All input vertices are identical.\n";
-      quit(TRIANGULATION_QUIT_ON_INPUT_ERROR);
-    }
-    std::swap(this->_vertices[1], this->_vertices[i]);
+  }
+  if (i == this->_vertices.size()) {
+    std::cerr << "Error: All input vertices are identical.\n";
+    quit(TRIANGULATION_QUIT_ON_INPUT_ERROR);
   }
 
-  i = 2;
+  ++i;
   ORIENTATION ori;
   for (; i < this->_vertices.size(); ++i) {
-    ori = orient2d(this->_vertices[0], this->_vertices[1], this->_vertices[i]);
-    if (ori != ORIENTATION::ON) break;
+    ori = orient2d(v0, v1, this->_vertices[i]);
+    if (ori != ORIENTATION::ON) {
+      v2 = this->_vertices[i];
+      break;
+    }
   }
   if (i == this->_vertices.size()) {
     std::cerr << "Error: Input vertices are collinear.\n";
     quit(TRIANGULATION_QUIT_ON_INPUT_ERROR);
   }
-  if (i > 2) std::swap(this->_vertices[2], this->_vertices[i]);
 
-  if (ori == ORIENTATION::NEGATIVE)
-    std::swap(this->_vertices[0], this->_vertices[1]);
-
-  return first_tri(this->_vertices[0], this->_vertices[1], this->_vertices[2]);
+  if (ori == ORIENTATION::POSITIVE)
+    return first_tri(v0, v1, v2);
+  else
+    return first_tri(v0, v2, v1);
 }
 
 template <typename T>

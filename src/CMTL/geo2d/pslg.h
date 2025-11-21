@@ -17,6 +17,8 @@ class PSLG {
  public:
   PSLG() = default;
   std::vector<geo2d::Point<T>> _points;
+  std::vector<std::pair<unsigned, unsigned>> _segments;
+  std::vector<int> _segmentmarks;
 };
 
 }  // namespace geo2d

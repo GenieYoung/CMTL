@@ -64,6 +64,7 @@ class TriangulationStorage {
   struct Vertex {
     Point crd;
     TriEdge adj;
+    Vertex* pair;
     int idx;
     char type;
   };
