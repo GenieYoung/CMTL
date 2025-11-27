@@ -30,11 +30,15 @@ class Triangulation : public Internal::TriangulationStorage<T> {
   enum FlipType { FLIP13 };
 
  private:
-  InsertVertexResult insert_vertex(Vertex* newvertex, TriEdge& searchtri);
-  void insert_segment(Vertex* endpoint1, Vertex* endpoint2, int mark);
+  int incremental_delaunay();
+  void recover_segments(const std::vector<std::pair<unsigned, unsigned>>& segs,
+                        const std::vector<int>& marks);
 
  private:
-  int incremental_delaunay();
+  InsertVertexResult insert_vertex(Vertex* newvertex, TriEdge& searchtri);
+  void recover_segment(Vertex* endpoint1, Vertex* endpoint2, int mark);
+
+ private:
   Triangle* first_tri();
   Triangle* first_tri(Vertex* v0, Vertex* v1, Vertex* v2);
   LocateResult locate(Vertex* v, TriEdge& searchtri);
@@ -43,6 +47,7 @@ class Triangulation : public Internal::TriangulationStorage<T> {
   void flip24(Vertex* v, TriEdge& te);
   void flip22(TriEdge& te);
   void lawson_flip(Vertex* v, TriEdge& start);
+  int find_direction(TriEdge& starttri, Vertex* endv);
 
  private:
   ORIENTATION orient2d(Vertex* v0, Vertex* v1, Vertex* v2) const;
@@ -85,6 +90,8 @@ Triangulation<T>::Triangulation(const geo2d::PSLG<T>& input)
   }
 
   incremental_delaunay();
+
+  recover_segments(input._segments, input._segmentmarks);
 }
 
 template <typename T>
@@ -122,81 +129,13 @@ typename Triangulation<T>::InsertVertexResult Triangulation<T>::insert_vertex(
   searchtri = lawsonstarttri.prev();
   this->_recenttri = searchtri;
 
-  /* Vertex* left = curr.dest();
-  Vertex* right = curr.org();
-  Vertex* first = right;
-  Vertex* top;
-  bool do_flip;
-  while(true) {
-    do_flip = true;
-
-    if(do_flip) {
-      TriEdge currsym = curr.sym();
-      top = currsym.apex();
-
-      if(left == this->_infvrt) {
-        do_flip = (orient2d(newvertex, right, top) == ORIENTATION::POSITIVE);
-      } else if(right == this->_infvrt) {
-        do_flip = (orient2d(top, left, newvertex) == ORIENTATION::POSITIVE);
-      } else if(top == this->_infvrt) {
-        do_flip = false;
-      } else {
-        do_flip = !local_delaunay_check(left, newvertex, right, top);
-      }
-
-      if(do_flip) {
-        TriEdge nn[4];
-        nn[0] = curr.prev().sym(); // [newv, right]
-        nn[1] = currsym.next().sym(); // [right, top]
-        nn[2] = currsym.prev().sym(); // [top, left]
-        nn[3] = curr.next().sym(); // [left, newv]
-        curr.set(top, newvertex, right);
-        currsym.set(newvertex, top, left);
-        if(left == this->_infvrt) {
-          curr.tri->clear_dummy();
-          this->_dummy_tris--;
-        }
-        if(right == this->_infvrt) {
-          currsym.tri->clear_dummy();
-          this->_dummy_tris--;
-        }
-        curr.link(currsym);
-        curr.next().link(nn[0]);
-        curr.prev().link(nn[1]);
-        currsym.next().link(nn[2]);
-        currsym.prev().link(nn[3]);
-        newvertex->adj = curr.next();
-        right->adj = curr.prev();
-        top->adj = currsym.next();
-        left->adj = currsym.prev();
-
-        // todo : update attributes
-        T area = (curr.tri->area + currsym.tri->area) * T(0.5);
-        curr.tri->area = area;
-        currsym.tri->area = area;
-
-        curr = curr.prev();
-        left = top;
-      }
-    }
-
-    if(!do_flip) {
-      curr = curr.next();
-      TriEdge testtri = curr.sym();
-
-      if(left == first) {
-        searchtri = curr.next();
-        this->_recenttri = curr;
-        return insertresult;
-      }
-
-      curr = testtri.next();
-      right = left;
-      left = curr.dest();
-    }
-  } */
-
   return insertresult;
+}
+
+template <typename T>
+void Triangulation<T>::recover_segment(Vertex* endpoint1, Vertex* endpoint2,
+                                       int mark) {
+  TriEdge ep1tri = endpoint1->adj;
 }
 
 template <typename T>
@@ -502,6 +441,59 @@ void Triangulation<T>::lawson_flip(Vertex* v, TriEdge& start) {
   }
 }
 
+/**
+ * @brief find the first triangle on the path from one point to another, the
+ * path is drawn from the origin of 'starttri' to the point 'endv'.
+ * @param starttri the adjacent triangle of first point
+ * @param endv second point
+ * @return 0 if the starttri's edge which opposite its origin vertex intersect the path,
+ * 1 if 'starttri' collinear with the path, -1 if the prev edge of 'starttri'
+ * collinear with the path.
+ * @note the origin of the starttri
+ * does not change, even though the triangle returned may change.
+ */
+template <typename T>
+int Triangulation<T>::find_direction(TriEdge& starttri, Vertex* endv) {
+  Vertex* startv = starttri.org();
+  Vertex* rightv = starttri.dest();
+  Vertex* leftv  = starttri.apex();
+
+  ORIENTATION leftori = orient2d(startv, endv, leftv);
+  ORIENTATION rightori = orient2d(startv, endv, rightv);
+  bool leftrotflag = (leftori == ORIENTATION::NEGATIVE);
+  bool rightrotflag = (rightori == ORIENTATION::POSITIVE);
+
+  if(leftrotflag && rightrotflag) {
+    TriEdge ccw = starttri.ccw();
+    if(ccw.tri->is_dummy()) 
+      leftrotflag = false;
+    else
+      rightrotflag = false;
+  }
+  
+  while(leftrotflag) {
+    starttri = starttri.ccw();
+    leftv = starttri.apex();
+    rightori = leftori;
+    leftori = orient2d(startv, endv, leftv);
+    leftrotflag = (leftori == ORIENTATION::NEGATIVE);
+  }
+  while(rightrotflag) {
+    starttri = starttri.cw();
+    rightv = starttri.dest();
+    leftori = rightori;
+    rightori = orient2d(startv, endv, rightv);
+    rightrotflag = (rightori == ORIENTATION::POSITIVE);
+  }
+
+  if(leftori == ORIENTATION::ON) 
+    return -1;
+  else if(rightori == ORIENTATION::ON)
+    return 1;
+  else
+    return 0;
+}
+
 template <typename T>
 int Triangulation<T>::incremental_delaunay() {
   Triangle* firstT = first_tri();
@@ -522,6 +514,42 @@ int Triangulation<T>::incremental_delaunay() {
   }
 
   return 1;
+}
+
+template <typename T>
+void Triangulation<T>::recover_segments(
+    const std::vector<std::pair<unsigned, unsigned>>& segs,
+    const std::vector<int>& marks) {
+  for (unsigned i = 0; i < segs.size(); ++i) {
+    unsigned sid1 = segs[i].first;
+    unsigned sid2 = segs[i].second;
+    if (sid1 >= this->_vertices.size()) {
+      std::cerr << "Error : Invalid first endpoint of segment " << i << '.\n';
+      quit(TRIANGULATION_QUIT_ON_INPUT_ERROR);
+    }
+    if (sid2 >= this->_vertices.size()) {
+      std::cerr << "Error : Invalid second endpoint of segment " << i << '.\n';
+      quit(TRIANGULATION_QUIT_ON_INPUT_ERROR);
+    }
+
+    Vertex* endpoint1 = this->_vertices[sid1];
+    Vertex* endpoint2 = this->_vertices[sid2];
+    if (endpoint1->type == this->UNUSEDVERTEX) {
+      if (endpoint1->pair != nullptr) {
+        endpoint1 = endpoint1->pair;
+      }
+    }
+    if (endpoint2->type == this->UNUSEDVERTEX) {
+      if (endpoint2->pair != nullptr) {
+        endpoint2 = endpoint2->pair;
+      }
+    }
+
+    int mark = 0;
+    if (i < marks.size()) mark = marks[i];
+
+    recover_segment(endpoint1, endpoint2, mark);
+  }
 }
 
 template <typename T>

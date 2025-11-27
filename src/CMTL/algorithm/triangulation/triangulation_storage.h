@@ -40,6 +40,8 @@ class TriangulationStorage {
   static constexpr unsigned char _edge_next_tbl[3] = {1, 2, 0};
   static constexpr unsigned char _edge_prev_tbl[3] = {2, 0, 1};
 
+  static constexpr unsigned int segment_flag_bit = 6;
+
  protected:
   struct Vertex;
   struct Triangle;
@@ -59,12 +61,18 @@ class TriangulationStorage {
     TriEdge next() const;
     TriEdge prev() const;
     TriEdge sym() const;
+    TriEdge ccw() const;
+    TriEdge cw() const;
+
+    bool is_segment() const;
+    void set_segment();
+    void clear_segment();
   };
 
   struct Vertex {
     Point crd;
     TriEdge adj;
-    Vertex* pair;
+    Vertex* pair = nullptr;
     int idx;
     char type;
   };
@@ -184,6 +192,33 @@ template <typename T>
 typename TriangulationStorage<T>::TriEdge
 TriangulationStorage<T>::TriEdge::sym() const {
   return tri->nei[ori];
+}
+
+template <typename T>
+typename TriangulationStorage<T>::TriEdge
+TriangulationStorage<T>::TriEdge::ccw() const {
+  return tri->nei[_edeg_prev_tbl[ori]];
+}
+
+template <typename T>
+typename TriangulationStorage<T>::TriEdge
+TriangulationStorage<T>::TriEdge::cw() const {
+  return sym().next();
+}
+
+template <typename T>
+bool TriangulationStorage<T>::TriEdge::is_segment() const {
+  return tri->flags & (1 << (segment_flag_bit + ori));
+}
+
+template <typename T>
+void TriangulationStorage<T>::TriEdge::set_segment() {
+  tri->flags |= (1 << (segment_flag_bit + ori));
+}
+
+template <typename T>
+void TriangulationStorage<T>::TriEdge::clear_segment() {
+  tri->flags &= ~(1 << (segment_flag_bit + ori));
 }
 
 // Triangle
