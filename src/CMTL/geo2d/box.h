@@ -93,12 +93,12 @@ class Box {
   /**
    * @brief get the writable left bottom point
    */
-  Point<T> left_bottom() { return Point<T>(left(), bottom()); }
+  Point<T> left_bottom() const { return Point<T>(left(), bottom()); }
 
   /**
    * @brief get the writable right top point
    */
-  Point<T> right_top() { return Point<T>(right(), top()); }
+  Point<T> right_top() const { return Point<T>(right(), top()); }
 
   /**
    * @brief get the left top point
