@@ -106,7 +106,7 @@ class TriangulationStorage {
   arraypool<Triangle*> _triangles;
 
   Vertex* _infvrt;
-  TriEdge _recenttri;
+  TriEdge _recenttri; // must make sure it's not in a dummy triangle
 
   int _unused_vrts;
   int _dummy_tris;
@@ -197,7 +197,7 @@ TriangulationStorage<T>::TriEdge::sym() const {
 template <typename T>
 typename TriangulationStorage<T>::TriEdge
 TriangulationStorage<T>::TriEdge::ccw() const {
-  return tri->nei[_edeg_prev_tbl[ori]];
+  return tri->nei[_edge_prev_tbl[ori]];
 }
 
 template <typename T>

@@ -403,6 +403,12 @@ void Triangulation<T>::flip22(TriEdge& te) {
   te.ori = 0;
 }
 
+/**
+ * @brief perform lawson flip around a vertex to recover delaunay property
+ * @param v center vertex
+ * @param start an edge opposite to v
+ * @note the start may changed, but it always opposite to v and in a non-dummy triangle
+ */
 template <typename T>
 void Triangulation<T>::lawson_flip(Vertex* v, TriEdge& start) {
   Vertex* first = start.org();
@@ -435,7 +441,13 @@ void Triangulation<T>::lawson_flip(Vertex* v, TriEdge& start) {
     }
 
     if (!do_flip) {
-      if (left == first) return;
+      if (left == first) {
+        // done, we must make sure the start.tri is not a dummy triangle
+        while(start.tri->is_dummy()) {
+          start = start.next().sym().next();
+        }
+        return;
+      }
       start = start.next().sym().next();
     }
   }
@@ -524,11 +536,11 @@ void Triangulation<T>::recover_segments(
     unsigned sid1 = segs[i].first;
     unsigned sid2 = segs[i].second;
     if (sid1 >= this->_vertices.size()) {
-      std::cerr << "Error : Invalid first endpoint of segment " << i << '.\n';
+      std::cerr << "Error : Invalid first endpoint of segment " << i << ".\n";
       quit(TRIANGULATION_QUIT_ON_INPUT_ERROR);
     }
     if (sid2 >= this->_vertices.size()) {
-      std::cerr << "Error : Invalid second endpoint of segment " << i << '.\n';
+      std::cerr << "Error : Invalid second endpoint of segment " << i << ".\n";
       quit(TRIANGULATION_QUIT_ON_INPUT_ERROR);
     }
 
