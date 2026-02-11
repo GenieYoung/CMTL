@@ -22,7 +22,8 @@ class Triangulation : public Internal::TriangulationStorage<T> {
   using typename Internal::TriangulationStorage<T>::Vertex;
   using typename Internal::TriangulationStorage<T>::TriEdge;
   using typename Internal::TriangulationStorage<T>::Triangle;
-  using typename Internal::TriangulationStorage<T>::Segment;
+  // using typename Internal::TriangulationStorage<T>::Subsegment;
+  // using typename Internal::TriangulationStorage<T>::OriSubsegment;
 
  public:
   enum InsertVertexResult { SUCCESSFULVERTEX, DUPLICATEVERTEX };
@@ -48,6 +49,8 @@ class Triangulation : public Internal::TriangulationStorage<T> {
   void flip22(TriEdge& te);
   void lawson_flip(Vertex* v, TriEdge& start);
   int find_direction(TriEdge& starttri, Vertex* endv);
+  int scout_segment(TriEdge& searchtri, Vertex* endpoint2, int mark);
+  void insert_subsegment(TriEdge& te, int mark);
 
  private:
   ORIENTATION orient2d(Vertex* v0, Vertex* v1, Vertex* v2) const;
@@ -135,7 +138,52 @@ typename Triangulation<T>::InsertVertexResult Triangulation<T>::insert_vertex(
 template <typename T>
 void Triangulation<T>::recover_segment(Vertex* endpoint1, Vertex* endpoint2,
                                        int mark) {
-  TriEdge ep1tri = endpoint1->adj;
+  TriEdge p1tri = endpoint1->adj;
+  if(scout_segment(p1tri, endpoint2, mark)) {
+    return;
+  }
+  endpoint1 = p1tri.org();
+
+  TriEdge p2tri = endpoint2->adj;
+  if(scout_segment(p2tri, endpoint1, mark)) {
+    return;
+  }
+  endpoint2 = p2tri.org();
+}
+
+template <typename T>
+int Triangulation<T>::scout_segment(TriEdge& searchtri, Vertex* endpoint2, int mark) {
+  int collinear = find_direction(searchtri, endpoint2);
+  Vertex* rightv = searchtri.dest();
+  Vertex* leftv = searchtri.apex();
+  if(is_same(leftv, endpoint2)) {
+    searchtri = searchtri.prev();
+    insert_subsegment(searchtri, mark);
+    return 1;
+  } else if(is_same(rightv, endpoint2)) {
+    insert_subsegment(searchtri, mark);
+    return 1;
+  } else if(collinear == -1) {
+    searchtri = searchtri.prev();
+    insert_subsegment(searchtri, mark);
+    return scout_segment(searchtri, endpoint2, mark);
+  } else if(collinear == 1) {
+    insert_subsegment(searchtri, mark);
+    searchtri = searchtri.next();
+    return scout_segment(searchtri, endpoint2, mark);
+  } else {
+    TriEdge crosstri = searchtri.next();
+    if(crosstri.is_segment()) {
+      return 0;
+    } else {
+      return scout_segment(searchtri, endpoint2, mark);
+    }
+  }
+}
+
+template <typename T>
+void Triangulation<T>::insert_subsegment(TriEdge& te, int mark) {
+
 }
 
 template <typename T>
@@ -407,7 +455,7 @@ void Triangulation<T>::flip22(TriEdge& te) {
  * @brief perform lawson flip around a vertex to recover delaunay property
  * @param v center vertex
  * @param start an edge opposite to v
- * @note the start may changed, but it always opposite to v and in a non-dummy triangle
+ * @note the `start` may changed, but it always opposite to v and in a non-dummy triangle
  */
 template <typename T>
 void Triangulation<T>::lawson_flip(Vertex* v, TriEdge& start) {

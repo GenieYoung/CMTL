@@ -4,6 +4,8 @@
 #include "../../geo2d/point.h"
 #include "triangulation_storage_fwd.h"
 
+#include <unordered_map>
+
 namespace CMTL {
 namespace algorithm {
 namespace Internal {
@@ -45,6 +47,7 @@ class TriangulationStorage {
  protected:
   struct Vertex;
   struct Triangle;
+  struct Segment;
 
   struct TriEdge {
     Triangle* tri;
@@ -67,6 +70,7 @@ class TriangulationStorage {
     bool is_segment() const;
     void set_segment();
     void clear_segment();
+    Segment* get_segment() const;
   };
 
   struct Vertex {
@@ -80,19 +84,21 @@ class TriangulationStorage {
   struct Triangle {
     Vertex* vrt[3];
     TriEdge nei[3];
+    int flags;
+    int mark;
+    T area;
 
     Triangle();
     void init();
 
-    int flags;
-    int mark;
-    T area;
     bool is_dummy() const;
     void set_dummy();
     void clear_dummy();
   };
 
-  typedef Triangle Segment;
+  struct Segment {
+    
+  };
 
   //   template<typename T>
   //   struct arraypool
@@ -104,6 +110,13 @@ class TriangulationStorage {
 
   arraypool<Vertex*> _vertices;
   arraypool<Triangle*> _triangles;
+
+  struct EdgeHash {
+    size_t operator()(const std::pair<uint, uint>& e) const {
+      return std::hash<uint>()(e.first) ^ std::hash<uint>()(e.second);
+    }
+  };
+  std::unordered_map<std::pair<uint, uint>, Segment*, EdgeHash> _segments;
 
   Vertex* _infvrt;
   TriEdge _recenttri; // must make sure it's not in a dummy triangle
@@ -219,6 +232,18 @@ void TriangulationStorage<T>::TriEdge::set_segment() {
 template <typename T>
 void TriangulationStorage<T>::TriEdge::clear_segment() {
   tri->flags &= ~(1 << (segment_flag_bit + ori));
+}
+
+template <typename T>
+typename TriangulationStorage<T>::Segment* TriangulationStorage<T>::TriEdge::get_segment() const {
+  uint a = std::min(org()->idx, dest()->idx);
+  uint b = std::max(org()->idx, dest()->idx);
+  auto it = _segments.find({a, b});
+  if(it != _segments.end()) {
+    return it->second;
+  } else {
+    return nullptr;
+  }
 }
 
 // Triangle
