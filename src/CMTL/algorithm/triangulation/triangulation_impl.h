@@ -139,41 +139,42 @@ template <typename T>
 void Triangulation<T>::recover_segment(Vertex* endpoint1, Vertex* endpoint2,
                                        int mark) {
   TriEdge p1tri = endpoint1->adj;
-  if(scout_segment(p1tri, endpoint2, mark)) {
+  if (scout_segment(p1tri, endpoint2, mark)) {
     return;
   }
   endpoint1 = p1tri.org();
 
   TriEdge p2tri = endpoint2->adj;
-  if(scout_segment(p2tri, endpoint1, mark)) {
+  if (scout_segment(p2tri, endpoint1, mark)) {
     return;
   }
   endpoint2 = p2tri.org();
 }
 
 template <typename T>
-int Triangulation<T>::scout_segment(TriEdge& searchtri, Vertex* endpoint2, int mark) {
+int Triangulation<T>::scout_segment(TriEdge& searchtri, Vertex* endpoint2,
+                                    int mark) {
   int collinear = find_direction(searchtri, endpoint2);
   Vertex* rightv = searchtri.dest();
   Vertex* leftv = searchtri.apex();
-  if(is_same(leftv, endpoint2)) {
+  if (is_same(leftv, endpoint2)) {
     searchtri = searchtri.prev();
     insert_subsegment(searchtri, mark);
     return 1;
-  } else if(is_same(rightv, endpoint2)) {
+  } else if (is_same(rightv, endpoint2)) {
     insert_subsegment(searchtri, mark);
     return 1;
-  } else if(collinear == -1) {
+  } else if (collinear == -1) {
     searchtri = searchtri.prev();
     insert_subsegment(searchtri, mark);
     return scout_segment(searchtri, endpoint2, mark);
-  } else if(collinear == 1) {
+  } else if (collinear == 1) {
     insert_subsegment(searchtri, mark);
     searchtri = searchtri.next();
     return scout_segment(searchtri, endpoint2, mark);
   } else {
     TriEdge crosstri = searchtri.next();
-    if(crosstri.is_segment()) {
+    if (crosstri.is_segment()) {
       return 0;
     } else {
       return scout_segment(searchtri, endpoint2, mark);
@@ -182,9 +183,7 @@ int Triangulation<T>::scout_segment(TriEdge& searchtri, Vertex* endpoint2, int m
 }
 
 template <typename T>
-void Triangulation<T>::insert_subsegment(TriEdge& te, int mark) {
-
-}
+void Triangulation<T>::insert_subsegment(TriEdge& te, int mark) {}
 
 template <typename T>
 typename Triangulation<T>::LocateResult Triangulation<T>::locate(
@@ -455,7 +454,8 @@ void Triangulation<T>::flip22(TriEdge& te) {
  * @brief perform lawson flip around a vertex to recover delaunay property
  * @param v center vertex
  * @param start an edge opposite to v
- * @note the `start` may changed, but it always opposite to v and in a non-dummy triangle
+ * @note the `start` may changed, but it always opposite to v and in a non-dummy
+ * triangle
  */
 template <typename T>
 void Triangulation<T>::lawson_flip(Vertex* v, TriEdge& start) {
@@ -491,7 +491,7 @@ void Triangulation<T>::lawson_flip(Vertex* v, TriEdge& start) {
     if (!do_flip) {
       if (left == first) {
         // done, we must make sure the start.tri is not a dummy triangle
-        while(start.tri->is_dummy()) {
+        while (start.tri->is_dummy()) {
           start = start.next().sym().next();
         }
         return;
@@ -506,9 +506,9 @@ void Triangulation<T>::lawson_flip(Vertex* v, TriEdge& start) {
  * path is drawn from the origin of 'starttri' to the point 'endv'.
  * @param starttri the adjacent triangle of first point
  * @param endv second point
- * @return 0 if the starttri's edge which opposite its origin vertex intersect the path,
- * 1 if 'starttri' collinear with the path, -1 if the prev edge of 'starttri'
- * collinear with the path.
+ * @return 0 if the starttri's edge which opposite its origin vertex intersect
+ * the path, 1 if 'starttri' collinear with the path, -1 if the prev edge of
+ * 'starttri' collinear with the path.
  * @note the origin of the starttri
  * does not change, even though the triangle returned may change.
  */
@@ -516,29 +516,29 @@ template <typename T>
 int Triangulation<T>::find_direction(TriEdge& starttri, Vertex* endv) {
   Vertex* startv = starttri.org();
   Vertex* rightv = starttri.dest();
-  Vertex* leftv  = starttri.apex();
+  Vertex* leftv = starttri.apex();
 
   ORIENTATION leftori = orient2d(startv, endv, leftv);
   ORIENTATION rightori = orient2d(startv, endv, rightv);
   bool leftrotflag = (leftori == ORIENTATION::NEGATIVE);
   bool rightrotflag = (rightori == ORIENTATION::POSITIVE);
 
-  if(leftrotflag && rightrotflag) {
+  if (leftrotflag && rightrotflag) {
     TriEdge ccw = starttri.ccw();
-    if(ccw.tri->is_dummy()) 
+    if (ccw.tri->is_dummy())
       leftrotflag = false;
     else
       rightrotflag = false;
   }
-  
-  while(leftrotflag) {
+
+  while (leftrotflag) {
     starttri = starttri.ccw();
     leftv = starttri.apex();
     rightori = leftori;
     leftori = orient2d(startv, endv, leftv);
     leftrotflag = (leftori == ORIENTATION::NEGATIVE);
   }
-  while(rightrotflag) {
+  while (rightrotflag) {
     starttri = starttri.cw();
     rightv = starttri.dest();
     leftori = rightori;
@@ -546,9 +546,9 @@ int Triangulation<T>::find_direction(TriEdge& starttri, Vertex* endv) {
     rightrotflag = (rightori == ORIENTATION::POSITIVE);
   }
 
-  if(leftori == ORIENTATION::ON) 
+  if (leftori == ORIENTATION::ON)
     return -1;
-  else if(rightori == ORIENTATION::ON)
+  else if (rightori == ORIENTATION::ON)
     return 1;
   else
     return 0;

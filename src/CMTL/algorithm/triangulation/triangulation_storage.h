@@ -96,9 +96,7 @@ class TriangulationStorage {
     void clear_dummy();
   };
 
-  struct Segment {
-    
-  };
+  struct Segment {};
 
   //   template<typename T>
   //   struct arraypool
@@ -119,7 +117,7 @@ class TriangulationStorage {
   std::unordered_map<std::pair<uint, uint>, Segment*, EdgeHash> _segments;
 
   Vertex* _infvrt;
-  TriEdge _recenttri; // must make sure it's not in a dummy triangle
+  TriEdge _recenttri;  // must make sure it's not in a dummy triangle
 
   int _unused_vrts;
   int _dummy_tris;
@@ -214,8 +212,8 @@ TriangulationStorage<T>::TriEdge::ccw() const {
 }
 
 template <typename T>
-typename TriangulationStorage<T>::TriEdge
-TriangulationStorage<T>::TriEdge::cw() const {
+typename TriangulationStorage<T>::TriEdge TriangulationStorage<T>::TriEdge::cw()
+    const {
   return sym().next();
 }
 
@@ -235,11 +233,12 @@ void TriangulationStorage<T>::TriEdge::clear_segment() {
 }
 
 template <typename T>
-typename TriangulationStorage<T>::Segment* TriangulationStorage<T>::TriEdge::get_segment() const {
+typename TriangulationStorage<T>::Segment*
+TriangulationStorage<T>::TriEdge::get_segment() const {
   uint a = std::min(org()->idx, dest()->idx);
   uint b = std::max(org()->idx, dest()->idx);
   auto it = _segments.find({a, b});
-  if(it != _segments.end()) {
+  if (it != _segments.end()) {
     return it->second;
   } else {
     return nullptr;

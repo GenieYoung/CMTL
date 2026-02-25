@@ -79,7 +79,8 @@ class VectorT {
    */
   template <typename TT, unsigned DIM2, typename Derived2>
   explicit VectorT(const VectorT<TT, DIM2, Derived2>& other) : VectorT() {
-    // in some machine, default construct may not initialize values to 0, so we call default construct first
+    // in some machine, default construct may not initialize values to 0, so we
+    // call default construct first
     operator=(other);
   }
 

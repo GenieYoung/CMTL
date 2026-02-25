@@ -66,7 +66,7 @@ void test5() {
 }
 
 int main() {
-  srand(42); 
+  srand(42);
 
   test1();
   test2();
