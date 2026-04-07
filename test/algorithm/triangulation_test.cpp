@@ -7,7 +7,8 @@
 void test1() {
   typedef CMTL::geo2d::Point<double> Point;
   CMTL::geo2d::PSLG<double> pslg;
-  pslg._points = std::vector<Point>{{-1, 0}, {1, 0}, {0, 0.5}, {0, 1}};
+  pslg._points =
+      std::vector<Point>{Point{-1, 0}, Point{1, 0}, Point{0, 0.5}, Point{0, 1}};
   CMTL::algorithm::Triangulation<double> T(pslg);
   CMTL::io::write_obj(T, "triangulation_test1.obj");
 }
@@ -59,8 +60,9 @@ void test4() {
 void test5() {
   typedef CMTL::geo2d::Point<double> Point;
   CMTL::geo2d::PSLG<double> pslg;
-  pslg._points = std::vector<Point>{{-1, 0},  {-1, 0}, {0, 0}, {1, 0},
-                                    {0, 0.5}, {0, 1},  {0, 0}};
+  pslg._points =
+      std::vector<Point>{Point{-1, 0},  Point{-1, 0}, Point{0, 0}, Point{1, 0},
+                         Point{0, 0.5}, Point{0, 1},  Point{0, 0}};
   CMTL::algorithm::Triangulation<double> T(pslg);
   CMTL::io::write_obj(T, "triangulation_test5.obj");
 }

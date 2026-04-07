@@ -5,109 +5,315 @@
 using namespace CMTL;
 
 TEST(VectorTest, ConstructTest) {
-  Vec1d v1d_0(mpq_class(1, 2));
-  EXPECT_EQ(v1d_0.dimension(), 1);
-  EXPECT_EQ(v1d_0[0], 0.5);
+  // default constructor
+  Vec1i v1i_from_default_construct;
+  Vec2i v2i_from_default_construct;
+  Vec3i v3i_from_default_construct;
+  EXPECT_EQ(v1i_from_default_construct[0], 0);
+  EXPECT_EQ(v2i_from_default_construct[0], 0);
+  EXPECT_EQ(v2i_from_default_construct[1], 0);
+  EXPECT_EQ(v3i_from_default_construct[0], 0);
+  EXPECT_EQ(v3i_from_default_construct[1], 0);
+  EXPECT_EQ(v3i_from_default_construct[2], 0);
+#ifdef USE_GMP
+  Vec3r v3r_from_default_construct;
+  EXPECT_EQ(v3r_from_default_construct[0], 0);
+  EXPECT_EQ(v3r_from_default_construct[1], 0);
+  EXPECT_EQ(v3r_from_default_construct[2], 0);
+#endif
 
-  Vec2d v2d_0;
-  EXPECT_EQ(v2d_0.dimension(), 2);
-  // EXPECT_DEATH({v2d_0[2];}, "index out of range");
-  EXPECT_EQ(v2d_0[0], 0);
-  EXPECT_EQ(v2d_0[1], 0);
+  // filled constructor
+  Vec2f v2f_from_filled_construct(2);
+  Vec3f v3f_from_filled_construct(3);
+  EXPECT_EQ(v2f_from_filled_construct[0], 2);
+  EXPECT_EQ(v2f_from_filled_construct[1], 2);
+  EXPECT_EQ(v3f_from_filled_construct[0], 3);
+  EXPECT_EQ(v3f_from_filled_construct[1], 3);
+  EXPECT_EQ(v3f_from_filled_construct[2], 3);
+#ifdef USE_GMP
+  Vec3r v3r_from_filled_construct(mpq_class(1, 2));
+  EXPECT_EQ(v3r_from_filled_construct[0], mpq_class(1, 2));
+  EXPECT_EQ(v3r_from_filled_construct[1], mpq_class(1, 2));
+  EXPECT_EQ(v3r_from_filled_construct[2], mpq_class(1, 2));
+  EXPECT_FALSE((std::is_constructible_v<Vec3f, mpq_class>));
+#endif
 
-  EXPECT_EQ(Vec2d::Origin[0], 0);
-  EXPECT_EQ(Vec2d::Origin[1], 0);
+  // multi values constructor
+  Vec1d v1d_from_multivalue_construct(1);
+  Vec2d v2d_from_multivalue_construct(2, 3.0);
+  Vec3d v3d_from_multivalue_construct(4, 5.0, 6);
+  EXPECT_EQ(v1d_from_multivalue_construct[0], 1);
+  EXPECT_EQ(v2d_from_multivalue_construct[0], 2);
+  EXPECT_EQ(v2d_from_multivalue_construct[1], 3);
+  EXPECT_EQ(v3d_from_multivalue_construct[0], 4);
+  EXPECT_EQ(v3d_from_multivalue_construct[1], 5);
+  EXPECT_EQ(v3d_from_multivalue_construct[2], 6);
+  EXPECT_FALSE((std::is_constructible_v<Vec3d, double, double>));
+#ifdef USE_GMP
+  Vec1d v1d_from_multivalue_construct_2(mpq_class(1, 2));
+  Vec3r v3r_from_multivalue_construct(0.5, 5, mpq_class(1, 2));
+  Vec3d v3d_from_multivalue_construct_2(mpq_class(1, 2), 5, 0.5);
+  EXPECT_EQ(v1d_from_multivalue_construct_2[0], 0.5);
+  EXPECT_EQ(v3r_from_multivalue_construct[0], 0.5);
+  EXPECT_EQ(v3r_from_multivalue_construct[1], 5);
+  EXPECT_EQ(v3r_from_multivalue_construct[2], mpq_class(1, 2));
+  EXPECT_EQ(v3d_from_multivalue_construct_2[0], 0.5);
+  EXPECT_EQ(v3d_from_multivalue_construct_2[1], 5);
+  EXPECT_EQ(v3d_from_multivalue_construct_2[2], 0.5);
+#endif
 
-  v2d_0.fill(1);
-  EXPECT_EQ(v2d_0[0], 1);
-  EXPECT_EQ(v2d_0[1], 1);
+  // construct from initializer list
+  Vec1d v1d_from_initializer_list{1};
+  Vec2d v2d_from_initializer_list{2, 3.0};
+  Vec3d v3d_from_initializer_list{4, 5, 6.0};
+  EXPECT_EQ(v1d_from_initializer_list[0], 1);
+  EXPECT_EQ(v2d_from_initializer_list[0], 2);
+  EXPECT_EQ(v2d_from_initializer_list[1], 3);
+  EXPECT_EQ(v3d_from_initializer_list[0], 4);
+  EXPECT_EQ(v3d_from_initializer_list[1], 5);
+  EXPECT_EQ(v3d_from_initializer_list[2], 6);
+  EXPECT_FALSE((std::is_convertible_v<double, Vec1d>));
+  EXPECT_FALSE((std::is_convertible_v<std::initializer_list<double>, Vec3d>));
+#ifdef USE_GMP
+  Vec3r v3r_from_initializer_list{mpq_class(1, 2), 0, 0.5};
+  EXPECT_EQ(v3r_from_initializer_list[0], 0.5);
+  EXPECT_EQ(v3r_from_initializer_list[1], 0);
+  EXPECT_EQ(v3r_from_initializer_list[2], 0.5);
+#endif
 
-  Vec2d v2d_1(0, mpq_class(1, 2));
-  EXPECT_EQ(v2d_1[0], 0);
-  EXPECT_EQ(v2d_1[1], 0.5);
+  // construct from build-in array
+  double v3d_builtin_array[3] = {1.1, 2.2, 3.3};
+  Vec3d v3d_from_builtin_array(v3d_builtin_array);
+  EXPECT_EQ(v3d_from_builtin_array[0], 1.1);
+  EXPECT_EQ(v3d_from_builtin_array[1], 2.2);
+  EXPECT_EQ(v3d_from_builtin_array[2], 3.3);
+  EXPECT_FALSE((std::is_convertible_v<double[3], Vec3d>));
+#ifdef USE_GMP
+  mpq_class v3r_builtin_array[3] = {mpq_class(1, 2), mpq_class(2, 4),
+                                    mpq_class(3, 6)};
+  Vec3d v3d_from_builtin_array_2(v3r_builtin_array);
+  EXPECT_EQ(v3d_from_builtin_array_2[0], 0.5);
+  EXPECT_EQ(v3d_from_builtin_array_2[1], 0.5);
+  EXPECT_EQ(v3d_from_builtin_array_2[2], 0.5);
+#endif
 
-  Vec2i v2i_0(1.5, -0.5);
-  EXPECT_EQ(v2i_0[0], 1);
-  EXPECT_EQ(v2i_0[1], 0);
+  // construct from array
+  std::array<double, 3> v3d_array = {1.1, 2.2, 3.3};
+  Vec3d v3d_from_array(v3d_array);
+  EXPECT_EQ(v3d_from_array[0], 1.1);
+  EXPECT_EQ(v3d_from_array[1], 2.2);
+  EXPECT_EQ(v3d_from_array[2], 3.3);
+  EXPECT_FALSE((std::is_convertible_v<std::array<double, 3>, Vec3d>));
+#ifdef USE_GMP
+  std::array<mpq_class, 3> v3r_array = {mpq_class(1, 2), mpq_class(2, 4),
+                                        mpq_class(3, 6)};
+  Vec3d v3d_from_array_2(v3r_array);
+  EXPECT_EQ(v3d_from_array_2[0], 0.5);
+  EXPECT_EQ(v3d_from_array_2[1], 0.5);
+  EXPECT_EQ(v3d_from_array_2[2], 0.5);
+#endif
 
-  v2d_1 = v2d_0;
-  EXPECT_EQ(v2d_1, v2d_0);
+  // cast constructor
+  Vec3d v3d_from_cast_construct(Vec2d(1.1, 2.2));
+  EXPECT_EQ(v3d_from_cast_construct[0], 1.1);
+  EXPECT_EQ(v3d_from_cast_construct[1], 2.2);
+  EXPECT_EQ(v3d_from_cast_construct[2], 0);
+  Vec2d v2d_from_cast_construct(Vec3d(1.1, 2, 3.3));
+  EXPECT_EQ(v2d_from_cast_construct[0], 1.1);
+  EXPECT_EQ(v2d_from_cast_construct[1], 2);
+  Vec3i v3i_from_cast_construct(Vec2d(1.1, 2.2));
+  EXPECT_EQ(v3i_from_cast_construct[0], 1);
+  EXPECT_EQ(v3i_from_cast_construct[1], 2);
+  EXPECT_EQ(v3i_from_cast_construct[2], 0);
+  EXPECT_FALSE((std::is_convertible_v<Vec2d, Vec3d>));
+  EXPECT_FALSE((std::is_convertible_v<Vec3d, Vec2d>));
+  EXPECT_FALSE((std::is_convertible_v<Vec2d, Vec3i>));
+#ifdef USE_GMP
+  Vec3d v3d_from_cast_construct_2(Vec2r(mpq_class(1, 2), mpq_class(1, 4)));
+  EXPECT_EQ(v3d_from_cast_construct_2[0], 0.5);
+  EXPECT_EQ(v3d_from_cast_construct_2[1], 0.25);
+  EXPECT_EQ(v3d_from_cast_construct_2[2], 0);
+  Vec2d v2d_from_cast_construct_2(
+      Vec3r(mpq_class(1, 2), mpq_class(1, 4), mpq_class(1, 8)));
+  EXPECT_EQ(v2d_from_cast_construct_2[0], 0.5);
+  EXPECT_EQ(v2d_from_cast_construct_2[1], 0.25);
+#endif
 
-  v2d_1 = Vec3d(1, 2, 3);
-  EXPECT_EQ(v2d_1[0], 1);
-  EXPECT_EQ(v2d_1[1], 2);
-  EXPECT_EQ(v2d_1.dimension(), 2);
+  // assign operator
+  Vec2d v2d_assign_operator_from(1.1, 2.2);
+  Vec2d v2d_assign_operator_to;
+  v2d_assign_operator_to = v2d_assign_operator_from;
+  EXPECT_EQ(v2d_assign_operator_to, v2d_assign_operator_from);
 
-  Vec2d v2d_2(VecXT<mpq_class, 2>(mpq_class(1, 3), mpq_class(1, 2)));
-  EXPECT_DOUBLE_EQ(v2d_2[0], 1 / 3.0);
-  EXPECT_EQ(v2d_2[1], 0.5);
-
-  Vec2d v2d_3({0, mpq_class(1, 2)});
-  EXPECT_EQ(v2d_3[0], 0);
-  EXPECT_EQ(v2d_3[1], 0.5);
-
-  Vec2d v2d_4(Vec3d(1, 2, 3));
-  EXPECT_EQ(v2d_4[0], 1);
-  EXPECT_EQ(v2d_4[1], 2);
-
-  Vec3d v3d_0(1);
-  EXPECT_EQ(v3d_0[0], 1);
-  EXPECT_EQ(v3d_0[1], 1);
-  EXPECT_EQ(v3d_0[2], 1);
-
-  Vec3d v3d_1(2, 3, 4);
-  v3d_1 = Vec2d(1, 2);
-  EXPECT_EQ(v3d_1[0], 1);
-  EXPECT_EQ(v3d_1[1], 2);
-  EXPECT_EQ(v3d_1[2], 4);
-
-  mpq_class array_0[3] = {1.1, 2.2, 3.3};
-  Vec3d v3d_2(array_0);
-  EXPECT_EQ(v3d_2[0], 1.1);
-  EXPECT_EQ(v3d_2[1], 2.2);
-  EXPECT_EQ(v3d_2[2], 3.3);
-
-  Vec3d v3d_3(Vec1d(1));
-  EXPECT_EQ(v3d_3[0], 1);
-  EXPECT_EQ(v3d_3[1], 0);
-  EXPECT_EQ(v3d_3[2], 0);
+  // cast operator
+  Vec2d v2d_from_cast_operator;
+  v2d_from_cast_operator = Vec3d(-1.1, -2.2, -3.3);
+  EXPECT_EQ(v2d_from_cast_operator[0], -1.1);
+  EXPECT_EQ(v2d_from_cast_operator[1], -2.2);
+  Vec3d v3d_from_cast_operator;
+  v3d_from_cast_operator = Vec2d(-1.1, -2.2);
+  EXPECT_EQ(v3d_from_cast_operator[0], -1.1);
+  EXPECT_EQ(v3d_from_cast_operator[1], -2.2);
+  EXPECT_EQ(v3d_from_cast_operator[2], 0);
+  v3i_from_cast_construct = Vec2d(-1.1, -2.2);
+  EXPECT_EQ(v3i_from_cast_construct[0], -1);
+  EXPECT_EQ(v3i_from_cast_construct[1], -2);
+  EXPECT_EQ(v3i_from_cast_construct[2], 0);
+  Vec2i v2i_from_cast_operator;
+  v2i_from_cast_operator = Vec3d(-1.1, -2.2, -3.3);
+  EXPECT_EQ(v2i_from_cast_operator[0], -1);
+  EXPECT_EQ(v2i_from_cast_operator[1], -2);
+#ifdef USE_GMP
+  Vec2d v2d_from_cast_operator_2;
+  v2d_from_cast_operator_2 =
+      Vec3r(mpq_class(-1, 2), mpq_class(-1, 4), mpq_class(-1, 8));
+  EXPECT_EQ(v2d_from_cast_operator_2[0], -0.5);
+  EXPECT_EQ(v2d_from_cast_operator_2[1], -0.25);
+  Vec3d v3d_from_cast_operator_2;
+  v3d_from_cast_operator_2 = Vec2r(mpq_class(-1, 2), mpq_class(-1, 4));
+  EXPECT_EQ(v3d_from_cast_operator_2[0], -0.5);
+  EXPECT_EQ(v3d_from_cast_operator_2[1], -0.25);
+  EXPECT_EQ(v3d_from_cast_operator_2[2], 0);
+#endif
 }
 
 TEST(VectorTest, OperationTest) {
-  Vec2d v2d_0(0.5, -1.5);
-  Vec2i v2i_0(1, 1);
-  EXPECT_EQ(v2d_0, Vec2d(0.5, -1.5));
-  EXPECT_EQ(v2i_0, Vec2i(1.1, 1.9));
-  EXPECT_NE(v2d_0, Vec2d(0.5, 1.5));
-  EXPECT_NE(v2i_0, Vec2i(0.9, 2.1));
-  EXPECT_EQ(v2d_0 + v2i_0, Vec2d(1.5, -0.5));
-  EXPECT_EQ(v2i_0 + v2d_0, Vec2i(1, 0));
-  EXPECT_EQ(v2d_0 - v2i_0, Vec2d(-0.5, -2.5));
-  EXPECT_EQ(v2i_0 - v2d_0, Vec2i(1, 2));
-  EXPECT_EQ(v2d_0 * v2i_0, -1);
-  EXPECT_EQ(v2i_0 * v2d_0, -1);
-  EXPECT_EQ(v2d_0 * 2, Vec2d(1, -3));
-  EXPECT_EQ(v2i_0 * 2.5, Vec2i(2, 2));
-  EXPECT_EQ(v2d_0 / 2.0, Vec2d(0.25, -0.75));
-  EXPECT_EQ(v2i_0 / 1.5, Vec2i(1, 1));
+  // equality
+  Vec3d v3d_equality_0(1.1, 2, 3.3);
+  Vec3d v3d_equality_1(1.1, 2, 3.3);
+  EXPECT_TRUE(v3d_equality_0 == v3d_equality_1);
+  EXPECT_FALSE(v3d_equality_0 != v3d_equality_1);
 
-  EXPECT_TRUE(v2d_0 < Vec2d(0.6, -1.5));
-  EXPECT_TRUE(v2i_0 < Vec2i(2.1, 0.9));
+  // less
+  Vec3d v3d_less_0(1.1, 2, 3.3);
+  Vec3d v3d_less_1(1.1, 1.9, 3.3);
+  Vec3d v3d_less_2(1.1, 2, 3.2);
+  EXPECT_TRUE(v3d_less_1 < v3d_less_0);
+  EXPECT_TRUE(v3d_less_2 < v3d_less_0);
 
-  EXPECT_EQ(*v2d_0.data(), 0.5);
-  EXPECT_EQ(v2d_0.data()[1], -1.5);
+  // add
+  Vec3d v3d_selfadd_0(1.5, 2, 3.5);
+  v3d_selfadd_0 += Vec3d(0.5, 0, -1.5);
+  EXPECT_EQ(v3d_selfadd_0, Vec3d(2, 2, 2));
+  Vec3i v3i_selfadd_0(1, 2, 3);
+  v3i_selfadd_0 += Vec3d(1.5, 0, -1.5);
+  EXPECT_EQ(v3i_selfadd_0, Vec3i(2, 2, 2));
+  Vec3d v3d_add_0 = Vec3d(1.5, 2, 3.5) + Vec3d(0.5, 0, -1.5);
+  EXPECT_EQ(v3d_add_0, Vec3d(2, 2, 2));
+  Vec3i v3i_add_0 = Vec3i(1, 2, 3) + Vec3d(1.5, 0, -1.5);
+  EXPECT_EQ(v3i_add_0, Vec3i(2, 2, 2));
+#ifdef USE_GMP
+  Vec3d v3d_selfadd_1(1.5, 2, 3.5);
+  v3d_selfadd_1 += Vec3r(mpq_class(1, 2), 0, mpq_class(-3, 2));
+  EXPECT_EQ(v3d_selfadd_1, Vec3d(2, 2, 2));
+  Vec3r v3r_selfadd_0(mpq_class(1, 2), mpq_class(2, 3), mpq_class(5, 4));
+  v3r_selfadd_0 += Vec3r(mpq_class(1, 2), mpq_class(1, 3), mpq_class(-1, 4));
+  EXPECT_EQ(v3r_selfadd_0, Vec3r(1, 1, 1));
+  Vec3d v3d_add_1 =
+      Vec3d(1.5, 2, 3.5) + Vec3r(mpq_class(1, 2), 0, mpq_class(-3, 2));
+  EXPECT_EQ(v3d_add_1, Vec3d(2, 2, 2));
+  Vec3r v3r_add_0 = Vec3r(mpq_class(1, 2), mpq_class(2, 3), mpq_class(5, 4)) +
+                    Vec3r(mpq_class(1, 2), mpq_class(1, 3), mpq_class(-1, 4));
+  EXPECT_EQ(v3r_add_0, Vec3r(1, 1, 1));
+#endif
 
-  VecXT<double, 5> v5d_0(0.2, 0.1, -0.1, 0.3, 0);
-  std::sort(v5d_0.data(), v5d_0.data() + v5d_0.size());
-  EXPECT_EQ(v5d_0, (VecXT<double, 5>(-0.1, 0, 0.1, 0.2, 0.3)));
+  // substract
+  Vec3d v3d_selfsubtract_0(1.5, 2, 3.5);
+  v3d_selfsubtract_0 -= Vec3d(-0.5, 0, 1.5);
+  EXPECT_EQ(v3d_selfsubtract_0, Vec3d(2, 2, 2));
+  Vec3i v3i_selfsubtract_0(1, 2, 3);
+  v3i_selfsubtract_0 -= Vec3d(-1.5, 0, 1.5);
+  EXPECT_EQ(v3i_selfsubtract_0, Vec3i(2, 2, 2));
+  Vec3d v3d_substract_0 = Vec3d(1.5, 2, 3.5) - Vec3d(-0.5, 0, 1.5);
+  EXPECT_EQ(v3d_substract_0, Vec3d(2, 2, 2));
+  Vec3i v3i_subtract_0 = Vec3i(1, 2, 3) - Vec3d(-1.5, 0, 1.5);
+  EXPECT_EQ(v3i_subtract_0, Vec3i(2, 2, 2));
+#ifdef USE_GMP
+  Vec3d v3d_selfsubtract_1(1.5, 2, 3.5);
+  v3d_selfsubtract_1 -= Vec3r(-mpq_class(1, 2), 0, mpq_class(3, 2));
+  EXPECT_EQ(v3d_selfsubtract_1, Vec3d(2, 2, 2));
+  Vec3r v3r_selfsubtract_0(mpq_class(1, 2), mpq_class(2, 3), mpq_class(5, 4));
+  v3r_selfsubtract_0 -=
+      Vec3r(mpq_class(-1, 2), mpq_class(-1, 3), mpq_class(1, 4));
+  EXPECT_EQ(v3r_selfsubtract_0, Vec3r(1, 1, 1));
+  Vec3d v3d_substract_1 =
+      Vec3d(1.5, 2, 3.5) - Vec3r(mpq_class(-1, 2), 0, mpq_class(3, 2));
+  EXPECT_EQ(v3d_substract_1, Vec3d(2, 2, 2));
+  Vec3r v3r_subtract_0 =
+      Vec3r(mpq_class(1, 2), mpq_class(2, 3), mpq_class(5, 4)) -
+      Vec3r(mpq_class(-1, 2), mpq_class(-1, 3), mpq_class(1, 4));
+  EXPECT_EQ(v3r_subtract_0, Vec3r(1, 1, 1));
+#endif
 
-  VecXT<double, 10> v10d_0(0.2, 0.1, -0.4, 0.3, 0.4, 0.3, 0, 0.1, -0.4, 0);
-  EXPECT_EQ(v10d_0.max(), 4);
-  EXPECT_EQ(v10d_0.min(), 2);
-  EXPECT_EQ(v10d_0.max_abs(), 2);
-  EXPECT_EQ(v10d_0.min_abs(), 6);
+  // negative
+  Vec3d v3d_negative(1.5, 0, -1.5);
+  EXPECT_EQ(-v3d_negative, Vec3d(-1.5, 0, 1.5));
+#ifdef USE_GMP
+  Vec3r v3r_negative(mpq_class(1, 2), 0, mpq_class(-1, 2));
+  EXPECT_EQ(-v3r_negative, Vec3r(mpq_class(-1, 2), 0, mpq_class(1, 2)));
+#endif
 
-  EXPECT_EQ(v2d_0.norm_square(), 2.5);
+  // scalar product
+  Vec3d v3d_scalar_product_0(1.5, 0, 2);
+  Vec3d v3d_scalar_product_1(2, 0, 1.5);
+  Vec3i v3i_scalar_product_0(1, 0, 2);
+  EXPECT_EQ(v3d_scalar_product_0 * v3d_scalar_product_1, 6);
+  EXPECT_EQ(v3i_scalar_product_0 * v3d_scalar_product_0, 5);
+  EXPECT_EQ(v3d_scalar_product_0.dot(v3d_scalar_product_1), 6);
+  EXPECT_EQ(v3i_scalar_product_0.dot(v3d_scalar_product_0), 5);
+#ifdef USE_GMP
+  Vec3r v3r_scalar_product_0(mpq_class(2, 1), 0, mpq_class(3, 2));
+  EXPECT_EQ(v3d_scalar_product_0 * v3r_scalar_product_0, 6);
+#endif
+
+  // multiply
+  Vec3d v3d_multiply(1.5, 0, -1.5);
+  EXPECT_EQ(v3d_multiply * 2, Vec3d(3, 0, -3));
+
+  // divide
+  Vec3d v3d_divide(1.5, 0, -3);
+  EXPECT_EQ(v3d_divide / 2, Vec3d(0.75, 0, -1.5));
+
+  // data
+  EXPECT_EQ(*Vec3d(1.1, 2.2, 3.3).data(), 1.1);
+  VecXT<double, 5> v5d_sort(0.2, 0.1, -0.1, 0.3, 0.1);
+  std::sort(v5d_sort.data(), v5d_sort.data() + v5d_sort.size());
+  EXPECT_EQ(v5d_sort, (VecXT<double, 5>(-0.1, 0.1, 0.1, 0.2, 0.3)));
+#ifdef USE_GMP
+  VecXT<mpq_class, 5> v5r_sort(mpq_class(1, 5), mpq_class(1, 10),
+                               mpq_class(-1, 10), mpq_class(3, 10),
+                               mpq_class(1, 10));
+  std::sort(v5r_sort.data(), v5r_sort.data() + v5r_sort.size());
+  EXPECT_EQ(v5r_sort, (VecXT<mpq_class, 5>(mpq_class(-1, 10), mpq_class(1, 10),
+                                           mpq_class(1, 10), mpq_class(1, 5),
+                                           mpq_class(3, 10))));
+#endif
+
+  // min max
+  VecXT<double, 10> v10d_min_max(0.2, 0.1, -0.4, 0.3, 0.4, 0.3, 0, 0.1, -0.4,
+                                 0);
+  EXPECT_EQ(v10d_min_max.max(), 4);
+  EXPECT_EQ(v10d_min_max.min(), 2);
+  EXPECT_EQ(v10d_min_max.max_abs(), 2);
+  EXPECT_EQ(v10d_min_max.min_abs(), 6);
+#ifdef USE_GMP
+  VecXT<mpq_class, 10> v10r_min_max(
+      mpq_class(1, 5), mpq_class(1, 10), mpq_class(-4, 10), mpq_class(-3, 10),
+      mpq_class(4, 10), mpq_class(3, 10), mpq_class(0), mpq_class(1, 10),
+      mpq_class(-4, 10), mpq_class(0));
+  EXPECT_EQ(v10r_min_max.max(), 4);
+  EXPECT_EQ(v10r_min_max.min(), 2);
+  EXPECT_EQ(v10r_min_max.max_abs(), 2);
+  EXPECT_EQ(v10r_min_max.min_abs(), 6);
+#endif
+
+  // measure
+  Vec3d v3d_measure(1, 0, -2);
+  EXPECT_EQ(v3d_measure.norm_square(), 5);
+#ifdef USE_GMP
+  Vec3r v3r_measure(mpq_class(1, 3), mpq_class(0), mpq_class(-2, 5));
+  EXPECT_EQ(v3r_measure.norm_square(), mpq_class(61, 225));
+#endif
 }
 
 // int main()

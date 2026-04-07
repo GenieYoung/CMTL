@@ -17,13 +17,15 @@ namespace CMTL {
 /* auxiliary class for number type conversion */
 template <typename T_IN, typename T_OUT>
 struct util_cast_impl {
-  static T_OUT cast(const T_IN& v) { return static_cast<T_OUT>(v); }
+  static constexpr T_OUT cast(const T_IN& v) noexcept {
+    return static_cast<T_OUT>(v);
+  }
 };
 
 /* template specialization class, used for converting number type to string */
 template <typename T_IN>
 struct util_cast_impl<T_IN, std::string> {
-  static std::string cast(const T_IN& v) { return std::to_string(v); }
+  static std::string cast(const T_IN& v) noexcept { return std::to_string(v); }
 };
 
 /**
@@ -32,7 +34,7 @@ struct util_cast_impl<T_IN, std::string> {
  * @tparam T_OUT output number type
  */
 template <typename T_IN, typename T_OUT>
-inline T_OUT util_cast(const T_IN& v) {
+inline constexpr T_OUT util_cast(const T_IN& v) {
   return util_cast_impl<T_IN, T_OUT>::cast(v);
 }
 

@@ -20,7 +20,7 @@ namespace geo3d {
  * @tparam T number type of coordinate
  */
 template <typename T>
-class Point : public VectorT<T, 3, Point<T>> {
+class Point final : public VectorT<T, 3, Point<T>> {
  public:
   /**
    * @brief float type
@@ -31,50 +31,42 @@ class Point : public VectorT<T, 3, Point<T>> {
   using VectorT<T, 3, Point>::VectorT;
   using VectorT<T, 3, Point>::operator=;
 
-  /**
-   * @brief construct a 3d point with three coordinates
-   */
-  Point(const T& x = 0, const T& y = 0, const T& z = 0)
-      : VectorT<T, 3, Point>(x, y, z) {}
-
-  ~Point() = default;
-
  public:
   /**
    * @brief get the writable x coordinate
    */
-  T& x() { return this->operator[](0); }
+  T& x() noexcept { return this->operator[](0); }
 
   /**
    * @brief get the const x coordinate
    */
-  const T& x() const { return this->operator[](0); }
+  const T& x() const noexcept { return this->operator[](0); }
 
   /**
    * @brief get the writable y coordinate
    */
-  T& y() { return this->operator[](1); }
+  T& y() noexcept { return this->operator[](1); }
 
   /**
    * @brief get the const y coordinate
    */
-  const T& y() const { return this->operator[](1); }
+  const T& y() const noexcept { return this->operator[](1); }
 
   /**
    * @brief get the writable z coordinate
    */
-  T& z() { return this->operator[](2); }
+  T& z() noexcept { return this->operator[](2); }
 
   /**
    * @brief get the const z coordinate
    */
-  const T& z() const { return this->operator[](2); }
+  const T& z() const noexcept { return this->operator[](2); }
 
  public:
   /**
    * @brief do cross product with another point
    */
-  Point operator%(const Point& p) const {
+  Point operator%(const Point& p) const noexcept {
     return Point(y() * p.z() - z() * p.y(), z() * p.x() - x() * p.z(),
                  x() * p.y() - y() * p.x());
   }
@@ -82,7 +74,7 @@ class Point : public VectorT<T, 3, Point<T>> {
   /**
    * @brief do cross product with another point
    */
-  Point cross(const Point& p) const { return (*this) % p; }
+  Point cross(const Point& p) const noexcept { return (*this) % p; }
 };
 
 }  // namespace geo3d

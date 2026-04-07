@@ -27,37 +27,75 @@ class VectorT {
   typedef T value_type;
 
   /* origin vector */
-  static Derived Origin;
+  static const Derived Origin;
 
   /**
    * @brief return dimension of this vector
    */
-  static constexpr unsigned dimension() { return DIM; }
+  static constexpr unsigned dimension() noexcept { return DIM; }
 
   /**
    * @brief alias of dimension
    */
-  static constexpr unsigned size() { return dimension(); }
+  static constexpr unsigned size() noexcept { return dimension(); }
 
-  constexpr VectorT() : _values{} {}
+  /**
+   * @brief default constructor
+   */
+  constexpr VectorT() noexcept : _values{} {}
+
+  /**
+   * @brief copy constructor
+   */
+  VectorT(const VectorT& other) noexcept = default;
+
+  /**
+   * @brief move constructor
+   */
+  VectorT(VectorT&& other) noexcept = default;
+
+  /**
+   * @brief destructor
+   */
+  ~VectorT() noexcept = default;
+
+  /**
+   * @brief assign operator
+   */
+  Derived& operator=(const VectorT& other) noexcept {
+    _values = other._values;
+    return static_cast<Derived&>(*this);
+  }
+
+  /**
+   * @brief move assign operator
+   */
+  Derived& operator=(VectorT&& other) noexcept {
+    _values = std::move(other._values);
+    return static_cast<Derived&>(*this);
+  }
 
   /**
    * @brief set all values to v
    */
-  explicit VectorT(const T& v) { fill(v); }
+  template <unsigned D = DIM, typename std::enable_if<(D > 1), int>::type = 0>
+  explicit constexpr VectorT(const T& v) noexcept {
+    fill(v);
+  }
 
   /**
    * @brief construct using DIM values
    */
   template <typename... TT,
-            typename = typename std::enable_if<sizeof...(TT) == DIM>::type>
-  constexpr VectorT(TT... vs) : _values{{util_cast<TT, T>(vs)...}} {}
+            typename std::enable_if<(sizeof...(TT) == DIM), int>::type = 0>
+  explicit constexpr VectorT(TT... vs) noexcept
+      : _values{{util_cast<TT, T>(vs)...}} {}
 
   /**
    * @brief construct using built-in arrays
    */
   template <typename TT>
-  constexpr VectorT(const TT (&vs)[DIM]) {
+  explicit constexpr VectorT(const TT (&vs)[DIM]) noexcept {
     for (unsigned i = 0; i < DIM; ++i) _values[i] = util_cast<TT, T>(vs[i]);
   }
 
@@ -65,28 +103,8 @@ class VectorT {
    * @brief construct using std array
    */
   template <typename TT>
-  constexpr VectorT(const std::array<TT, DIM>& vs) {
+  explicit constexpr VectorT(const std::array<TT, DIM>& vs) noexcept {
     for (unsigned i = 0; i < DIM; ++i) _values[i] = util_cast<TT, T>(vs[i]);
-  }
-
-  VectorT(const VectorT& other) = default;
-
-  /**
-   * @brief copy & cast constructor
-   * @tparam TT another number type
-   * @tparam DIM2 another dimension
-   * @tparam Derived used for CRTP
-   */
-  template <typename TT, unsigned DIM2, typename Derived2>
-  explicit VectorT(const VectorT<TT, DIM2, Derived2>& other) : VectorT() {
-    // in some machine, default construct may not initialize values to 0, so we
-    // call default construct first
-    operator=(other);
-  }
-
-  Derived& operator=(const VectorT& other) {
-    _values = other._values;
-    return static_cast<Derived&>(*this);
   }
 
   /**
@@ -99,18 +117,30 @@ class VectorT {
    *       vector is shrinked(e.g. {1,2,3}->{1,2})
    */
   template <typename TT, unsigned DIM2, typename Derived2>
-  Derived& operator=(const VectorT<TT, DIM2, Derived2>& other) {
+  Derived& operator=(const VectorT<TT, DIM2, Derived2>& other) noexcept {
     for (unsigned i = 0; i < std::min(DIM, DIM2); ++i)
       _values[i] = util_cast<TT, T>(other[i]);
     return static_cast<Derived&>(*this);
   }
 
-  virtual ~VectorT() {}
+  /**
+   * @brief copy & cast constructor
+   * @tparam TT another number type
+   * @tparam DIM2 another dimension
+   * @tparam Derived used for CRTP
+   */
+  template <typename TT, unsigned DIM2, typename Derived2>
+  explicit constexpr VectorT(const VectorT<TT, DIM2, Derived2>& other) noexcept
+      : VectorT() {
+    // in some machine, default construct may not initialize values to 0, so we
+    // call default construct first
+    operator=(other);
+  }
 
   /**
    * @brief get the writable ith value
    */
-  T& operator[](unsigned i) {
+  T& operator[](unsigned i) noexcept {
     assert(i < DIM && "index out of range");
     return _values[i];
   }
@@ -118,7 +148,7 @@ class VectorT {
   /**
    * @brief get the const ith value
    */
-  const T& operator[](unsigned i) const {
+  const T& operator[](unsigned i) const noexcept {
     assert(i < DIM && "index out of range");
     return _values[i];
   }
@@ -126,7 +156,7 @@ class VectorT {
   /**
    * @brief set all values to v
    */
-  Derived& fill(const T& v) {
+  constexpr Derived& fill(const T& v) noexcept {
     std::fill(_values.begin(), _values.end(), v);
     return static_cast<Derived&>(*this);
   }
@@ -135,7 +165,8 @@ class VectorT {
    * @brief self-addition
    */
   template <typename TT, typename Derived2>
-  Derived& operator+=(const VectorT<TT, DIM, Derived2>& other) {
+  constexpr Derived& operator+=(
+      const VectorT<TT, DIM, Derived2>& other) noexcept {
     for (unsigned i = 0; i < DIM; ++i) _values[i] += util_cast<TT, T>(other[i]);
     return static_cast<Derived&>(*this);
   }
@@ -144,15 +175,19 @@ class VectorT {
    * @brief add two vector
    */
   template <typename TT, typename Derived2>
-  Derived operator+(const VectorT<TT, DIM, Derived2>& other) const {
-    return VectorT(*this) += other;
+  constexpr Derived operator+(
+      const VectorT<TT, DIM, Derived2>& other) const noexcept {
+    Derived result(static_cast<const Derived&>(*this));
+    result += other;
+    return result;
   }
 
   /**
    * @brief self-subtract
    */
   template <typename TT, typename Derived2>
-  Derived& operator-=(const VectorT<TT, DIM, Derived2>& other) {
+  constexpr Derived& operator-=(
+      const VectorT<TT, DIM, Derived2>& other) noexcept {
     for (unsigned i = 0; i < DIM; ++i) _values[i] -= util_cast<TT, T>(other[i]);
     return static_cast<Derived&>(*this);
   }
@@ -161,14 +196,17 @@ class VectorT {
    * @brief subtract two vector
    */
   template <typename TT, typename Derived2>
-  Derived operator-(const VectorT<TT, DIM, Derived2>& other) const {
-    return VectorT(*this) -= other;
+  constexpr Derived operator-(
+      const VectorT<TT, DIM, Derived2>& other) const noexcept {
+    Derived result(static_cast<const Derived&>(*this));
+    result -= other;
+    return result;
   }
 
   /**
-   * @brief self-negate
+   * @brief self-negative
    */
-  Derived& operator-() {
+  constexpr Derived& operator-() noexcept {
     for (unsigned i = 0; i < DIM; ++i) _values[i] = -_values[i];
     return static_cast<Derived&>(*this);
   }
@@ -177,7 +215,8 @@ class VectorT {
    * @brief scalar product
    */
   template <typename TT, typename Derived2>
-  T operator*(const VectorT<TT, DIM, Derived2>& other) const {
+  constexpr T operator*(
+      const VectorT<TT, DIM, Derived2>& other) const noexcept {
     T result(0);
     for (unsigned i = 0; i < DIM; ++i)
       result += (_values[i] * util_cast<TT, T>(other[i]));
@@ -188,14 +227,14 @@ class VectorT {
    * @brief scalar product
    */
   template <typename TT, typename Derived2>
-  T dot(const VectorT<TT, DIM, Derived2>& other) const {
+  constexpr T dot(const VectorT<TT, DIM, Derived2>& other) const noexcept {
     return *this * other;
   }
 
   /**
    * @brief self-scale by multiply
    */
-  Derived& operator*=(const T& scale) {
+  constexpr Derived& operator*=(const T& scale) noexcept {
     for (unsigned i = 0; i < DIM; ++i) _values[i] *= scale;
     return static_cast<Derived&>(*this);
   }
@@ -203,12 +242,16 @@ class VectorT {
   /**
    * @brief do scale by multiply
    */
-  Derived operator*(const T& scale) const { return VectorT(*this) *= scale; }
+  constexpr Derived operator*(const T& scale) const noexcept {
+    Derived result(static_cast<const Derived&>(*this));
+    result *= scale;
+    return result;
+  }
 
   /**
    * @brief self-scale by divide
    */
-  Derived& operator/=(const T& scale) {
+  constexpr Derived& operator/=(const T& scale) noexcept {
     assert(scale != T(0));
     for (unsigned i = 0; i < DIM; ++i) _values[i] /= scale;
     return static_cast<Derived&>(*this);
@@ -217,17 +260,21 @@ class VectorT {
   /**
    * @brief do scale by divide
    */
-  Derived operator/(const T& scale) const { return VectorT(*this) /= scale; }
+  constexpr Derived operator/(const T& scale) const noexcept {
+    return VectorT(*this) /= scale;
+  }
 
-  bool operator==(const VectorT& other) const {
+  constexpr bool operator==(const VectorT& other) const noexcept {
     for (unsigned i = 0; i < DIM; ++i)
       if (_values[i] != other[i]) return false;
     return true;
   }
 
-  bool operator!=(const VectorT& other) const { return !(*this == other); }
+  constexpr bool operator!=(const VectorT& other) const noexcept {
+    return !(*this == other);
+  }
 
-  bool operator<(const VectorT& other) const {
+  constexpr bool operator<(const VectorT& other) const noexcept {
     for (unsigned i = 0; i < DIM; ++i)
       if (_values[i] != other._values[i]) return _values[i] < other._values[i];
     return false;
@@ -236,17 +283,17 @@ class VectorT {
   /**
    * @brief access to scalar array
    */
-  T* data() { return _values.data(); }
+  constexpr T* data() noexcept { return _values.data(); }
 
   /**
    * @brief access to const scalar array
    */
-  const T* data() const { return _values.data(); }
+  constexpr const T* data() const noexcept { return _values.data(); }
 
   /**
    * @brief return the index of first maximal component
    */
-  unsigned max() const {
+  constexpr unsigned max() const {
     auto max_iter = std::max_element(_values.cbegin(), _values.cend());
     return max_iter - _values.begin();
   }
@@ -254,7 +301,7 @@ class VectorT {
   /**
    * @brief return the index of first minimal component
    */
-  unsigned min() const {
+  constexpr unsigned min() const {
     auto min_iter = std::min_element(_values.cbegin(), _values.cend());
     return min_iter - _values.begin();
   }
@@ -262,7 +309,7 @@ class VectorT {
   /**
    * @brief return the index of first maximal absolute component
    */
-  unsigned max_abs() const {
+  constexpr unsigned max_abs() const {
     auto max_iter = std::max_element(
         _values.cbegin(), _values.cend(),
         [](const T& a, const T& b) { return absolute(a) < absolute(b); });
@@ -272,7 +319,7 @@ class VectorT {
   /**
    * @brief return the index of first minimal absolute component
    */
-  unsigned min_abs() const {
+  constexpr unsigned min_abs() const {
     auto min_iter = std::min_element(
         _values.cbegin(), _values.cend(),
         [](const T& a, const T& b) { return absolute(a) < absolute(b); });
@@ -282,12 +329,12 @@ class VectorT {
   /**
    * @brief calculate square of L2-norm
    */
-  T norm_square() const { return (*this) * (*this); }
+  constexpr T norm_square() const noexcept { return (*this) * (*this); }
 
   /**
    * @brief calculate square of L2-norm
    */
-  T length_square() const { return norm_square(); }
+  constexpr T length_square() const noexcept { return norm_square(); }
 
   friend std::ostream& operator<<(std::ostream& os, const VectorT& vec) {
     os << "[" << vec[0];
@@ -300,7 +347,7 @@ class VectorT {
 };
 
 template <typename T, unsigned DIM, typename Derived>
-Derived VectorT<T, DIM, Derived>::Origin = Derived(T(0));
+const Derived VectorT<T, DIM, Derived>::Origin = Derived(T(0));
 
 /**
  * @brief simple fixed size value type container easy for use
@@ -308,7 +355,7 @@ Derived VectorT<T, DIM, Derived>::Origin = Derived(T(0));
  * @tparam DIM dimension
  */
 template <typename T, unsigned DIM>
-class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>> {
+class VecTBase final : public VectorT<T, DIM, VecTBase<T, DIM>> {
  public:
   /**
    * @brief float type
@@ -318,13 +365,6 @@ class VecTBase : public VectorT<T, DIM, VecTBase<T, DIM>> {
  public:
   using VectorT<T, DIM, VecTBase<T, DIM>>::VectorT;
   using VectorT<T, DIM, VecTBase<T, DIM>>::operator=;
-
-  /**
-   * @brief set all values to v
-   */
-  explicit VecTBase(const T& v = 0) : VectorT<T, DIM, VecTBase>(v) {}
-
-  ~VecTBase() {}
 };
 
 /* specialized versions */
@@ -339,6 +379,12 @@ typedef VecTBase<double, 2> Vec2d;
 typedef VecTBase<int, 3> Vec3i;
 typedef VecTBase<float, 3> Vec3f;
 typedef VecTBase<double, 3> Vec3d;
+
+#ifdef USE_GMP
+typedef VecTBase<mpq_class, 1> Vec1r;
+typedef VecTBase<mpq_class, 2> Vec2r;
+typedef VecTBase<mpq_class, 3> Vec3r;
+#endif
 
 /**
  * @brief simple fixed size value type container easy for use
