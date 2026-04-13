@@ -1,41 +1,33 @@
 # Try to find the GMPXX libraries
 # GMPXX_FOUND - system has GMPXX lib
-# GMPXX_INCLUDE_DIR - the GMPXX include directory
+# GMPXX_INCLUDES - the GMPXX include directory
 # GMPXX_LIBRARIES - Libraries needed to use GMPXX
 
 # GMPXX needs GMP
-
-find_package( GMP QUIET )
-
 if(GMP_FOUND)
-
-  if (GMPXX_INCLUDE_DIR AND GMPXX_LIBRARIES)
-    # Already in cache, be silent
+  if (GMPXX_INCLUDES AND GMPXX_LIBRARIES)
     set(GMPXX_FIND_QUIETLY TRUE)
   endif()
 
-  find_path(GMPXX_INCLUDE_DIR NAMES gmpxx.h
-            PATHS ${GMP_INCLUDE_DIR_SEARCH}
-            DOC "The directory containing the GMPXX include files"
-           )
+  find_path(GMPXX_INCLUDES 
+    NAMES gmpxx.h
+    PATHS 
+    $ENV{GMPXXDIR}
+    ${LIB_INSTALL_DIR}
+  )
 
-  find_library(GMPXX_LIBRARY NAMES gmpxx
-               PATHS ${GMP_LIBRARIES_DIR_SEARCH}
-               DOC "Path to the GMPXX library"
-               )
+  find_library(GMPXX_LIBRARIES
+    NAMES gmpxx
+    PATHS
+    $ENV{GMPXXDIR}
+    ${LIB_INSTALL_DIR}
+  )
 
-  # handle the QUIETLY and REQUIRED arguments and set TRIANGLE_FOUND to TRUE if
-  # all listed variables are TRUE
   include(FindPackageHandleStandardArgs)
   FIND_PACKAGE_HANDLE_STANDARD_ARGS(GMPXX
-                          REQUIRED_VARS GMPXX_LIBRARY GMPXX_INCLUDE_DIR
+                          REQUIRED_VARS GMPXX_LIBRARIES GMPXX_INCLUDES
                           VERSION_VAR GMPXX_VERSION_STRING)
 
-  if(GMPXX_FOUND)
-    set(GMPXX_LIBRARIES ${GMPXX_LIBRARY})
-    set(GMPXX_INCLUDE_DIRS ${GMPXX_INCLUDE_DIR})
-  endif()
-
-  mark_as_advanced(GMPXX_INCLUDE_DIR GMPXX_LIBRARY)
+  mark_as_advanced(GMPXX_INCLUDES GMPXX_LIBRARIES)
 
 endif()

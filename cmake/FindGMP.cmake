@@ -1,20 +1,25 @@
-
-# Try to find the GNU Multiple Precision Arithmetic Library (GMP)
-# See http://gmplib.org/
+# Try to find the GMP libraries
+# GMP_FOUND - system has GMP lib
+# GMP_INCLUDES - the GMP include directory
+# GMP_LIBRARIES - Libraries needed to use GMP
 
 if (GMP_INCLUDES AND GMP_LIBRARIES)
   set(GMP_FIND_QUIETLY TRUE)
 endif (GMP_INCLUDES AND GMP_LIBRARIES)
 
 find_path(GMP_INCLUDES
-  NAMES
-  gmp.h
+  NAMES gmp.h
   PATHS
   $ENV{GMPDIR}
   ${INCLUDE_INSTALL_DIR}
 )
 
-find_library(GMP_LIBRARIES gmp PATHS $ENV{GMPDIR} ${LIB_INSTALL_DIR})
+find_library(GMP_LIBRARIES 
+  NAMES gmp 
+  PATHS 
+  $ENV{GMPDIR} 
+  ${LIB_INSTALL_DIR}
+)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GMP DEFAULT_MSG

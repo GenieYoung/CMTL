@@ -7,7 +7,7 @@ find_package(GMPXX)
 if(GMP_FOUND AND GMPXX_FOUND)
 	target_include_directories(${PROJECT_NAME} INTERFACE
 		${GMP_INCLUDES}
-		${GMPXX_INCLUDE_DIRS}
+		${GMPXX_INCLUDES}
 	)
 	target_link_libraries(${PROJECT_NAME} INTERFACE
 		${GMP_LIBRARIES}
@@ -15,5 +15,18 @@ if(GMP_FOUND AND GMPXX_FOUND)
 	)
 	target_compile_definitions(${PROJECT_NAME} INTERFACE USE_GMP)
 else()
-	message("GMP not found.")
+	message(WARNING "GMP not found.")
+endif()
+
+find_package(MPFR)
+if(MPFR_FOUND)
+	target_include_directories(${PROJECT_NAME} INTERFACE
+		${MPFR_INCLUDES}
+	)
+	target_link_libraries(${PROJECT_NAME} INTERFACE
+		${MPFR_LIBRARIES}
+	)
+    target_compile_definitions(${PROJECT_NAME} INTERFACE USE_MPFR)
+else()
+	message(WARNING "MPFR not found.")
 endif()
