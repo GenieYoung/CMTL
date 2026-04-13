@@ -1,0 +1,9 @@
+if(GMP_FOUND AND MPFR_FOUND)
+    add_library(CORE STATIC IMPORTED GLOBAL)
+    set_target_properties(CORE PROPERTIES
+    IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/lib/libcore++.a"
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}"
+    )
+else()
+    message(WARNING "CORE needs GMP and MPFR.")
+endif()

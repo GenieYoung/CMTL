@@ -51,7 +51,7 @@ Point normal(const Point& p0, const Point& p1, const Point& p2) {
  */
 template <typename Point>
 Point normalize_3d(const Point& p) {
-  return p / square_root(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
+  return p / sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
 }
 
 // /* template specialization */

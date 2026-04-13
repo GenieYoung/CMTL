@@ -40,8 +40,8 @@ bool intersect(const geo2d::Segment<T>& seg1, const geo2d::Segment<T>& seg2,
 
   // coliinear
   T t11, t12, t21, t22;
-  T xdiff = absolute(T(seg1.second().x() - seg1.first().x()));
-  T ydiff = absolute(T(seg1.second().y() - seg1.first().y()));
+  T xdiff = abs(T(seg1.second().x() - seg1.first().x()));
+  T ydiff = abs(T(seg1.second().y() - seg1.first().y()));
   if (xdiff > ydiff) {
     t11 = seg1.first().x();
     t12 = seg1.second().x();

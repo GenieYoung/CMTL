@@ -5,6 +5,10 @@
 #include "gmpxx.h"
 #endif
 
+#ifdef USE_CORE
+#include "CORE/CORE.h"
+#endif
+
 #include <cmath>
 #include <string>
 #include <type_traits>
@@ -54,6 +58,23 @@ inline std::string util_cast<mpq_class, std::string>(const mpq_class& v) {
 }
 #endif  // USE_GMP
 
+#ifdef USE_CORE
+/* template specialization function, used for converting number type to double
+ */
+template <>
+inline double util_cast<CORE::Expr, double>(const CORE::Expr& v) {
+  return v.doubleValue();
+}
+
+/* template specialization function, used for converting number type to string
+ */
+template <>
+inline std::string util_cast<CORE::Expr, std::string>(const CORE::Expr& v) {
+  CORE::Expr tmp(v);
+  return tmp.toString();
+}
+#endif // USE_CORE
+
 /**
  * @brief convert number to double type
  */
@@ -72,14 +93,23 @@ inline std::string to_string(const T& v) {
 
 /**
  * @brief calculate the absolute value of a number
- * @note if the number type is from gmp, absolute(expression) may crash, call
- * absolute(T(expression)) instead.
  */
 template <typename T>
-inline T absolute(const T& v) {
-  if (v >= 0) return v;
-  return -v;
+inline T abs(const T& v) {
+  using std::abs;
+  return abs(v);
 }
+
+#ifdef USE_GMP
+/**
+ * @brief template specialization function, calculate the absolute value of a number
+ * @note absolute(expression) may crash, call absolute(T(expression)) instead.
+ */
+inline mpq_class abs(const mpq_class& v) {
+  if(v < 0) return -v;
+  return v;
+}
+#endif
 
 /**
  * @brief calculate the minimal value of two numbers
@@ -103,9 +133,18 @@ inline T max(const T& v1, const T& v2) {
  * @brief calculate the square root value of a number
  */
 template <typename T>
-inline T square_root(const T& v) {
-  return T(std::sqrt(to_double(v)));
+inline T sqrt(const T& v) {
+  using std::sqrt;
+  return sqrt(v);
 }
+
+#ifdef USE_GMP
+/* template specialization, calculate the square root value of a number */
+template <>
+inline mpq_class sqrt(const mpq_class& v) {
+  return mpq_class(sqrt(to_double(v)));     // TODO
+}
+#endif
 
 template <typename T, typename = void>
 class numeric_comparator {
@@ -144,7 +183,7 @@ class numeric_comparator<
   static T& tolerance() { return _tol; }
 
   static bool is_equal(const T& v1, const T& v2, const T& tol = _tol) {
-    return absolute(v1 - v2) <= _tol;
+    return abs(v1 - v2) <= _tol;
   }
 
   static bool is_not_equal(const T& v1, const T& v2, const T& tol = _tol) {

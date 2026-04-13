@@ -312,7 +312,7 @@ class VectorT {
   constexpr unsigned max_abs() const {
     auto max_iter = std::max_element(
         _values.cbegin(), _values.cend(),
-        [](const T& a, const T& b) { return absolute(a) < absolute(b); });
+        [](const T& a, const T& b) { return abs(a) < abs(b); });
     return max_iter - _values.begin();
   }
 
@@ -322,7 +322,7 @@ class VectorT {
   constexpr unsigned min_abs() const {
     auto min_iter = std::min_element(
         _values.cbegin(), _values.cend(),
-        [](const T& a, const T& b) { return absolute(a) < absolute(b); });
+        [](const T& a, const T& b) { return abs(a) < abs(b); });
     return min_iter - _values.begin();
   }
 
