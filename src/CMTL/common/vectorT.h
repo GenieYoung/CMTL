@@ -233,8 +233,9 @@ class VectorT {
 
   /**
    * @brief self-scale by multiply
+   * @note we not use T& to prevent user from writing something like v*=v[0]
    */
-  constexpr Derived& operator*=(const T& scale) noexcept {
+  constexpr Derived& operator*=(const T scale) noexcept {
     for (unsigned i = 0; i < DIM; ++i) _values[i] *= scale;
     return static_cast<Derived&>(*this);
   }
@@ -244,14 +245,15 @@ class VectorT {
    */
   constexpr Derived operator*(const T& scale) const noexcept {
     Derived result(static_cast<const Derived&>(*this));
-    result *= scale;
+    for (unsigned i = 0; i < DIM; ++i) result[i] *= scale;
     return result;
   }
 
   /**
    * @brief self-scale by divide
+   * @note we not use T& to prevent user from writing something like v/=v[0]
    */
-  constexpr Derived& operator/=(const T& scale) noexcept {
+  constexpr Derived& operator/=(const T scale) noexcept {
     assert(scale != T(0));
     for (unsigned i = 0; i < DIM; ++i) _values[i] /= scale;
     return static_cast<Derived&>(*this);
@@ -261,7 +263,9 @@ class VectorT {
    * @brief do scale by divide
    */
   constexpr Derived operator/(const T& scale) const noexcept {
-    return VectorT(*this) /= scale;
+    Derived result(static_cast<const Derived&>(*this));
+    for (unsigned i = 0; i < DIM; ++i) result[i] /= scale;
+    return result;
   }
 
   constexpr bool operator==(const VectorT& other) const noexcept {

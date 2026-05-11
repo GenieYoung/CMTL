@@ -270,9 +270,19 @@ TEST(VectorTest, OperationTest) {
   Vec3d v3d_multiply(1.5, 0, -1.5);
   EXPECT_EQ(v3d_multiply * 2, Vec3d(3, 0, -3));
 
+  // self-multiply
+  Vec3d v3d_self_multiply(1, 2, 3);
+  v3d_self_multiply *= v3d_self_multiply[1];
+  EXPECT_EQ(v3d_self_multiply, Vec3d(2, 4, 6));
+
   // divide
   Vec3d v3d_divide(1.5, 0, -3);
   EXPECT_EQ(v3d_divide / 2, Vec3d(0.75, 0, -1.5));
+
+  // self-divide
+  Vec3d v3d_self_divide(2, 4, 6);
+  v3d_self_divide /= v3d_self_divide[0];
+  EXPECT_EQ(v3d_self_divide, Vec3d(1, 2, 3));
 
   // data
   EXPECT_EQ(*Vec3d(1.1, 2.2, 3.3).data(), 1.1);
