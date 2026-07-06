@@ -92,6 +92,16 @@ class VectorT {
       : _values{{util_cast<TT, T>(vs)...}} {}
 
   /**
+   * @brief assign using DIM values
+   */
+  template <typename... TT,
+            typename std::enable_if<(sizeof...(TT) == DIM), int>::type = 0>
+  constexpr Derived& assign(TT... vs) noexcept {
+    _values = {{util_cast<TT, T>(vs)...}};
+    return static_cast<Derived&>(*this);
+  }
+
+  /**
    * @brief construct using built-in arrays
    */
   template <typename TT>

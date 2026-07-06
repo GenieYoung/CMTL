@@ -62,6 +62,29 @@ TEST(VectorTest, ConstructTest) {
   EXPECT_EQ(v3d_from_multivalue_construct_2[2], 0.5);
 #endif
 
+  // assign using multi values
+  Vec1d v1d_from_assign;
+  Vec2d v2d_from_assign;
+  v1d_from_assign.assign(1);
+  v2d_from_assign.assign(2, 3.0);
+  EXPECT_EQ(v1d_from_assign[0], 1);
+  EXPECT_EQ(v2d_from_assign[0], 2);
+  EXPECT_EQ(v2d_from_assign[1], 3);
+  v2d_from_assign.assign(4, 5.0).assign(6, 7.0);
+  EXPECT_EQ(v2d_from_assign[0], 6);
+  EXPECT_EQ(v2d_from_assign[1], 7);
+#ifdef USE_GMP
+  Vec1d v1d_from_assign_2;
+  v1d_from_assign_2.assign(mpq_class(1, 2));
+  Vec3r v3r_from_assign;
+  v3r_from_assign.assign(0.5, 5, mpq_class(1, 2));
+  EXPECT_EQ(v1d_from_assign_2[0], 0.5);
+  EXPECT_EQ(v3r_from_assign[0], 0.5);
+  EXPECT_EQ(v3r_from_assign[1], 5);
+  EXPECT_EQ(v3r_from_assign[2], mpq_class(1, 2));
+#endif
+
+
   // construct from initializer list
   Vec1d v1d_from_initializer_list{1};
   Vec2d v2d_from_initializer_list{2, 3.0};
