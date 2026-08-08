@@ -1,5 +1,5 @@
-#ifndef __algorithm_triangulation_impl_h__
-#define __algorithm_triangulation_impl_h__
+#ifndef CMTL_TRIANGULATION_IMPL_H
+#define CMTL_TRIANGULATION_IMPL_H
 
 #include "../../geo2d/pslg.h"
 #include "../predicate.h"
@@ -725,4 +725,4 @@ void Triangulation<T>::quit(int status) {
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_triangulation_impl_h__
+#endif  // CMTL_TRIANGULATION_IMPL_H

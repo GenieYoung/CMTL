@@ -1,5 +1,5 @@
-#ifndef __algorithm_triangulate_polygon__
-#define __algorithm_triangulate_polygon__
+#ifndef CMTL_TRIANGULATE_POLYGON_H
+#define CMTL_TRIANGULATE_POLYGON_H
 
 #include "../geo2d/polygon.h"
 #include "../geo3d/polygon.h"
@@ -273,4 +273,4 @@ bool triangulate_polygon_3d(const Polygon& polygon,
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_triangulate__
+#endif  // CMTL_TRIANGULATE_POLYGON_H

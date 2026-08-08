@@ -1,5 +1,5 @@
-#ifndef __algorithm_area__
-#define __algorithm_area__
+#ifndef CMTL_AREA_H
+#define CMTL_AREA_H
 
 #include "../geo2d/polygon.h"
 #include "../geo2d/triangle.h"
@@ -88,4 +88,4 @@ void area_2d(ForwardIterator begin, ForwardIterator end, NumberType& result) {
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_area__
+#endif  // CMTL_AREA_H

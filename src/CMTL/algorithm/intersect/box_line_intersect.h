@@ -1,5 +1,5 @@
-#ifndef __algorithm_box_line_intersect__
-#define __algorithm_box_line_intersect__
+#ifndef CMTL_BOX_LINE_INTERSECT_H
+#define CMTL_BOX_LINE_INTERSECT_H
 
 #include "../../geo2d/box.h"
 #include "../../geo2d/segment.h"
@@ -197,4 +197,4 @@ bool intersect(const geo2d::Ray<T>& ray, const geo2d::Box<T>& box, T& t0,
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_box_line_intersect__
+#endif  // CMTL_BOX_LINE_INTERSECT_H

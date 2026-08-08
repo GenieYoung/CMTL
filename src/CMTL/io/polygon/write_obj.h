@@ -1,5 +1,5 @@
-#ifndef __io_polygon_write_obj__
-#define __io_polygon_write_obj__
+#ifndef CMTL_POLYGON_WRITE_OBJ_H
+#define CMTL_POLYGON_WRITE_OBJ_H
 
 #include "../../geo2d/polygon.h"
 #include "../../geo3d/polygon.h"
@@ -62,4 +62,4 @@ void write_obj(const geo3d::Polygon<T>& poly, const std::string& file) {
 }  // namespace io
 }  // namespace CMTL
 
-#endif  // __io_polygon_write_obj__
+#endif  // CMTL_POLYGON_WRITE_OBJ_H

@@ -1,5 +1,5 @@
-#ifndef __common_orientation__
-#define __common_orientation__
+#ifndef CMTL_ORIENTATION_H
+#define CMTL_ORIENTATION_H
 
 #include <ostream>
 
@@ -37,4 +37,4 @@ inline std::ostream& operator<<(std::ostream& os, ORIENTATION ori) {
 
 }  // namespace CMTL
 
-#endif  // __common_orientation__
+#endif  // CMTL_ORIENTATION_H

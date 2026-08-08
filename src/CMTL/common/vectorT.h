@@ -1,5 +1,5 @@
-#ifndef __common_vectorT_h__
-#define __common_vectorT_h__
+#ifndef CMTL_VECTOR_T_H
+#define CMTL_VECTOR_T_H
 
 #include "numeric_utils.h"
 
@@ -410,4 +410,4 @@ using VecXT = VecTBase<T, DIM>;
 
 }  // namespace CMTL
 
-#endif  // __common_vectorT_h__
+#endif  // CMTL_VECTOR_T_H

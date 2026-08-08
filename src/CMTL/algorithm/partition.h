@@ -1,6 +1,6 @@
-#ifndef __algorithm_partition__
-#define __algorithm_partition__
+#ifndef CMTL_PARTITION_H
+#define CMTL_PARTITION_H
 
 #include "partition/connected_manifold_partition.h"
 
-#endif  // __algorithm_partition__
+#endif  // CMTL_PARTITION_H

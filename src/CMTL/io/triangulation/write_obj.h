@@ -1,5 +1,5 @@
-#ifndef __io_triangulation_write_obj__
-#define __io_triangulation_write_obj__
+#ifndef CMTL_TRIANGULATION_WRITE_OBJ_H
+#define CMTL_TRIANGULATION_WRITE_OBJ_H
 
 #include "../../algorithm/triangulation.h"
 
@@ -39,4 +39,4 @@ void write_obj(
 }  // namespace io
 }  // namespace CMTL
 
-#endif  // __io_triangulation_write_obj__
+#endif  // CMTL_TRIANGULATION_WRITE_OBJ_H

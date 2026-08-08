@@ -1,5 +1,5 @@
-#ifndef __geo3d_polygon_h__
-#define __geo3d_polygon_h__
+#ifndef CMTL_GEO3D_POLYGON_H
+#define CMTL_GEO3D_POLYGON_H
 
 #include "point.h"
 
@@ -144,4 +144,4 @@ Point<T> Polygon<T>::normal() const {
 }  // namespace geo3d
 }  // namespace CMTL
 
-#endif  // __geo3d_polygon_h__
+#endif  // CMTL_GEO3D_POLYGON_H

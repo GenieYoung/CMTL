@@ -1,5 +1,5 @@
-#ifndef __topologic_halfedge_h__
-#define __topologic_halfedge_h__
+#ifndef CMTL_HALFEDGE_H
+#define CMTL_HALFEDGE_H
 
 #include <cassert>
 #include <iostream>
@@ -2248,4 +2248,4 @@ class Graph : public GraphTopology {
 }  // namespace halfedge
 }  // namespace CMTL
 
-#endif  // __topologic_halfedge_h__
+#endif  // CMTL_HALFEDGE_H

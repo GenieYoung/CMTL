@@ -84,7 +84,6 @@ TEST(VectorTest, ConstructTest) {
   EXPECT_EQ(v3r_from_assign[2], mpq_class(1, 2));
 #endif
 
-
   // construct from initializer list
   Vec1d v1d_from_initializer_list{1};
   Vec2d v2d_from_initializer_list{2, 3.0};

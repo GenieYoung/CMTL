@@ -1,5 +1,5 @@
-#ifndef __geo2d_polygon_h__
-#define __geo2d_polygon_h__
+#ifndef CMTL_GEO2D_POLYGON_H
+#define CMTL_GEO2D_POLYGON_H
 
 #include "point.h"
 
@@ -109,4 +109,4 @@ T Polygon<T>::area() const {
 }  // namespace geo2d
 }  // namespace CMTL
 
-#endif  // __geo2d_polygon_h__
+#endif  // CMTL_GEO2D_POLYGON_H

@@ -1,5 +1,5 @@
-#ifndef __common_attributes_h__
-#define __common_attributes_h__
+#ifndef CMTL_ATTRIBUTES_H
+#define CMTL_ATTRIBUTES_H
 
 #include <any>
 #include <map>
@@ -116,4 +116,4 @@ class Attributes {
 
 }  // namespace CMTL
 
-#endif  // __common_attributes_h__
+#endif  // CMTL_ATTRIBUTES_H

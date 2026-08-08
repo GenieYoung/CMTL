@@ -1,5 +1,5 @@
-#ifndef __io_surface_mesh_read_obj__
-#define __io_surface_mesh_read_obj__
+#ifndef CMTL_SURFACE_MESH_READ_OBJ_H
+#define CMTL_SURFACE_MESH_READ_OBJ_H
 
 #include "../../geo2d/surface_mesh.h"
 #include "../../geo3d/surface_mesh.h"
@@ -136,4 +136,4 @@ bool read_obj(geo3d::SurfaceMesh<T>& sm, const std::string& file) {
 }  // namespace io
 }  // namespace CMTL
 
-#endif  // __io_surface_mesh_read_obj__
+#endif  // CMTL_SURFACE_MESH_READ_OBJ_H

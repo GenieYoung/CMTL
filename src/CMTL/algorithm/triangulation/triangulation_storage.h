@@ -1,5 +1,5 @@
-#ifndef __algorithm_triangulation_storage_h__
-#define __algorithm_triangulation_storage_h__
+#ifndef CMTL_TRIANGULATION_STORAGE_H
+#define CMTL_TRIANGULATION_STORAGE_H
 
 #include "../../geo2d/point.h"
 #include "triangulation_storage_fwd.h"
@@ -280,4 +280,4 @@ void TriangulationStorage<T>::Triangle::clear_dummy() {
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_triangulation_storage_h__
+#endif  // CMTL_TRIANGULATION_STORAGE_H

@@ -1,5 +1,5 @@
-#ifndef __algorithm_connected_manifold_partition__
-#define __algorithm_connected_manifold_partition__
+#ifndef CMTL_CONNECTED_MANIFOLD_PARTITION_H
+#define CMTL_CONNECTED_MANIFOLD_PARTITION_H
 
 #include <queue>
 #include <unordered_map>
@@ -79,4 +79,4 @@ void connected_manifold_partition_3d(
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_connected_manifold_partition__
+#endif  // CMTL_CONNECTED_MANIFOLD_PARTITION_H

@@ -1,5 +1,5 @@
-#ifndef __algorithm_lawson_flip__
-#define __algorithm_lawson_flip__
+#ifndef CMTL_LAWSON_FLIP_H
+#define CMTL_LAWSON_FLIP_H
 
 #include "../geo2d/surface_mesh.h"
 #include "predicate.h"
@@ -76,4 +76,4 @@ void lawson_flip(geo2d::SurfaceMesh<T>& sm,
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_lawson_flip__
+#endif  // CMTL_LAWSON_FLIP_H

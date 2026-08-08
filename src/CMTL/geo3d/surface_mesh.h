@@ -1,5 +1,5 @@
-#ifndef __geo3d_surface_mesh_h__
-#define __geo3d_surface_mesh_h__
+#ifndef CMTL_GEO3D_SURFACE_MESH_H
+#define CMTL_GEO3D_SURFACE_MESH_H
 
 #include "../common/attributes.h"
 #include "../topology/halfedge.h"
@@ -148,4 +148,4 @@ class SurfaceMesh : public halfedge::Graph<geo3d::Point<T>, Traits> {
 }  // namespace geo3d
 }  // namespace CMTL
 
-#endif  // __geo3d_surface_mesh_h__
+#endif  // CMTL_GEO3D_SURFACE_MESH_H

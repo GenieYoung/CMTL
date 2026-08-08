@@ -1,5 +1,5 @@
-#ifndef __algorithm_normal__
-#define __algorithm_normal__
+#ifndef CMTL_NORMAL_H
+#define CMTL_NORMAL_H
 
 #include "../geo3d/point.h"
 
@@ -65,4 +65,4 @@ Point normalize_3d(const Point& p) {
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_normal__
+#endif  // CMTL_NORMAL_H

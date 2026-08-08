@@ -1,5 +1,5 @@
-#ifndef __geo3d_plane_h__
-#define __geo3d_plane_h__
+#ifndef CMTL_GEO3D_PLANE_H
+#define CMTL_GEO3D_PLANE_H
 
 #include "../geo2d/point.h"
 #include "point.h"
@@ -144,4 +144,4 @@ class Plane {
 }  // namespace geo3d
 }  // namespace CMTL
 
-#endif  // __geo3d_plane_h__
+#endif  // CMTL_GEO3D_PLANE_H

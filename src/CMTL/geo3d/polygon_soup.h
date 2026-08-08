@@ -1,5 +1,5 @@
-#ifndef __geo3d_polygon_soup_h__
-#define __geo3d_polygon_soup_h__
+#ifndef CMTL_GEO3D_POLYGON_SOUP_H
+#define CMTL_GEO3D_POLYGON_SOUP_H
 
 #include "point.h"
 
@@ -76,4 +76,4 @@ class PolygonSoup {
 }  // namespace geo3d
 }  // namespace CMTL
 
-#endif  // __geo3d_polygon_soup_h__
+#endif  // CMTL_GEO3D_POLYGON_SOUP_H

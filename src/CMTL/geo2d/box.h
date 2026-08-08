@@ -1,5 +1,5 @@
-#ifndef __geo2d_box_h__
-#define __geo2d_box_h__
+#ifndef CMTL_GEO2D_BOX_H
+#define CMTL_GEO2D_BOX_H
 
 #include "point.h"
 
@@ -132,4 +132,4 @@ class Box {
 }  // namespace geo2d
 }  // namespace CMTL
 
-#endif  // __geo2d_box_h__
+#endif  // CMTL_GEO2D_BOX_H

@@ -1,5 +1,5 @@
-#ifndef __geo2d_point_h__
-#define __geo2d_point_h__
+#ifndef CMTL_GEO2D_POINT_H
+#define CMTL_GEO2D_POINT_H
 
 #include "../common/vectorT.h"
 
@@ -69,4 +69,4 @@ class Point final : public VectorT<T, 2, Point<T>> {
 }  // namespace geo2d
 }  // namespace CMTL
 
-#endif  // __geo2d_point_h__
+#endif  // CMTL_GEO2D_POINT_H

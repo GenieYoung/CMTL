@@ -1,5 +1,5 @@
-#ifndef __topologic_simplicials_h__
-#define __topologic_simplicials_h__
+#ifndef CMTL_SIMPLICIALS_H
+#define CMTL_SIMPLICIALS_H
 
 #include <vector>
 
@@ -67,4 +67,4 @@ class Simplicials_2 {
 }  // namespace simplicials
 }  // namespace CMTL
 
-#endif  // __topologic_simplicials_h__
+#endif  // CMTL_SIMPLICIALS_H

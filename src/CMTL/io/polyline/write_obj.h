@@ -1,5 +1,5 @@
-#ifndef __io_polyline_write_obj__
-#define __io_polyline_write_obj__
+#ifndef CMTL_POLYLINE_WRITE_OBJ_H
+#define CMTL_POLYLINE_WRITE_OBJ_H
 
 #include "../../common/numeric_utils.h"
 
@@ -35,4 +35,4 @@ void write_obj(const std::vector<std::pair<Point, Point>>& edges,
 }  // namespace io
 }  // namespace CMTL
 
-#endif  // __io_polyline_write_obj__
+#endif  // CMTL_POLYLINE_WRITE_OBJ_H

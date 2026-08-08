@@ -17,7 +17,7 @@ TEST(AttributeTest, Test) {
   EXPECT_EQ(attr.get<int>("int"), 1);
   EXPECT_THROW(attr.get<double>("int"), std::bad_any_cast);
   EXPECT_THROW(attr.set<double>("int") = 3.14, std::bad_any_cast);
-  
+
   attr.set<int>("int") = 2;
   EXPECT_EQ(attr.get<int>("int"), 2);
 

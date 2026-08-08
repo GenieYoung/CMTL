@@ -1,5 +1,5 @@
-#ifndef __io_polygon_soup_write_obj__
-#define __io_polygon_soup_write_obj__
+#ifndef CMTL_POLYGON_SOUP_WRITE_OBJ_H
+#define CMTL_POLYGON_SOUP_WRITE_OBJ_H
 
 #include "../../geo2d/polygon_soup.h"
 #include "../../geo3d/polygon_soup.h"
@@ -72,4 +72,4 @@ void write_obj(const geo3d::PolygonSoup<T>& poly, const std::string& file) {
 }  // namespace io
 }  // namespace CMTL
 
-#endif  // __io_polygon_soup_write_obj__
+#endif  // CMTL_POLYGON_SOUP_WRITE_OBJ_H

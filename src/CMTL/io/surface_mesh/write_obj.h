@@ -1,5 +1,5 @@
-#ifndef __io_surface_mesh_write_obj__
-#define __io_surface_mesh_write_obj__
+#ifndef CMTL_SURFACE_MESH_WRITE_OBJ_H
+#define CMTL_SURFACE_MESH_WRITE_OBJ_H
 
 #include "../../geo2d/surface_mesh.h"
 #include "../../geo3d/surface_mesh.h"
@@ -70,4 +70,4 @@ void write_obj(const geo3d::SurfaceMesh<T, Traits>& sm,
 }  // namespace io
 }  // namespace CMTL
 
-#endif  // __io_surface_mesh_write_obj__
+#endif  // CMTL_SURFACE_MESH_WRITE_OBJ_H

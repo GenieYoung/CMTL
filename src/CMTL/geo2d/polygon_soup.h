@@ -1,5 +1,5 @@
-#ifndef __geo2d_polygon_soup_h__
-#define __geo2d_polygon_soup_h__
+#ifndef CMTL_GEO2D_POLYGON_SOUP_H
+#define CMTL_GEO2D_POLYGON_SOUP_H
 
 #include "point.h"
 
@@ -88,4 +88,4 @@ class PolygonSoup {
 }  // namespace geo2d
 }  // namespace CMTL
 
-#endif  // __geo2d_polygon_soup_h__
+#endif  // CMTL_GEO2D_POLYGON_SOUP_H

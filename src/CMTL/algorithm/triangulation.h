@@ -1,6 +1,6 @@
-#ifndef __algorithm_triangulation_h__
-#define __algorithm_triangulation_h__
+#ifndef CMTL_TRIANGULATION_H
+#define CMTL_TRIANGULATION_H
 
 #include "triangulation/triangulation_impl.h"
 
-#endif  // __algorithm_triangulation_h__
+#endif  // CMTL_TRIANGULATION_H

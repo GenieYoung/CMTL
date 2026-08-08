@@ -1,5 +1,5 @@
-#ifndef __algorithm_triangulation_storage_fwd_h__
-#define __algorithm_triangulation_storage_fwd_h__
+#ifndef CMTL_TRIANGULATION_STORAGE_FWD_H
+#define CMTL_TRIANGULATION_STORAGE_FWD_H
 
 #include <string>
 
@@ -22,4 +22,4 @@ void write_obj(
 
 }  // namespace CMTL
 
-#endif  // __algorithm_triangulation_storage_fwd_h__
+#endif  // CMTL_TRIANGULATION_STORAGE_FWD_H

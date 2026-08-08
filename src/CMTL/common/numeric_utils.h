@@ -1,5 +1,5 @@
-#ifndef __common_utils_h__
-#define __common_utils_h__
+#ifndef CMTL_NUMERIC_UTILS_H
+#define CMTL_NUMERIC_UTILS_H
 
 #ifdef USE_GMP
 #include "gmpxx.h"
@@ -73,7 +73,7 @@ inline std::string util_cast<CORE::Expr, std::string>(const CORE::Expr& v) {
   CORE::Expr tmp(v);
   return tmp.toString();
 }
-#endif // USE_CORE
+#endif  // USE_CORE
 
 /**
  * @brief convert number to double type
@@ -102,11 +102,12 @@ inline T abs(const T& v) {
 
 #ifdef USE_GMP
 /**
- * @brief template specialization function, calculate the absolute value of a number
+ * @brief template specialization function, calculate the absolute value of a
+ * number
  * @note absolute(expression) may crash, call absolute(T(expression)) instead.
  */
 inline mpq_class abs(const mpq_class& v) {
-  if(v < 0) return -v;
+  if (v < 0) return -v;
   return v;
 }
 #endif
@@ -142,7 +143,7 @@ inline T sqrt(const T& v) {
 /* template specialization, calculate the square root value of a number */
 template <>
 inline mpq_class sqrt(const mpq_class& v) {
-  return mpq_class(sqrt(to_double(v)));     // TODO
+  return mpq_class(sqrt(to_double(v)));  // TODO
 }
 #endif
 
@@ -302,4 +303,4 @@ bool is_greater_equal(const T& v1, const T& v2,
 
 }  // namespace CMTL
 
-#endif  // __common_utils_h__
+#endif  // CMTL_NUMERIC_UTILS_H

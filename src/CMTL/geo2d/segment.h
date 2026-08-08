@@ -1,5 +1,5 @@
-#ifndef __geo2d_segment_h__
-#define __geo2d_segment_h__
+#ifndef CMTL_GEO2D_SEGMENT_H
+#define CMTL_GEO2D_SEGMENT_H
 
 #include "point.h"
 
@@ -159,4 +159,4 @@ class Ray : public Line<T> {
 }  // namespace geo2d
 }  // namespace CMTL
 
-#endif  // __geo2d_segment_h__
+#endif  // CMTL_GEO2D_SEGMENT_H

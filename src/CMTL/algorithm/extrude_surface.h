@@ -1,5 +1,5 @@
-#ifndef __algorithm_extrude_surface__
-#define __algorithm_extrude_surface__
+#ifndef CMTL_EXTRUDE_SURFACE_H
+#define CMTL_EXTRUDE_SURFACE_H
 
 #include "../geo3d/polygon_soup.h"
 #include "../geo3d/surface_mesh.h"
@@ -303,4 +303,4 @@ bool extrude_surface(const geo3d::SurfaceMesh<T>& sm,
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_extrude_surface__
+#endif  // CMTL_EXTRUDE_SURFACE_H

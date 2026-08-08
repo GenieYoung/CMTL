@@ -1,5 +1,5 @@
-#ifndef __geo3d_point_h__
-#define __geo3d_point_h__
+#ifndef CMTL_GEO3D_POINT_H
+#define CMTL_GEO3D_POINT_H
 
 #include "../common/vectorT.h"
 
@@ -80,4 +80,4 @@ class Point final : public VectorT<T, 3, Point<T>> {
 }  // namespace geo3d
 }  // namespace CMTL
 
-#endif  // __geo3d_point_h__
+#endif  // CMTL_GEO3D_POINT_H

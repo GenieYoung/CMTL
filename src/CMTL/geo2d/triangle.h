@@ -1,5 +1,5 @@
-#ifndef __geo2d_triangle_h__
-#define __geo2d_triangle_h__
+#ifndef CMTL_GEO2D_TRIANGLE_H
+#define CMTL_GEO2D_TRIANGLE_H
 
 #include "point.h"
 
@@ -81,4 +81,4 @@ T Triangle<T>::area() const {
 }  // namespace geo2d
 }  // namespace CMTL
 
-#endif  // __geo2d_triangle_h__
+#endif  // CMTL_GEO2D_TRIANGLE_H

@@ -1,5 +1,5 @@
-#ifndef __algorithm_io__
-#define __algorithm_io__
+#ifndef CMTL_IO_H
+#define CMTL_IO_H
 
 #include "polygon/write_obj.h"
 #include "polygon_soup/write_obj.h"
@@ -11,4 +11,4 @@ namespace CMTL {
 namespace algorithm {}  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_intersect__
+#endif  // CMTL_IO_H

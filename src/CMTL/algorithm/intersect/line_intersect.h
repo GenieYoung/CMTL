@@ -1,5 +1,5 @@
-#ifndef __algorithm_line_intersect__
-#define __algorithm_line_intersect__
+#ifndef CMTL_LINE_INTERSECT_H
+#define CMTL_LINE_INTERSECT_H
 
 #include "../../geo2d/segment.h"
 #include "../predicate.h"
@@ -65,4 +65,4 @@ bool intersect(const geo2d::Segment<T>& seg1, const geo2d::Segment<T>& seg2,
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_line_intersect__
+#endif  // CMTL_LINE_INTERSECT_H

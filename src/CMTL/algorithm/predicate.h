@@ -1,5 +1,5 @@
-#ifndef __algorithm_predicate__
-#define __algorithm_predicate__
+#ifndef CMTL_PREDICATE_H
+#define CMTL_PREDICATE_H
 
 #include "../common/orientation.h"
 #include "../geo2d/triangle.h"
@@ -236,4 +236,4 @@ ORIENTATION in_triangle(const geo2d::Triangle<T>& tri,
 }  // namespace algorithm
 }  // namespace CMTL
 
-#endif  // __algorithm_predicate__
+#endif  // CMTL_PREDICATE_H
