@@ -4,54 +4,55 @@
 
 #include <gtest/gtest.h>
 
-TEST(AttributeTest, SetGetTest) {
+TEST(AttributeTest, Test) {
   CMTL::Attributes attr;
+  EXPECT_EQ(attr.contains("int"), false);
+  EXPECT_EQ(attr.try_get<int>("int"), nullptr);
+  EXPECT_THROW(attr.get<int>("int"), std::bad_any_cast);
 
-  attr.set<int>("number") = 1;
-  ASSERT_TRUE(attr.contain("number"));
-  // EXPECT_DEATH({attr.set<char>("number") = '1';}, "attribute with specific
-  // type not found"); EXPECT_DEATH({attr.get<int>("Number");}, "attribute with
-  // specific name not found"); EXPECT_DEATH({attr.get<char>("number");},
-  // "attribute with specific type not found");
-  EXPECT_EQ(attr.get<int>("number"), 1);
-  attr.set<int>("number") = 2;
-  EXPECT_EQ(attr.get<int>("number"), 2);
+  attr.set<int>("int") = 1;
+  ASSERT_TRUE(attr.contains("int"));
+  ASSERT_FALSE(attr.contains("double"));
+  EXPECT_EQ(attr.try_get<double>("int"), nullptr);
+  EXPECT_EQ(attr.get<int>("int"), 1);
+  EXPECT_THROW(attr.get<double>("int"), std::bad_any_cast);
+  EXPECT_THROW(attr.set<double>("int") = 3.14, std::bad_any_cast);
+  
+  attr.set<int>("int") = 2;
+  EXPECT_EQ(attr.get<int>("int"), 2);
 
-  attr.set<std::string>("string") = "hello";
-  ASSERT_TRUE(attr.contain("string"));
-  EXPECT_EQ(attr.get<std::string>("string"), "hello");
-  attr.set<std::string>("string") = "world";
-  EXPECT_EQ(attr.get<std::string>("string"), "world");
+  attr.set<double>("double") = 3.14;
+  ASSERT_TRUE(attr.contains("double"));
+  EXPECT_EQ(attr.try_get<int>("double"), nullptr);
+  EXPECT_EQ(attr.get<double>("double"), 3.14);
+  EXPECT_THROW(attr.get<int>("double"), std::bad_any_cast);
+  EXPECT_THROW(attr.set<int>("double") = 1, std::bad_any_cast);
 
-  CMTL::Attributes attr2 = attr;
-  EXPECT_TRUE(attr2.contain("number"));
-  EXPECT_TRUE(attr2.contain("string"));
-  EXPECT_EQ(attr.get<int>("number"), 2);
-  EXPECT_EQ(attr.get<std::string>("string"), "world");
-  attr2.remove("number");
-  EXPECT_FALSE(attr2.contain("number"));
-  attr2.remove("string");
-  EXPECT_FALSE(attr2.contain("string"));
-  attr2.set<char>("number") = '3';
-  // EXPECT_DEATH({attr2.get<int>("number");}, "attribute with specific type not
-  // found");
-  EXPECT_TRUE(attr2.contain("number"));
-  EXPECT_EQ(attr2.get<char>("number"), '3');
-  attr2.clear();
-  EXPECT_FALSE(attr2.contain("number"));
+  const auto& attr2 = attr;
+  EXPECT_TRUE(attr2.contains("int"));
+  EXPECT_TRUE(attr2.contains("double"));
+  EXPECT_NE(attr2.try_get<int>("int"), nullptr);
+  EXPECT_EQ(attr2.get<int>("int"), 2);
+
+  CMTL::Attributes attr3 = attr;
+  EXPECT_TRUE(attr3.contains("int"));
+  EXPECT_TRUE(attr3.contains("double"));
+  EXPECT_EQ(attr3.get<int>("int"), 2);
+  EXPECT_EQ(attr3.get<double>("double"), 3.14);
+
+  attr3.remove("int");
+  EXPECT_FALSE(attr3.contains("int"));
+  attr3.remove("double");
+  EXPECT_FALSE(attr3.contains("double"));
+
+  attr3.set<double>("int") = 1.1;
+  EXPECT_TRUE(attr3.contains("int"));
+  EXPECT_EQ(attr3.get<double>("int"), 1.1);
+
+  attr3.clear();
+  EXPECT_FALSE(attr3.contains("int"));
 }
 
 // int main()
 // {
-//     CMTL::Attributes attr;
-//     attr.set<int>("number") = 1;
-//     attr.set<std::string>("string") = "hello";
-//     std::cout << attr.get<int>("number") << " " <<
-//     attr.get<std::string>("string") << std::endl; attr.set<int>("number") =
-//     2; attr.set<std::string>("string") = "world"; std::cout <<
-//     attr.get<int>("number") << " " << attr.get<std::string>("string") <<
-//     std::endl;
-
-//     //attr.set<std::string>("number") = "2";
-//     return 0;
 // }

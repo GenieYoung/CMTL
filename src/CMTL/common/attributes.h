@@ -2,7 +2,6 @@
 #define __common_attributes_h__
 
 #include <any>
-#include <cassert>
 #include <map>
 #include <string>
 
@@ -20,70 +19,94 @@ class Attributes {
  public:
   typedef K key_type;
 
-  Attributes(){};
-
-  Attributes(const Attributes& other) { *this = other; }
-
-  ~Attributes() { this->clear(); }
-
-  Attributes& operator=(const Attributes& other) {
-    _values = other._values;
-    return *this;
-  }
+  Attributes() = default;
 
   /**
    * @brief check whether the value with specific name exist
    * @param name value name
    * @return true if exist, otherwise false
    */
-  bool contain(const K& name) const {
+  bool contains(const K& name) const {
     auto it = _values.find(name);
-    if (it != _values.end() && it->second.has_value()) return true;
-    return false;
+    return it != _values.end();
   }
 
   /**
-   * @brief get the value with specific name and type
+   * @brief try to get the value with specific name and type, if not found,
+   * return nullptr
+   * @tparam T value type
+   * @param name value name
+   * @result the pointer to the value or nullptr if not found
+   */
+  template <typename T>
+  T* try_get(const K& name) {
+    auto it = _values.find(name);
+    return it == _values.end() ? nullptr : std::any_cast<T>(&it->second);
+  }
+
+  /**
+   * @brief try to get the value with specific name and type, if not found,
+   * return nullptr
+   * @tparam T value type
+   * @param name value name
+   * @result the pointer to the value or nullptr if not found
+   */
+  template <typename T>
+  const T* try_get(const K& name) const {
+    auto it = _values.find(name);
+    return it == _values.end() ? nullptr : std::any_cast<T>(&it->second);
+  }
+
+  /**
+   * @brief get the value with specific name and type, if not found, throw
+   * std::bad_any_cast
+   * @tparam T value type
+   * @param name value name
+   * @result value with specific name and type
+   */
+  template <typename T>
+  T& get(const K& name) {
+    if (T* value = try_get<T>(name)) return *value;
+    throw std::bad_any_cast();
+  }
+
+  /**
+   * @brief get the value with specific name and type, if not found, throw
+   * std::bad_any_cast
    * @tparam T value type
    * @param name value name
    * @result value with specific name and type
    */
   template <typename T>
   const T& get(const K& name) const {
-    auto it = _values.find(name);
-    assert(it != _values.end() && "attribute with specific name not found");
-    assert(it->second.has_value() && "attribute has no value");
-    assert(it->second.type() == typeid(T) &&
-           "attribute with specific type not found");
-    return *std::any_cast<T>(&it->second);
+    if (const T* value = try_get<T>(name)) return *value;
+    throw std::bad_any_cast();
   }
 
   /**
    * @brief set the value with specific name and type, if not found, construct
-   * it
+   * it, otherwise, return the reference of it
    * @tparam T value type
    * @param name value name
    * @result the writable value that need to be set
+   * @note if found, the value type must be the same as the type of the value to
+   * be set, otherwise throw std::bad_any_cast
    */
   template <typename T>
-  T& set(const K& name) {
-    auto it = _values.find(name);
-    if (it == _values.end()) return _values[name].template emplace<T>();
-    if (!it->second.has_value()) return it->second.template emplace<T>();
-    if (it->second.type() == typeid(T)) return *std::any_cast<T>(&it->second);
-    assert(false && "attribute with specific type not found");
+  [[nodiscard]] T& set(const K& name) {
+    auto [it, inserted] = _values.try_emplace(name);
+    if (inserted) return it->second.template emplace<T>();
+    if (auto* value = std::any_cast<T>(&it->second)) return *value;
+    throw std::bad_any_cast();
   }
 
   /**
    * @brief remove value with specific name
    */
-  void remove(const K& name) {
-    auto it = _values.find(name);
-    if (it != _values.end()) _values.erase(it);
-  }
+  void remove(const K& name) { _values.erase(name); }
 
   /**
-   * @brief clear all the values
+   * @brief clear all values
    */
   void clear() { _values.clear(); }
 
