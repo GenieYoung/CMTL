@@ -5,9 +5,8 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <iostream>
-
-#include <assert.h>
 
 namespace CMTL {
 
@@ -42,27 +41,27 @@ class VectorT {
   /**
    * @brief default constructor
    */
-  constexpr VectorT() noexcept : _values{} {}
+  constexpr VectorT() : _values{} {}
 
   /**
    * @brief copy constructor
    */
-  VectorT(const VectorT& other) noexcept = default;
+  VectorT(const VectorT& other) = default;
 
   /**
    * @brief move constructor
    */
-  VectorT(VectorT&& other) noexcept = default;
+  VectorT(VectorT&& other) = default;
 
   /**
    * @brief destructor
    */
-  ~VectorT() noexcept = default;
+  ~VectorT() = default;
 
   /**
    * @brief assign operator
    */
-  Derived& operator=(const VectorT& other) noexcept {
+  Derived& operator=(const VectorT& other) {
     _values = other._values;
     return static_cast<Derived&>(*this);
   }
@@ -70,7 +69,7 @@ class VectorT {
   /**
    * @brief move assign operator
    */
-  Derived& operator=(VectorT&& other) noexcept {
+  Derived& operator=(VectorT&& other) {
     _values = std::move(other._values);
     return static_cast<Derived&>(*this);
   }
@@ -79,7 +78,7 @@ class VectorT {
    * @brief set all values to v
    */
   template <unsigned D = DIM, typename std::enable_if<(D > 1), int>::type = 0>
-  explicit constexpr VectorT(const T& v) noexcept {
+  explicit constexpr VectorT(const T& v) {
     fill(v);
   }
 
@@ -88,7 +87,7 @@ class VectorT {
    */
   template <typename... TT,
             typename std::enable_if<(sizeof...(TT) == DIM), int>::type = 0>
-  explicit constexpr VectorT(TT... vs) noexcept
+  explicit constexpr VectorT(const TT&... vs)
       : _values{{util_cast<TT, T>(vs)...}} {}
 
   /**
@@ -96,7 +95,7 @@ class VectorT {
    */
   template <typename... TT,
             typename std::enable_if<(sizeof...(TT) == DIM), int>::type = 0>
-  constexpr Derived& assign(TT... vs) noexcept {
+  constexpr Derived& assign(const TT&... vs) {
     _values = {{util_cast<TT, T>(vs)...}};
     return static_cast<Derived&>(*this);
   }
@@ -105,7 +104,7 @@ class VectorT {
    * @brief construct using built-in arrays
    */
   template <typename TT>
-  explicit constexpr VectorT(const TT (&vs)[DIM]) noexcept {
+  explicit constexpr VectorT(const TT (&vs)[DIM]) {
     for (unsigned i = 0; i < DIM; ++i) _values[i] = util_cast<TT, T>(vs[i]);
   }
 
@@ -113,7 +112,7 @@ class VectorT {
    * @brief construct using std array
    */
   template <typename TT>
-  explicit constexpr VectorT(const std::array<TT, DIM>& vs) noexcept {
+  explicit constexpr VectorT(const std::array<TT, DIM>& vs) {
     for (unsigned i = 0; i < DIM; ++i) _values[i] = util_cast<TT, T>(vs[i]);
   }
 
@@ -127,7 +126,7 @@ class VectorT {
    *       vector is shrinked(e.g. {1,2,3}->{1,2})
    */
   template <typename TT, unsigned DIM2, typename Derived2>
-  Derived& operator=(const VectorT<TT, DIM2, Derived2>& other) noexcept {
+  Derived& operator=(const VectorT<TT, DIM2, Derived2>& other) {
     for (unsigned i = 0; i < std::min(DIM, DIM2); ++i)
       _values[i] = util_cast<TT, T>(other[i]);
     return static_cast<Derived&>(*this);
@@ -140,7 +139,7 @@ class VectorT {
    * @tparam Derived used for CRTP
    */
   template <typename TT, unsigned DIM2, typename Derived2>
-  explicit constexpr VectorT(const VectorT<TT, DIM2, Derived2>& other) noexcept
+  explicit constexpr VectorT(const VectorT<TT, DIM2, Derived2>& other)
       : VectorT() {
     // in some machine, default construct may not initialize values to 0, so we
     // call default construct first
@@ -166,7 +165,7 @@ class VectorT {
   /**
    * @brief set all values to v
    */
-  constexpr Derived& fill(const T& v) noexcept {
+  constexpr Derived& fill(const T& v) {
     std::fill(_values.begin(), _values.end(), v);
     return static_cast<Derived&>(*this);
   }
@@ -175,8 +174,7 @@ class VectorT {
    * @brief self-addition
    */
   template <typename TT, typename Derived2>
-  constexpr Derived& operator+=(
-      const VectorT<TT, DIM, Derived2>& other) noexcept {
+  constexpr Derived& operator+=(const VectorT<TT, DIM, Derived2>& other) {
     for (unsigned i = 0; i < DIM; ++i) _values[i] += util_cast<TT, T>(other[i]);
     return static_cast<Derived&>(*this);
   }
@@ -185,8 +183,7 @@ class VectorT {
    * @brief add two vector
    */
   template <typename TT, typename Derived2>
-  constexpr Derived operator+(
-      const VectorT<TT, DIM, Derived2>& other) const noexcept {
+  constexpr Derived operator+(const VectorT<TT, DIM, Derived2>& other) const {
     Derived result(static_cast<const Derived&>(*this));
     result += other;
     return result;
@@ -196,8 +193,7 @@ class VectorT {
    * @brief self-subtract
    */
   template <typename TT, typename Derived2>
-  constexpr Derived& operator-=(
-      const VectorT<TT, DIM, Derived2>& other) noexcept {
+  constexpr Derived& operator-=(const VectorT<TT, DIM, Derived2>& other) {
     for (unsigned i = 0; i < DIM; ++i) _values[i] -= util_cast<TT, T>(other[i]);
     return static_cast<Derived&>(*this);
   }
@@ -206,27 +202,26 @@ class VectorT {
    * @brief subtract two vector
    */
   template <typename TT, typename Derived2>
-  constexpr Derived operator-(
-      const VectorT<TT, DIM, Derived2>& other) const noexcept {
+  constexpr Derived operator-(const VectorT<TT, DIM, Derived2>& other) const {
     Derived result(static_cast<const Derived&>(*this));
     result -= other;
     return result;
   }
 
   /**
-   * @brief self-negative
+   * @brief negative
    */
-  constexpr Derived& operator-() noexcept {
-    for (unsigned i = 0; i < DIM; ++i) _values[i] = -_values[i];
-    return static_cast<Derived&>(*this);
+  constexpr Derived operator-() const {
+    Derived result(static_cast<const Derived&>(*this));
+    for (unsigned i = 0; i < DIM; ++i) result[i] = -_values[i];
+    return result;
   }
 
   /**
    * @brief scalar product
    */
   template <typename TT, typename Derived2>
-  constexpr T operator*(
-      const VectorT<TT, DIM, Derived2>& other) const noexcept {
+  constexpr T operator*(const VectorT<TT, DIM, Derived2>& other) const {
     T result(0);
     for (unsigned i = 0; i < DIM; ++i)
       result += (_values[i] * util_cast<TT, T>(other[i]));
@@ -237,7 +232,7 @@ class VectorT {
    * @brief scalar product
    */
   template <typename TT, typename Derived2>
-  constexpr T dot(const VectorT<TT, DIM, Derived2>& other) const noexcept {
+  constexpr T dot(const VectorT<TT, DIM, Derived2>& other) const {
     return *this * other;
   }
 
@@ -245,7 +240,7 @@ class VectorT {
    * @brief self-scale by multiply
    * @note we not use T& to prevent user from writing something like v*=v[0]
    */
-  constexpr Derived& operator*=(const T scale) noexcept {
+  constexpr Derived& operator*=(const T scale) {
     for (unsigned i = 0; i < DIM; ++i) _values[i] *= scale;
     return static_cast<Derived&>(*this);
   }
@@ -253,9 +248,9 @@ class VectorT {
   /**
    * @brief do scale by multiply
    */
-  constexpr Derived operator*(const T& scale) const noexcept {
+  constexpr Derived operator*(const T& scale) const {
     Derived result(static_cast<const Derived&>(*this));
-    for (unsigned i = 0; i < DIM; ++i) result[i] *= scale;
+    result *= scale;
     return result;
   }
 
@@ -263,7 +258,7 @@ class VectorT {
    * @brief self-scale by divide
    * @note we not use T& to prevent user from writing something like v/=v[0]
    */
-  constexpr Derived& operator/=(const T scale) noexcept {
+  constexpr Derived& operator/=(const T scale) {
     assert(scale != T(0));
     for (unsigned i = 0; i < DIM; ++i) _values[i] /= scale;
     return static_cast<Derived&>(*this);
@@ -272,23 +267,23 @@ class VectorT {
   /**
    * @brief do scale by divide
    */
-  constexpr Derived operator/(const T& scale) const noexcept {
+  constexpr Derived operator/(const T& scale) const {
     Derived result(static_cast<const Derived&>(*this));
-    for (unsigned i = 0; i < DIM; ++i) result[i] /= scale;
+    result /= scale;
     return result;
   }
 
-  constexpr bool operator==(const VectorT& other) const noexcept {
+  constexpr bool operator==(const VectorT& other) const {
     for (unsigned i = 0; i < DIM; ++i)
       if (_values[i] != other[i]) return false;
     return true;
   }
 
-  constexpr bool operator!=(const VectorT& other) const noexcept {
+  constexpr bool operator!=(const VectorT& other) const {
     return !(*this == other);
   }
 
-  constexpr bool operator<(const VectorT& other) const noexcept {
+  constexpr bool operator<(const VectorT& other) const {
     for (unsigned i = 0; i < DIM; ++i)
       if (_values[i] != other._values[i]) return _values[i] < other._values[i];
     return false;
@@ -343,12 +338,12 @@ class VectorT {
   /**
    * @brief calculate square of L2-norm
    */
-  constexpr T norm_square() const noexcept { return (*this) * (*this); }
+  constexpr T norm_square() const { return (*this) * (*this); }
 
   /**
    * @brief calculate square of L2-norm
    */
-  constexpr T length_square() const noexcept { return norm_square(); }
+  constexpr T length_square() const { return norm_square(); }
 
   friend std::ostream& operator<<(std::ostream& os, const VectorT& vec) {
     os << "[" << vec[0];

@@ -269,9 +269,11 @@ TEST(VectorTest, OperationTest) {
 
   // negative
   Vec3d v3d_negative(1.5, 0, -1.5);
+  EXPECT_EQ(v3d_negative, Vec3d(1.5, 0, -1.5));
   EXPECT_EQ(-v3d_negative, Vec3d(-1.5, 0, 1.5));
 #ifdef USE_GMP
   Vec3r v3r_negative(mpq_class(1, 2), 0, mpq_class(-1, 2));
+  EXPECT_EQ(v3r_negative, Vec3r(mpq_class(1, 2), 0, mpq_class(-1, 2)));
   EXPECT_EQ(-v3r_negative, Vec3r(mpq_class(-1, 2), 0, mpq_class(1, 2)));
 #endif
 

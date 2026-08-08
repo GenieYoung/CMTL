@@ -3,11 +3,6 @@
 
 #include "../common/vectorT.h"
 
-#include <iomanip>
-#include <iostream>
-
-#include <assert.h>
-
 namespace CMTL {
 
 /**
@@ -66,7 +61,7 @@ class Point final : public VectorT<T, 3, Point<T>> {
   /**
    * @brief do cross product with another point
    */
-  Point operator%(const Point& p) const noexcept {
+  Point operator%(const Point& p) const {
     return Point(y() * p.z() - z() * p.y(), z() * p.x() - x() * p.z(),
                  x() * p.y() - y() * p.x());
   }
@@ -74,7 +69,7 @@ class Point final : public VectorT<T, 3, Point<T>> {
   /**
    * @brief do cross product with another point
    */
-  Point cross(const Point& p) const noexcept { return (*this) % p; }
+  Point cross(const Point& p) const { return (*this) % p; }
 };
 
 }  // namespace geo3d

@@ -3,11 +3,6 @@
 
 #include "../common/vectorT.h"
 
-#include <iomanip>
-#include <iostream>
-
-#include <assert.h>
-
 namespace CMTL {
 
 /**
@@ -56,14 +51,12 @@ class Point final : public VectorT<T, 2, Point<T>> {
   /**
    * @brief do cross product with another point
    */
-  T operator%(const Point& p) const noexcept {
-    return x() * p.y() - y() * p.x();
-  }
+  T operator%(const Point& p) const { return x() * p.y() - y() * p.x(); }
 
   /**
    * @brief do cross product with another point
    */
-  T cross(const Point& p) const noexcept { return (*this) % p; }
+  T cross(const Point& p) const { return (*this) % p; }
 };
 
 }  // namespace geo2d
