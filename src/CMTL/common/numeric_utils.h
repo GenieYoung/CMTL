@@ -11,7 +11,6 @@
 
 #include <cmath>
 #include <string>
-#include <type_traits>
 
 /**
  * @brief Computational Mathematics Tool Library
@@ -21,16 +20,97 @@ namespace CMTL {
 /* auxiliary class for number type conversion */
 template <typename T_IN, typename T_OUT>
 struct util_cast_impl {
-  static constexpr T_OUT cast(const T_IN& v) noexcept {
-    return static_cast<T_OUT>(v);
-  }
+  static constexpr T_OUT cast(const T_IN& v) { return static_cast<T_OUT>(v); }
 };
 
 /* template specialization class, used for converting number type to string */
 template <typename T_IN>
 struct util_cast_impl<T_IN, std::string> {
-  static std::string cast(const T_IN& v) noexcept { return std::to_string(v); }
+  static std::string cast(const T_IN& v) { return std::to_string(v); }
 };
+
+#ifdef USE_GMP
+/* template specialization class, used for converting number type to double
+ */
+template <>
+struct util_cast_impl<mpq_class, double> {
+  static double cast(const mpq_class& v) { return v.get_d(); }
+};
+
+/* template specialization class, used for converting number type to double
+ */
+template <typename Expression>
+struct util_cast_impl<__gmp_expr<mpq_t, Expression>, double> {
+  static double cast(const __gmp_expr<mpq_t, Expression>& expr) {
+    return mpq_class(expr).get_d();
+  }
+};
+
+/* template specialization class, used for converting number type to string
+ */
+template <>
+struct util_cast_impl<mpq_class, std::string> {
+  static std::string cast(const mpq_class& v) { return v.get_str(); }
+};
+
+/* template specialization class, used for converting number type to string
+ */
+template <typename Expression>
+struct util_cast_impl<__gmp_expr<mpq_t, Expression>, std::string> {
+  static std::string cast(const __gmp_expr<mpq_t, Expression>& expr) {
+    return mpq_class(expr).get_str();
+  }
+};
+#endif  // USE_GMP
+
+#ifdef USE_CORE
+/* template specialization class, used for converting number type to double
+ */
+template <>
+struct util_cast_impl<CORE::Expr, double> {
+  static double cast(const CORE::Expr& v) { return v.doubleValue(); }
+};
+
+/* template specialization class, used for converting number type to string
+ */
+template <>
+struct util_cast_impl<CORE::BigRat, std::string> {
+  static std::string cast(const CORE::BigRat& v) { return v.get_str(); }
+};
+
+/* template specialization class, used for converting number type to string
+ */
+template <>
+struct util_cast_impl<CORE::Expr, std::string> {
+  static std::string cast(const CORE::Expr& v) {
+    return CORE::Expr(v).toString();
+  }
+};
+#endif  // USE_CORE
+
+#if defined(USE_GMP) && defined(USE_CORE)
+/* convert an mpq_class to an exact CORE::Expr.
+ */
+template <>
+struct util_cast_impl<mpq_class, CORE::Expr> {
+  static CORE::Expr cast(const mpq_class& value) {
+    CORE::BigRat result;
+    mpq_set(result.mp(), value.get_mpq_t());
+    return CORE::Expr(result);
+  }
+};
+
+/** convert a gmp expression to an exact CORE::Expr.
+ */
+template <typename Expression>
+struct util_cast_impl<__gmp_expr<mpq_t, Expression>, CORE::Expr> {
+  static CORE::Expr cast(const __gmp_expr<mpq_t, Expression>& expr) {
+    const mpq_class value(expr);
+
+    return util_cast_impl<mpq_class, CORE::Expr>::cast(value);
+  }
+};
+#endif  // defined(USE_GMP) && defined(USE_CORE)
 
 /**
  * @brief number type conversion function
@@ -41,39 +121,6 @@ template <typename T_IN, typename T_OUT>
 inline constexpr T_OUT util_cast(const T_IN& v) {
   return util_cast_impl<T_IN, T_OUT>::cast(v);
 }
-
-#ifdef USE_GMP
-/* template specialization function, used for converting number type to double
- */
-template <>
-inline double util_cast<mpq_class, double>(const mpq_class& v) {
-  return v.get_d();
-}
-
-/* template specialization function, used for converting number type to string
- */
-template <>
-inline std::string util_cast<mpq_class, std::string>(const mpq_class& v) {
-  return v.get_str();
-}
-#endif  // USE_GMP
-
-#ifdef USE_CORE
-/* template specialization function, used for converting number type to double
- */
-template <>
-inline double util_cast<CORE::Expr, double>(const CORE::Expr& v) {
-  return v.doubleValue();
-}
-
-/* template specialization function, used for converting number type to string
- */
-template <>
-inline std::string util_cast<CORE::Expr, std::string>(const CORE::Expr& v) {
-  CORE::Expr tmp(v);
-  return tmp.toString();
-}
-#endif  // USE_CORE
 
 /**
  * @brief convert number to double type
@@ -91,215 +138,91 @@ inline std::string to_string(const T& v) {
   return util_cast<T, std::string>(v);
 }
 
+#ifdef USE_CORE
+template <typename T>
+inline CORE::Expr to_core_expr(const T& value) {
+  return util_cast<T, CORE::Expr>(value);
+}
+#endif  // USE_CORE
+
 /**
  * @brief calculate the absolute value of a number
+ * @note do not use auto to get the return type if T is a gmp expression
  */
 template <typename T>
-inline T abs(const T& v) {
+inline decltype(auto) abs(const T& v) {
   using std::abs;
   return abs(v);
 }
 
+/**
+ * @brief calculate the minimal value of two numbers
+ */
+template <typename T>
+inline const T& min(const T& v1, const T& v2) {
+  return v2 < v1 ? v2 : v1;
+}
+
+/**
+ * @brief calculate the maximal value of two numbers
+ */
+template <typename T>
+inline const T& max(const T& v1, const T& v2) {
+  return v1 < v2 ? v2 : v1;
+}
+
 #ifdef USE_GMP
-/**
- * @brief template specialization function, calculate the absolute value of a
- * number
- * @note absolute(expression) may crash, call absolute(T(expression)) instead.
- */
-inline mpq_class abs(const mpq_class& v) {
-  if (v < 0) return -v;
-  return v;
-}
-#endif
-
-/**
- * @brief calculate the minimal value of two numbers
- */
-template <typename T>
-inline T min(const T& v1, const T& v2) {
-  if (v1 < v2) return v1;
-  return v2;
+inline const mpq_class& min(const mpq_class& v1, const mpq_class& v2) {
+  return v2 < v1 ? v2 : v1;
 }
 
-/**
- * @brief calculate the minimal value of two numbers
- */
-template <typename T>
-inline T max(const T& v1, const T& v2) {
-  if (v1 > v2) return v1;
-  return v2;
+template <typename Expression1, typename Expression2>
+inline mpq_class min(const __gmp_expr<mpq_t, Expression1>& expr1,
+                     const __gmp_expr<mpq_t, Expression2>& expr2) {
+  mpq_class v1(expr1);
+  mpq_class v2(expr2);
+
+  if (v2 < v1) return v2;
+  return v1;
 }
+
+inline const mpq_class& max(const mpq_class& v1, const mpq_class& v2) {
+  return v1 < v2 ? v2 : v1;
+}
+
+template <typename Expression1, typename Expression2>
+inline mpq_class max(const __gmp_expr<mpq_t, Expression1>& expr1,
+                     const __gmp_expr<mpq_t, Expression2>& expr2) {
+  mpq_class v1(expr1);
+  mpq_class v2(expr2);
+
+  if (v1 < v2) return v2;
+  return v1;
+}
+#endif  // USE_GMP
 
 /**
  * @brief calculate the square root value of a number
  */
 template <typename T>
-inline T sqrt(const T& v) {
+inline decltype(auto) sqrt(const T& v) {
   using std::sqrt;
   return sqrt(v);
 }
 
-#ifdef USE_GMP
-/* template specialization, calculate the square root value of a number */
-template <>
-inline mpq_class sqrt(const mpq_class& v) {
-  return mpq_class(sqrt(to_double(v)));  // TODO
-}
-#endif
-
-template <typename T, typename = void>
-class numeric_comparator {
- public:
-  static T tolerance() { return T(0); }
-
-  static bool is_equal(const T& v1, const T& v2, const T& tol = T(0)) {
-    return v1 == v2;
-  }
-
-  static bool is_not_equal(const T& v1, const T& v2, const T& tol = T(0)) {
-    return !(is_equal(v1, v2, tol));
-  }
-
-  static bool is_less(const T& v1, const T& v2, const T& tol = T(0)) {
-    return v1 < v2;
-  }
-
-  static bool is_less_equal(const T& v1, const T& v2, const T& tol = T(0)) {
-    return v1 <= v2;
-  }
-
-  static bool is_greater(const T& v1, const T& v2, const T& tol = T(0)) {
-    return v1 > v2;
-  }
-
-  static bool is_greater_equal(const T& v1, const T& v2, const T& tol = T(0)) {
-    return v1 >= v2;
-  }
-};
-
-template <typename T>
-class numeric_comparator<
-    T, typename std::enable_if<std::is_floating_point<T>::value>::type> {
- public:
-  static T& tolerance() { return _tol; }
-
-  static bool is_equal(const T& v1, const T& v2, const T& tol = _tol) {
-    return abs(v1 - v2) <= _tol;
-  }
-
-  static bool is_not_equal(const T& v1, const T& v2, const T& tol = _tol) {
-    return !(is_equal(v1, v2, tol));
-  }
-
-  static bool is_zero(const T& v, const T& tol = _tol) {
-    return is_equal(v, T(0), _tol);
-  }
-
-  static bool is_less(const T& v1, const T& v2, const T& tol = _tol) {
-    return v1 < v2 - tol;
-  }
-
-  static bool is_less_equal(const T& v1, const T& v2, const T& tol = _tol) {
-    return v1 <= v2 + tol;
-  }
-
-  static bool is_greater(const T& v1, const T& v2, const T& tol = _tol) {
-    return v1 > v2 + tol;
-  }
-
-  static bool is_greater_equal(const T& v1, const T& v2, const T& tol = _tol) {
-    return v1 >= v2 - tol;
-  }
-
- private:
-  static T _tol;
-};
-
-constexpr float default_float_tolerance = 1e-5;
-constexpr double default_double_tolerance = 1e-13;
-
-template <>
-inline float numeric_comparator<float>::_tol = default_float_tolerance;
-
-template <>
-inline double numeric_comparator<double>::_tol = default_double_tolerance;
-
-template <typename T>
-T numeric_comparator<
-    T, typename std::enable_if<std::is_floating_point<T>::value>::type>::_tol =
-    std::numeric_limits<T>::epsilon();
-
+#if defined(USE_GMP) && defined(USE_CORE)
 /**
- * @brief check whether two number are equal
- * @param tolerance tolerance that prevents the floating point error
- * @note if the number type is from gmp, it should be in canonical form!
+ * @brief calculate the exact square root of a gmp rational expression.
+ * @return an exact algebraic expression.
+ * @pre expression >= 0
  */
-template <typename T>
-bool is_equal(const T& v1, const T& v2,
-              const T& tolerance = numeric_comparator<T>::tolerance()) {
-  return numeric_comparator<T>::is_equal(v1, v2, tolerance);
+template <typename Expression>
+inline CORE::Expr sqrt(const __gmp_expr<mpq_t, Expression>& expr) {
+  const CORE::Expr value = to_core_expr(expr);
+  using std::sqrt;
+  return sqrt(value);
 }
-
-/**
- * @brief check whether two number are not equal
- * @param tolerance tolerance that prevents the floating point error
- */
-template <typename T>
-bool is_not_equal(const T& v1, const T& v2,
-                  const T& tolerance = numeric_comparator<T>::tolerance()) {
-  return numeric_comparator<T>::is_not_equal(v1, v2, tolerance);
-}
-
-/**
- * @brief check whether number is same as zero
- * @param tolerance tolerance that prevents the floating point error
- * @note if the number type is from gmp, it should be in canonical form!
- */
-template <typename T>
-bool is_zero(const T& v,
-             const T& tolerance = numeric_comparator<T>::tolerance()) {
-  return numeric_comparator<T>::is_zero(v, tolerance);
-}
-
-/**
- * @brief check whether v1 is less than v2
- * @param tolerance tolerance that prevents the floating point error
- */
-template <typename T>
-bool is_less(const T& v1, const T& v2,
-             const T& tolerance = numeric_comparator<T>::tolerance()) {
-  return numeric_comparator<T>::is_less(v1, v2, tolerance);
-}
-
-/**
- * @brief check whether v1 is less than v2 or same as v2
- * @param tolerance tolerance that prevents the floating point error
- */
-template <typename T>
-bool is_less_equal(const T& v1, const T& v2,
-                   const T& tolerance = numeric_comparator<T>::tolerance()) {
-  return numeric_comparator<T>::is_less_equal(v1, v2, tolerance);
-}
-
-/**
- * @brief check whether v1 is greater than v2
- * @param tolerance tolerance that prevents the floating point error
- */
-template <typename T>
-bool is_greater(const T& v1, const T& v2,
-                const T& tolerance = numeric_comparator<T>::tolerance()) {
-  return numeric_comparator<T>::is_greater(v1, v2, tolerance);
-}
-
-/**
- * @brief check whether v1 is greater than v2 or same as v2
- * @param tolerance tolerance that prevents the floating point error
- */
-template <typename T>
-bool is_greater_equal(const T& v1, const T& v2,
-                      const T& tolerance = numeric_comparator<T>::tolerance()) {
-  return numeric_comparator<T>::is_greater_equal(v1, v2, tolerance);
-}
+#endif  // defined(USE_GMP) && defined(USE_CORE)
 
 }  // namespace CMTL
 
