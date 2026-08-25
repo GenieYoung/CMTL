@@ -15,8 +15,8 @@ bool intersect(const geo2d::Box<T>& box, const geo2d::Point<T>& ori,
   assert(dir != geo2d::Point<T>::Origin);
 
   T p1 = -dir.x(), p2 = dir.x(), p3 = -dir.y(), p4 = dir.y();
-  T q1 = ori.x() - box.left(), q2 = box.right() - ori.x(),
-    q3 = ori.y() - box.bottom(), q4 = box.top() - ori.y();
+  T q1 = ori.x() - box.xmin(), q2 = box.xmax() - ori.x(),
+    q3 = ori.y() - box.ymin(), q4 = box.ymax() - ori.y();
 
   if (p1 == 0 && (q1 < 0 || q2 < 0)) return false;
   if (p3 == 0 && (q3 < 0 || q4 < 0)) return false;

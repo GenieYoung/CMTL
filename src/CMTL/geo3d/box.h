@@ -1,13 +1,13 @@
-#ifndef CMTL_GEO2D_BOX_H
-#define CMTL_GEO2D_BOX_H
+#ifndef CMTL_GEO3D_BOX_H
+#define CMTL_GEO3D_BOX_H
 
 #include "point.h"
 
 namespace CMTL {
-namespace geo2d {
+namespace geo3d {
 
 /**
- * @brief 2 dimension axis-aligned box
+ * @brief 3 dimension axis-aligned box
  * @tparam T number type of point coordinate
  */
 template <typename T>
@@ -31,23 +31,28 @@ class Box {
   }
 
   /**
-   * @brief construct from four boundary coordinates
+   * @brief construct from six boundary coordinates
    * @param xmin_ minimum x coordinate
    * @param ymin_ minimum y coordinate
+   * @param zmin_ minimum z coordinate
    * @param xmax_ maximum x coordinate
    * @param ymax_ maximum y coordinate
+   * @param zmax_ maximum z coordinate
    */
-  Box(const T& xmin_, const T& ymin_, const T& xmax_, const T& ymax_)
-      : _min(xmin_, ymin_), _max(xmax_, ymax_) {
+  Box(const T& xmin_, const T& ymin_, const T& zmin_, const T& xmax_,
+      const T& ymax_, const T& zmax_)
+      : _min(xmin_, ymin_, zmin_), _max(xmax_, ymax_, zmax_) {
     normalize();
   }
 
   /**
-   * @brief normalize the box, make sure xmin <= xmax and ymin <= ymax
+   * @brief normalize the box, make sure xmin <= xmax, ymin <= ymax and zmin <=
+   * zmax
    */
   void normalize() {
     if (xmin() > xmax()) std::swap(xmin(), xmax());
     if (ymin() > ymax()) std::swap(ymin(), ymax());
+    if (zmin() > zmax()) std::swap(zmin(), zmax());
   }
 
   ~Box() = default;
@@ -104,26 +109,51 @@ class Box {
   const T& ymax() const { return _max.y(); }
 
   /**
+   * @brief get the writable minimum z coordinate
+   */
+  T& zmin() { return _min.z(); }
+
+  /**
+   * @brief get the const minimum z coordinate
+   */
+  const T& zmin() const { return _min.z(); }
+
+  /**
+   * @brief get the writable maximum z coordinate
+   */
+  T& zmax() { return _max.z(); }
+
+  /**
+   * @brief get the const maximum z coordinate
+   */
+  const T& zmax() const { return _max.z(); }
+
+  /**
    * @brief get the length along x-axis
    */
   T x_span() const { return xmax() - xmin(); }
 
   /**
-   * @brief get the width along y-axis
+   * @brief get the length along y-axis
    */
   T y_span() const { return ymax() - ymin(); }
 
   /**
-   * @brief return the area of the box
+   * @brief get the length along z-axis
    */
-  T area() const { return x_span() * y_span(); }
+  T z_span() const { return zmax() - zmin(); }
+
+  /**
+   * @brief return the volume of the box
+   */
+  T volume() const { return x_span() * y_span() * z_span(); }
 
  private:
   Point<T> _min;
   Point<T> _max;
 };
 
-}  // namespace geo2d
+}  // namespace geo3d
 }  // namespace CMTL
 
-#endif  // CMTL_GEO2D_BOX_H
+#endif  // CMTL_GEO3D_BOX_H
