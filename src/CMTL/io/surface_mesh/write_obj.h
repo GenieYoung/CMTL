@@ -4,7 +4,7 @@
 #include "../../geo2d/surface_mesh.h"
 #include "../../geo3d/surface_mesh.h"
 
-#include <fstream>
+#include "../io_common.h"
 
 namespace CMTL {
 namespace io {

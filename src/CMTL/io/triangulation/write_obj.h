@@ -3,7 +3,7 @@
 
 #include "../../algorithm/triangulation.h"
 
-#include <fstream>
+#include "../io_common.h"
 
 namespace CMTL {
 namespace io {

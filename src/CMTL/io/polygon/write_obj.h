@@ -4,7 +4,7 @@
 #include "../../geo2d/polygon.h"
 #include "../../geo3d/polygon.h"
 
-#include <fstream>
+#include "../io_common.h"
 
 namespace CMTL {
 

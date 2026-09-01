@@ -4,7 +4,7 @@
 #include "../../geo2d/polygon_soup.h"
 #include "../../geo3d/polygon_soup.h"
 
-#include <fstream>
+#include "../io_common.h"
 
 namespace CMTL {
 namespace io {

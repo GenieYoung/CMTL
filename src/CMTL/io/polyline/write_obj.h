@@ -3,8 +3,7 @@
 
 #include "../../common/numeric_utils.h"
 
-#include <fstream>
-#include <vector>
+#include "../io_common.h"
 
 namespace CMTL {
 namespace io {
